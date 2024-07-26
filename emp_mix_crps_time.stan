@@ -78,7 +78,7 @@ model {
   sigma_z ~ normal(0, 10);
   beta ~ normal(0, 1);
   zetas[1] ~ normal(0, sigma_z);
-  for (t in 2:T) {zetas[t] ~ normal(beta, sigma_z);}
+  for (t in 2:T) {zetas[t] ~ normal(beta*zetas[t-1], sigma_z);}
   
   target += exponential_lupdf(risk_crps | eta*T);
 }

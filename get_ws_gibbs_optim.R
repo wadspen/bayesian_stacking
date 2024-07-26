@@ -34,7 +34,7 @@ get_loc_file <- list.files(paste0(mod_loc, "FluSight-baseline/"))[4]
 get_loc_forc <- read.csv(paste0(mod_loc, "FluSight-baseline/", get_loc_file))
 locations <- unique(get_loc_forc$location)
 
-
+#locations <- locations[sample(length(locations), 6)]
 
 comp_forcs <- readRDS("comp_forcs.rds")
 all_flu <- read.csv("../FluSight-forecast-hub/target-data/target-hospital-admissions.csv")
@@ -43,7 +43,7 @@ all_flu <- read.csv("../FluSight-forecast-hub/target-data/target-hospital-admiss
 loc <- "12"
 dat <- sub_dates[1]
 horizon <- 0
-etas <- seq(.1, 4, by = .1)
+etas <- c(16)
 mean_score <- c()
 mean_scores <- foreach(loc = locations,
                     .packages = c("cmdstanr", "stringr",
