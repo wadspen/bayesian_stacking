@@ -22,3 +22,25 @@ sum_crps <- function(wt, mse_mat, absdiff_arr) {
 	crpss <- mix_mat_crps(wt, mse_mat, absdiff_arr)
 	return(sum(crpss))
 }
+
+
+alphaik <- function(par_fun) {
+  mu_diff <- par_fun[1]
+  sig2_sum <- par_fun[2]
+  # wt_prod <- par_fun[3]
+  alpha <- -(1/sqrt(2*pi))*sqrt(sig2_sum)*exp(-(mu_diff^2/(2*sig2_sum))) -
+    ((mu_diff/2)*(2*pnorm(mu_diff/sqrt(sig2_sum)) - 1))
+  return(alpha)
+}
+
+# betai <- function(y, mu, sigma, wt) {
+#   beta <- sqrt(2/pi)*sigma*exp(-((mu - y)^2/(2*sigma^2))) +
+#     (mu - y)*(2*pnorm(y, mu, sigma) - 1)
+#   return(beta*wt)
+# }
+
+betai <- function(y, mu, sigma) {
+  beta <- sqrt(2/pi)*sigma*exp(-(mu - y)^2/(2*sigma^2)) +
+    ((mu - y))*(2*pnorm((mu - y)/sigma) - 1)
+  return(beta)
+}
