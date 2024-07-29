@@ -44,3 +44,12 @@ betai <- function(y, mu, sigma) {
     ((mu - y))*(2*pnorm((mu - y)/sigma) - 1)
   return(beta)
 }
+
+abs_punit <- function(x, ppitd_est, d = 1) {
+  abs(ppitd_est(x) - x)^d
+}
+
+unit_wass_dist <- function(ppitd_est, d = 1) {
+  (d + 1)*integrate(abs_punit, lower = 0, upper = 1, ppitd_est, d = d,
+                    subdivisions = 3000)$value
+}

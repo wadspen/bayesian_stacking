@@ -13,18 +13,19 @@ Sigma <- diag(rep(1,M))
 # Sigma <- matrix(.99, nrow = M, ncol = M)
 # Sigma <- Sigma + diag(rep(1, M))
 
-# zeta[1,] <- MASS::mvrnorm(1, rep(0,M), Sigma = Sigma)
-zeta[1,] <- rtmvnorm(1, rep(.1, M), sigma = Sigma,
-         lower = rep(0,M))
+zeta[1,] <- MASS::mvrnorm(1, rep(0,M), Sigma = Sigma)
+# zeta[1,] <- rtmvnorm(1, rep(.1, M), sigma = Sigma,
+#          lower = rep(0,M))
 for (i in 2:N) {
-  # zeta[i,] <- MASS::mvrnorm(1, zeta[i-1,] + .02, Sigma)
-  zeta[i,] <- rtmvnorm(1, zeta[i-1,], sigma = Sigma,
-                       lower = rep(0,M))
+  zeta[i,] <- MASS::mvrnorm(1, zeta[i-1,] + .02, Sigma)
+  # zeta[i,] <- rtmvnorm(1, zeta[i-1,], sigma = Sigma,
+  #                      lower = rep(0,M))
 }
 
 omega <- matrix(NA, nrow = N, ncol = M)
 for (i in 1:N) {
   omega[i,] <- exp(zeta[i,])/sum(exp(zeta[i,]))
+  # omega[i,] <- zeta[i,]/sum(zeta[i,])
 }
 
 plot(omega[,1] ~ t, type = "l")
@@ -32,10 +33,11 @@ lines(omega[,2] ~ t, col = "red")
 lines(omega[,3] ~ t, col = "dodgerblue")
 lines(omega[,4] ~ t, col = "purple")
 
-a <- c(1.1, 1.2, 1.3, 1.4)
+a <- c(1.1,1.2,1.3,1.4)
 X <- MASS::mvrnorm(N, rep(5,M), diag(rep(.5,M)))
 
-Xl <- apply(X, MARGIN = 2, FUN = function(x) {x*a})
+# Xl <- apply(X, MARGIN = 2, FUN = function(x) {x*a})
+Xl <- X
 
 yt <- apply(Xl*omega, MARGIN = 1, FUN = sum) + rnorm(N)
 plot(yt ~ t, type = "l")
@@ -81,7 +83,9 @@ pmixnorm <- function(y, mus, sigmas, wts) {
 
 et <- 25
 ps <- c()
-for (d in 2:nrow(all_betas)) {
+pm <- c()
+pb <- c()
+for (d in 2:(nrow(all_betas) - 1)) {
   
   stan_dat <- list(
     T = d,
@@ -92,20 +96,67 @@ for (d in 2:nrow(all_betas)) {
     betas = all_betas[1:d,]
   )
   
-  fit <- gibbmod$sample(data = stan_dat,
-                    chains = 1,
-                    iter_warmup = 2000,
-                    iter_sampling = 2000)
+  fit <- gibbmod$variational(data = stan_dat)
   
   draws <- fit$draws(variables = "omegaT1", format = "df") %>% 
     select(contains("omega"))
   
   wt <- apply(draws, MARGIN = 2, FUN = mean)
   wt <- wt/sum(wt)
+  
+  bma <- c(mixtools::dmvnorm(yt[2:d], Xl[2:d,1]),
+           mixtools::dmvnorm(yt[2:d], Xl[2:d,2]),
+           mixtools::dmvnorm(yt[2:d], Xl[2:d,3]),
+           mixtools::dmvnorm(yt[2:d], Xl[2:d,4]))
+  bwt <- bma/sum(bma)
+  
+  
+  
   ps[d] <- pmixnorm(yt[d + 1], Xl[d,], sigma, wt)
+  pm[d] <- pmixnorm(yt[d + 1], Xl[d,], sigma, rep(1/M, M))
+  pb[d] <- pmixnorm(yt[d + 1], Xl[d,], sigma, bwt)
   
   
 }
+
+uwd1 <- c(unit_wass_dist(ecdf(pm)),
+          unit_wass_dist(ecdf(pb)),
+          unit_wass_dist(ecdf(ps)))
+
+uwd2 <- c(unit_wass_dist(ecdf(pm), d = 2),
+          unit_wass_dist(ecdf(pb), d = 2),
+          unit_wass_dist(ecdf(ps), d = 2))
+
+ks_stat <- c(ks.test(pm, y = "punif")$statistic,
+             ks.test(pb, y = "punif")$statistic,
+             ks.test(ps, y = "punif")$statistic)
+
+# M <- 1000
+# m <- 1
+# diff <- c()
+# repeat{
+#   diff[m] <- unit_wass_dist(ecdf(sample(pm,95,replace = FALSE)), d = 2)/
+#                 unit_wass_dist(ecdf(sample(ps,95,replace = FALSE)), d = 2)
+# 
+#   m <- m + 1
+#   if (m > M) {break}
+# }
+# 
+# unit_wass_dist(ecdf(pm[1:100]), d = 1)/
+#   unit_wass_dist(ecdf(ps[1:100]), d = 1)
+# 
+# ks.test(pm[1:100], y = "punif")$statistic/ks.test(ps[1:100], y = "punif")$statistic
+
+
+
+
+
+
+
+
+
+
+
 
 
 

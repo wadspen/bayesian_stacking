@@ -57,7 +57,7 @@ parameters {
   // vector[num_comp] omega;
   real<lower=0> sigma_z;
   array[T] vector[num_comp] zetas;
-  real<lower=0,upper=1> beta;
+  // real<lower=0,upper=1> beta;
 }
 
 transformed parameters {
@@ -76,9 +76,9 @@ model {
   // omega ~ dirichlet(alpha);
   // omega ~ normal(1, 1);
   sigma_z ~ normal(0, 10);
-  beta ~ normal(0, 1);
+  // beta ~ normal(0, 1);
   zetas[1] ~ normal(0, sigma_z);
-  for (t in 2:T) {zetas[t] ~ normal(beta*zetas[t-1], sigma_z);}
+  for (t in 2:T) {zetas[t] ~ normal(zetas[t-1], sigma_z);}
   
   // target += gibbsLik(risk_crps, eta, N);
   // target += normal_lpdf(risk_crps | 0, 1);
@@ -88,7 +88,7 @@ model {
 
 generated quantities {
   vector[num_comp] zetaT1;
-  for (c in 1:num_comp) zetaT1[c] = normal_rng(beta*zetas[T][c], sigma_z);
+  for (c in 1:num_comp) zetaT1[c] = normal_rng(zetas[T][c], sigma_z);
   simplex[num_comp] omegaT1 = softmax(zetaT1);
 }
 
