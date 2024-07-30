@@ -2,8 +2,28 @@
 library(tmvtnorm)
 library(cmdstanr)
 library(dplyr)
+source("./stack_functions.R")
+library(parallel)
+library(doParallel)
+library(doMC)
+n.cores <- detectCores()
+my.cluster <- makeCluster(n.cores, type = "PSOCK")
+doParallel::registerDoParallel(cl = my.cluster)
+foreach::getDoParRegistered()
+foreach::getDoParWorkers()
+registerDoMC(cores = n.cores)
 
 gibbmod <- cmdstan_model(stan_file = './time_mix_norm_crps.stan')
+
+
+
+
+replicates <- 500
+wds <- foreach(rep = 1:replicates,
+                    .packages = c("cmdstanr", "stringr",
+                                  "lubridate", "dplyr", "tmvtnorm")
+                    ,.errorhandling = "remove"
+                    ,.combine = rbind) %dopar% {
 
 N <- 100
 M <- 4
@@ -13,27 +33,27 @@ Sigma <- diag(rep(1,M))
 # Sigma <- matrix(.99, nrow = M, ncol = M)
 # Sigma <- Sigma + diag(rep(1, M))
 
-zeta[1,] <- MASS::mvrnorm(1, rep(0,M), Sigma = Sigma)
-# zeta[1,] <- rtmvnorm(1, rep(.1, M), sigma = Sigma,
-#          lower = rep(0,M))
+#zeta[1,] <- MASS::mvrnorm(1, rep(0,M), Sigma = Sigma)
+zeta[1,] <- rtmvnorm(1, rep(.1, M), sigma = Sigma,
+          lower = rep(0,M))
 for (i in 2:N) {
-  zeta[i,] <- MASS::mvrnorm(1, zeta[i-1,] + .02, Sigma)
-  # zeta[i,] <- rtmvnorm(1, zeta[i-1,], sigma = Sigma,
-  #                      lower = rep(0,M))
+  #zeta[i,] <- MASS::mvrnorm(1, zeta[i-1,] + .02, Sigma)
+  zeta[i,] <- rtmvnorm(1, zeta[i-1,], sigma = Sigma,
+                        lower = rep(0,M))
 }
 
 omega <- matrix(NA, nrow = N, ncol = M)
 for (i in 1:N) {
-  omega[i,] <- exp(zeta[i,])/sum(exp(zeta[i,]))
-  # omega[i,] <- zeta[i,]/sum(zeta[i,])
+  #omega[i,] <- exp(zeta[i,])/sum(exp(zeta[i,]))
+  omega[i,] <- zeta[i,]/sum(zeta[i,])
 }
 
-plot(omega[,1] ~ t, type = "l")
-lines(omega[,2] ~ t, col = "red")
-lines(omega[,3] ~ t, col = "dodgerblue")
-lines(omega[,4] ~ t, col = "purple")
+#plot(omega[,1] ~ t, type = "l")
+#lines(omega[,2] ~ t, col = "red")
+#lines(omega[,3] ~ t, col = "dodgerblue")
+#lines(omega[,4] ~ t, col = "purple")
 
-a <- c(1.1,1.2,1.3,1.4)
+#a <- c(1.1,1.2,1.3,1.4)
 X <- MASS::mvrnorm(N, rep(5,M), diag(rep(.5,M)))
 
 # Xl <- apply(X, MARGIN = 2, FUN = function(x) {x*a})
@@ -45,17 +65,17 @@ plot(yt ~ t, type = "l")
 # points(yt ~ X[,2], col = "red")
 # points(yt ~ X[,3], col = "dodgerblue")
 # points(yt ~ X[,4], col = "purple")
-p1 <- c()
-p2 <- c()
-p3 <- c()
-p4 <- c()
-for (i in 1:N) {
-  p1[i] <- pnorm(yt[i], X[i,1])
-  p2[i] <- pnorm(yt[i], X[i,2])
-  p3[i] <- pnorm(yt[i], X[i,3])
-  p4[i] <- pnorm(yt[i], X[i,4])
-}
-hist(c(p1, p2, p3, p4))
+#p1 <- c()
+#p2 <- c()
+#p3 <- c()
+#p4 <- c()
+#for (i in 1:N) {
+#  p1[i] <- pnorm(yt[i], X[i,1])
+#  p2[i] <- pnorm(yt[i], X[i,2])
+#  p3[i] <- pnorm(yt[i], X[i,3])
+#  p4[i] <- pnorm(yt[i], X[i,4])
+#}
+#hist(c(p1, p2, p3, p4))
 
 
 all_alphas <- array(NA, dim = c(M,M,N))
@@ -130,6 +150,13 @@ uwd2 <- c(unit_wass_dist(ecdf(pm), d = 2),
 ks_stat <- c(ks.test(pm, y = "punif")$statistic,
              ks.test(pb, y = "punif")$statistic,
              ks.test(ps, y = "punif")$statistic)
+
+data.frame(rep = rep, method = c("ms", "bma", "bs"), uwd1, uwd2, ks_stat)
+
+}
+
+saveRDS(wds, "wds.rds")
+
 
 # M <- 1000
 # m <- 1
