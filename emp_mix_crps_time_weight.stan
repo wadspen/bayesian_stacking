@@ -25,13 +25,13 @@ functions {
     return crps;
   }
   
-  real riskCRPSs(int T, int num_comp, array[] vector omegas, data matrix mae, 
+  real riskCRPSs(int T, int num_comp, vector omegas, data matrix mae, 
                        data array[] matrix absdiff, real tweight) {
     // real rcrpss = mean(empCRPSs(T, num_comp, omega, mae, absdiff));
     real rcrpss;
     vector[T] crpss;
     
-    for (t in 1:T) crpss[t] = tweight^((T-t))*empCRPSs(t, num_comp, omegas[t], 
+    for (t in 1:T) crpss[t] = tweight^((T-t))*empCRPSs(t, num_comp, omegas, 
                                                        mae, absdiff);
     rcrpss = mean(crpss);
     
