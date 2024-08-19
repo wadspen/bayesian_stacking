@@ -23,6 +23,13 @@ sum_crps <- function(wt, mse_mat, absdiff_arr) {
 	return(sum(crpss))
 }
 
+sum_weight_crps <- function(wt, mse_mat, absdiff_arr, alpha = .98, T) {
+  wt <- exp(wt)/sum(exp(wt))
+  t <- 1:T
+  crpss <- (alpha^(T - t))*mix_mat_crps(wt, mse_mat, absdiff_arr)
+  return(sum(crpss))
+}
+
 
 alphaik <- function(par_fun) {
   mu_diff <- par_fun[1]

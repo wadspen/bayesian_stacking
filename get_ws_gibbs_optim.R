@@ -26,6 +26,7 @@ mod <- cmdstan_model(stan_file = './emp_mix_crps_time_weight.stan')
 
 
 mod_loc <- "../FluSight-forecast-hub/model-output/"
+mod_loc <- "../../forecast-hub/FluSight-forecast-hub/model-output/" #local machine
 models <- list.files(mod_loc)
 models <- models[models != "README.md"]
 sub_dates <- substr(list.files(paste0(mod_loc, "FluSight-baseline")), 1, 10)
@@ -38,7 +39,7 @@ locations <- unique(get_loc_forc$location)
 
 comp_forcs <- readRDS("comp_forcs.rds")
 all_flu <- read.csv("../FluSight-forecast-hub/target-data/target-hospital-admissions.csv")
-
+all_flu <- read.csv("../../forecast-hub/FluSight-forecast-hub/target-data/target-hospital-admissions.csv") #local machine
 
 loc <- "16"
 dat <- sub_dates[1]
@@ -79,29 +80,31 @@ mean_scores <- foreach(loc = locations,
 	#		absdiff_arr <- absdiff_h_arr[,,pre_forcs]
 	#	}
 	  
-	  stan_dat <- list(
-              	     T = d,
-              	     num_comp = nrow(all_mse),
-              	     eta = et,
-              	     alpha = rep(1, nrow(all_mse)),
-              	     mae = all_mse[,1:d],
-              	     absdiff = aperm(absdiff_arr[,,1:d])
-	              , tweight = .98)
+# 	  stan_dat <- list(
+#               	     T = d,
+#               	     num_comp = nrow(all_mse),
+#               	     eta = et,
+#               	     alpha = rep(1, nrow(all_mse)),
+#               	     mae = all_mse[,1:d],
+#               	     absdiff = aperm(absdiff_arr[,,1:d])
+# 	              , tweight = .98)
 	  
 	  # fit <- mod$sample(data = stan_dat,
 	  #                   chains = 1,
 	  #                   iter_warmup = 2000,
 	  #                   iter_sampling = 2000)
 	  
-	  fit <- mod$variational(data = stan_dat)
+	  # fit <- mod$variational(data = stan_dat)
 	  
-	  draws <- fit$draws(format = "df") %>% 
-	    select(contains("omega"))
-	  weight[,d+1] <- apply(draws, MARGIN = 2, FUN = mean)
+	  # draws <- fit$draws(format = "df") %>% 
+	  #   select(contains("omega"))
+	  # weight[,d+1] <- apply(draws, MARGIN = 2, FUN = mean)
 		
-		# wts <- optim(log(weights[,d] + 1), sum_crps, mse_mat = all_mse[,1:d], 
-		# 	     absdiff_arr = absdiff_arr[,,1:d])$par
-		# weights[,d+1] <- exp(wts)/sum(exp(wts))
+		wts <- optim(log(weight[,d] + 1), sum_crps, mse_mat = all_mse[,1:d],
+			     absdiff_arr = absdiff_arr[,,1:d])$par
+		wts <- optim(log(weight[,d] + 1), sum_weight_crps, mse_mat = all_mse[,1:d],
+		             absdiff_arr = absdiff_arr[,,1:d], T = d)$par
+		weight[,d+1] <- exp(wts)/sum(exp(wts))
 	}
 
 
