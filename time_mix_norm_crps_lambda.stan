@@ -52,7 +52,6 @@ data {
   matrix[T, num_comp] betas;
   vector[num_comp - 1] sigma_s;
   vector[num_comp] wts;
-  real<lower=0> lambda;
 }
 
 // The parameters accepted by the model. Our model
@@ -65,6 +64,7 @@ parameters {
   array[T] vector[num_comp - 1] zetas;
   // real<lower=0,upper=1> beta;
   real beta;
+  real<lower=0> lambda;
   // real<lower=0> lambda;
 }
 
@@ -95,6 +95,7 @@ model {
   // omega ~ normal(1, 1);
   // lambda ~ normal(0,3);
   // sigma_z ~ normal(0, 1);
+  lambda ~ normal(5, .5);
   beta ~ normal(0, 1);
   zetas[1] ~ multi_normal(log(sigma_s) + 7,
   diag_matrix(sigma_s));

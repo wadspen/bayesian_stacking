@@ -25,7 +25,7 @@ print("gets here")
 mod <- cmdstan_model(stan_file = './emp_mix_crps_time.stan')
 
 
-mod_loc <- "../FluSight-forecast-hub/model-output/"
+mod_loc <- "../../forecast-hub/FluSight-forecast-hub/model-output/"
 models <- list.files(mod_loc)
 models <- models[models != "README.md"]
 sub_dates <- substr(list.files(paste0(mod_loc, "FluSight-baseline")), 1, 10)
@@ -37,10 +37,10 @@ locations <- unique(get_loc_forc$location)
 #locations <- locations[sample(length(locations), 6)]
 
 comp_forcs <- readRDS("comp_forcs.rds")
-all_flu <- read.csv("../FluSight-forecast-hub/target-data/target-hospital-admissions.csv")
+all_flu <- read.csv("../../forecast-hub/FluSight-forecast-hub/target-data/target-hospital-admissions.csv")
 
 
-loc <- "12"
+loc <- "16"
 dat <- sub_dates[1]
 horizon <- 0
 etas <- c(16)
@@ -88,10 +88,12 @@ mean_scores <- foreach(loc = locations,
               	     absdiff = aperm(absdiff_arr[,,1:d])
 	              )
 	  
-	  fit <- mod$sample(data = stan_dat,
-	                    chains = 1,
-	                    iter_warmup = 2000,
-	                    iter_sampling = 2000)
+	  # fit <- mod$sample(data = stan_dat,
+	  #                   chains = 1,
+	  #                   iter_warmup = 2000,
+	  #                   iter_sampling = 2000)
+	  
+	  fit <- mod$variational(data = stan_dat)
 	  
 	  draws <- fit$draws(format = "df") %>% 
 	    select(contains("omegaT1"))

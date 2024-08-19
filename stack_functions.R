@@ -45,6 +45,33 @@ betai <- function(y, mu, sigma) {
   return(beta)
 }
 
+
+# alphaikw <- function(par_fun, wt) {
+#   mu_diff <- par_fun[1]
+#   sig2_sum <- par_fun[2]
+#   # wt_prod <- par_fun[3]
+#   alpha <- -(1/sqrt(2*pi))*sqrt(sig2_sum)*exp(-(mu_diff^2/(2*sig2_sum))) -
+#     ((mu_diff/2)*(2*pnorm(mu_diff/sqrt(sig2_sum)) - 1))
+#   return(alpha*wt)
+# }
+# 
+# betaiw <- function(y, mu, sigma, wt) {
+#   beta <- sqrt(2/pi)*sigma*exp(-(mu - y)^2/(2*sigma^2)) +
+#     ((mu - y))*(2*pnorm((mu - y)/sigma) - 1)
+#   return(beta*wt)
+# }
+
+
+CRPS <- function(y, mu, sigma, wt) {
+  mean_diff <- outer(mu, mu, "-")
+  var_sum <- outer(sigma^2, sigma^2, "+")
+  param_func <- array(c(mean_diff, var_sum), dim = c(M, M, 2))
+  alpha <- apply(param_func, MARGIN = c(1,2), FUN = alphaik)
+  beta <- betai(y, mu, sigma)
+  
+  return(sum(beta*wt) + sum(wt%*%alpha%*%wt))
+}
+
 abs_punit <- function(x, ppitd_est, d = 1) {
   abs(ppitd_est(x) - x)^d
 }
