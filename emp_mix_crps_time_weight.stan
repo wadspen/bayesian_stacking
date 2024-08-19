@@ -86,9 +86,9 @@ model {
   target += exponential_lupdf(risk_crps | eta*T);
 }
 
-generated quantities {
-  // vector[num_comp] zetaT1;
-  // for (c in 1:num_comp) zetaT1[c] = normal_rng(beta*zetas[T][c], sigma_z);
-  simplex[num_comp] omegaT1 = dirichlet_rng(alpha);
-}
+// generated quantities {
+//   // vector[num_comp] zetaT1;
+//   // for (c in 1:num_comp) zetaT1[c] = normal_rng(beta*zetas[T][c], sigma_z);
+//   simplex[num_comp] omegaT1 = dirichlet_rng(alpha);
+// }
 
