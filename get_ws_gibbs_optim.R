@@ -22,10 +22,10 @@ foreach::getDoParRegistered()
 foreach::getDoParWorkers()
 registerDoMC(cores = n.cores)
 print("gets here")
-mod <- cmdstan_model(stan_file = './emp_mix_crps_time.stan')
+mod <- cmdstan_model(stan_file = './emp_mix_crps_time_weight.stan')
 
 
-mod_loc <- "../../forecast-hub/FluSight-forecast-hub/model-output/"
+mod_loc <- "../FluSight-forecast-hub/model-output/"
 models <- list.files(mod_loc)
 models <- models[models != "README.md"]
 sub_dates <- substr(list.files(paste0(mod_loc, "FluSight-baseline")), 1, 10)
@@ -37,14 +37,14 @@ locations <- unique(get_loc_forc$location)
 #locations <- locations[sample(length(locations), 6)]
 
 comp_forcs <- readRDS("comp_forcs.rds")
-all_flu <- read.csv("../../forecast-hub/FluSight-forecast-hub/target-data/target-hospital-admissions.csv")
+all_flu <- read.csv("../FluSight-forecast-hub/target-data/target-hospital-admissions.csv")
 
 
 loc <- "16"
 dat <- sub_dates[1]
 horizon <- 0
-etas <- c(16)
-mean_score <- c()
+etas <- c(1)
+mean_score <- c(); print(locations)
 mean_scores <- foreach(loc = locations,
                     .packages = c("cmdstanr", "stringr",
                                   "lubridate", "dplyr")
@@ -86,7 +86,7 @@ mean_scores <- foreach(loc = locations,
               	     alpha = rep(1, nrow(all_mse)),
               	     mae = all_mse[,1:d],
               	     absdiff = aperm(absdiff_arr[,,1:d])
-	              )
+	              , tweight = .98)
 	  
 	  # fit <- mod$sample(data = stan_dat,
 	  #                   chains = 1,
@@ -96,7 +96,7 @@ mean_scores <- foreach(loc = locations,
 	  fit <- mod$variational(data = stan_dat)
 	  
 	  draws <- fit$draws(format = "df") %>% 
-	    select(contains("omegaT1"))
+	    select(contains("omega"))
 	  weight[,d+1] <- apply(draws, MARGIN = 2, FUN = mean)
 		
 		# wts <- optim(log(weights[,d] + 1), sum_crps, mse_mat = all_mse[,1:d], 
@@ -122,4 +122,4 @@ mean_scores <- foreach(loc = locations,
 
 }
 
-saveRDS(mean_scores, "mean_score.rds")
+saveRDS(mean_scores, "mean_score_weight.rds")

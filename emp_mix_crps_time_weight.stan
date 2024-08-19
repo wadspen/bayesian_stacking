@@ -26,12 +26,12 @@ functions {
   }
   
   real riskCRPSs(int T, int num_comp, vector omegas, data matrix mae, 
-                       data array[] matrix absdiff, real tweight) {
+                       data array[] matrix absdiff, real tweight, real power) {
     // real rcrpss = mean(empCRPSs(T, num_comp, omega, mae, absdiff));
     real rcrpss;
     vector[T] crpss;
     
-    for (t in 1:T) crpss[t] = tweight^((T-t))*empCRPSs(t, num_comp, omegas, 
+    for (t in 1:T) crpss[t] = tweight^((T-t)^power)*empCRPSs(t, num_comp, omegas, 
                                                        mae, absdiff);
     rcrpss = mean(crpss);
     
@@ -47,7 +47,7 @@ functions {
 data {
   int<lower=0> T;
   int<lower=0> num_comp;
-  real<lower=0> eta;
+  //real<lower=0> eta;
   vector<lower=0>[num_comp] alpha;
   matrix[num_comp,T] mae;
   array[T] matrix[num_comp, num_comp] absdiff;
@@ -58,6 +58,8 @@ data {
 // accepts two parameters 'mu' and 'sigma'.
 parameters {
   simplex[num_comp] omegas;
+  real<lower=0> power;
+  real<lower=0> eta;
   // vector[num_comp] omega;
   // real<lower=0> sigma_z;
   // array[T] vector[num_comp] zetas;
@@ -69,7 +71,7 @@ transformed parameters {
   // array[T] simplex[num_comp] omegas;
   // for (t in 1:T) omegas[t] = softmax(zetas[t]);
   real<lower=0> risk_crps = riskCRPSs(T, num_comp, omegas, mae, 
-                                      absdiff, tweight);
+                                      absdiff, tweight, power);
   
 }
 
@@ -78,6 +80,8 @@ transformed parameters {
 // and standard deviation 'sigma'.
 model {
   omegas ~ dirichlet(alpha);
+  power ~ normal(0,2);
+  eta ~ normal(0,200);
   // sigma_z ~ normal(0, 10);
   // beta ~ normal(0, 1);
   // zetas[1] ~ normal(0, sigma_z);
