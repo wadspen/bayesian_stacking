@@ -47,19 +47,19 @@ functions {
 data {
   int<lower=0> T;
   int<lower=0> num_comp;
-  //real<lower=0> eta;
+  real<lower=0> eta;
   vector<lower=0>[num_comp] alpha;
   matrix[num_comp,T] mae;
   array[T] matrix[num_comp, num_comp] absdiff;
   real<lower=0,upper=1> tweight;
+  real<lower=0> power;
 }
 
 // The parameters accepted by the model. Our model
 // accepts two parameters 'mu' and 'sigma'.
 parameters {
   simplex[num_comp] omegas;
-  real<lower=0> power;
-  real<lower=0> eta;
+  // real<lower=0> power;
   // vector[num_comp] omega;
   // real<lower=0> sigma_z;
   // array[T] vector[num_comp] zetas;
@@ -80,8 +80,7 @@ transformed parameters {
 // and standard deviation 'sigma'.
 model {
   omegas ~ dirichlet(alpha);
-  power ~ normal(0,2);
-  eta ~ normal(0,200);
+  // power ~ normal(0,2);
   // sigma_z ~ normal(0, 10);
   // beta ~ normal(0, 1);
   // zetas[1] ~ normal(0, sigma_z);

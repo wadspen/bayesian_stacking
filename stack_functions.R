@@ -31,6 +31,63 @@ sum_weight_crps <- function(wt, mse_mat, absdiff_arr, alpha = .98, T) {
 }
 
 
+learning_rate <- function(eta, i, mse_mat, absdiff_arr, mod, lambda = .0001,
+                          tweight = .98, power = 2, return_wts = FALSE) {
+  crps_grid <- c()
+  for (d in 1:i) {
+    if (d == 1){ 
+      mae <- matrix(mse_mat[,1:d], nrow = nrow(absdiff_arr))
+      absdiff <- array(absdiff_arr, 
+                       dim = c(1, nrow(absdiff_arr), ncol(absdiff_arr)))
+    } 
+    else {
+      mae <- mse_mat[,1:d]
+      absdiff = aperm(absdiff_arr[,,1:d])
+    }
+    stan_dat <- list(
+      T = d,
+      num_comp = nrow(mse_mat),
+      eta = exp(eta),
+      alpha = rep(1, nrow(mse_mat)),
+      mae = mae,
+      absdiff = absdiff
+      , tweight = tweight
+      , power = power)
+    
+    fit <- mod$sample(data = stan_dat,
+                      chains = 1,
+                      iter_warmup = 5000,
+                      iter_sampling = 5000,
+                      init = list(list(omegas =
+                                         rep(1/stan_dat$num_comp,
+                                             stan_dat$num_comp)))
+                      )
+    
+    # fit <- mod$variational(data = stan_dat, init = list(list(omegas =
+    #                           rep(1/stan_dat$num_comp, stan_dat$num_comp)))
+    #                         )
+    
+    draws <- fit$draws(format = "df") %>%
+      select(contains("omega"))
+    wts <- apply(draws, MARGIN = 2, FUN = mean)
+    crps_grid[d] <- mix_mat_crps(wts, all_mse[,d+1], absdiff_arr[,,d+1]) +
+                  lambda*exp(eta)
+    
+  }
+  if (return_wts == FALSE) {
+    return(mean(crps_grid))
+  } else {
+    return(wts)
+  }
+}
+
+
+
+
+
+
+
+
 alphaik <- function(par_fun) {
   mu_diff <- par_fun[1]
   sig2_sum <- par_fun[2]
