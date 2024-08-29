@@ -177,7 +177,10 @@ distance <- foreach(replicate = 1:reps,
       )
       
         # fit <- gibbmod$variational(data = stan_dat)
-      fit <- gibbmod$sample(data = stan_dat, chains = 1)
+      fit <- gibbmod$sample(data = stan_dat, chains = 1, 
+                            iter_warmup = 5000,
+                            iter_sampling = 5000, 
+                            init = list(list(omega = rep(1/C, C))))
       draws <- fit$draws(variables = "omega", format = "df") %>%
         select(contains("omega"))
         
