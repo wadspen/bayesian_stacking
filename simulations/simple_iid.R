@@ -18,22 +18,24 @@ registerDoMC(cores = n.cores)
 gibbmod <- cmdstan_model(stan_file = '../stan_models/simple_mix_norm_crps.stan')
 
 methods <- c("bma", "avs", "msgp")
-samp_sizes <- c(10, 20, 50, 100, 200, 400)
+samp_sizes <- c(10, 20, 50, 100, 200, 400, 800)/2
 #models
 mus <- c(0,2,4,6,8,10)
 C <- length(mus)
 sigmas <- rep(1, C)
 reps <- 500
 #samp_sizes = 200
+total_samp <- 1000
 stacks <- foreach(replicate = 1:reps,
                     .packages = c("cmdstanr", "dplyr", "tidyr")
-                    #,.errorhandling = "remove"
+                    ,.errorhandling = "remove"
                     ,.combine = rbind) %:%
-                foreach(N2 = samp_sizes, .combine = rbind) %dopar% {
+                foreach(N = samp_sizes, .combine = rbind) %dopar% {
 
       #data
       #N2 <- 10
-      N <- ceiling(N2/2)
+      #N <- ceiling(N2/2)
+      N2 <- total_samp + N
       tmus <- c(3,6.5)
       tw <- .65
       all_y <- c()
@@ -60,7 +62,7 @@ stacks <- foreach(replicate = 1:reps,
       ##############
       #####AVS######
       ##############
-      etas <- seq(.01, 3, length.out = 30)
+      etas <- seq(.001, 1.5, length.out = 30)
       min_eta <- c()
       for (n in 1:N) {
         yloo <- y[-n]
