@@ -163,3 +163,5 @@ all_crps <- function(y, mus, sigmas, ws) {
 pmixnorm <- function(y, mus, sigmas, wts) {
   return(sum(wts*pnorm(y,mus,sigmas)))
 }
+
+
