@@ -1,4 +1,4 @@
-source("./simulations/stack_functions.R")
+source("./stack_functions.R")
 library(dplyr)
 library(tidyr)
 library(cmdstanr)
@@ -15,28 +15,27 @@ registerDoMC(cores = n.cores)
 
 
 
-gibbmod <- cmdstan_model(stan_file = './stan_models/simple_mix_norm_crps.stan')
+gibbmod <- cmdstan_model(stan_file = '../stan_models/simple_mix_norm_crps.stan')
 
 methods <- c("bma", "avs", "msgp")
-samp_sizes <- c(10, 20, 50, 100, 200)
+samp_sizes <- c(10, 20, 50, 100, 200, 400)
 #models
 mus <- c(0,2,4,6,8,10)
 C <- length(mus)
 sigmas <- rep(1, C)
-
-
-distance <- foreach(replicate = 1:reps,
-                    .packages = c("cmdstanr", "evmix", "distfromq", "dplyr", "tidyr",
-                                  "janitor")
-                    ,.errorhandling = "remove"
+reps <- 500
+#samp_sizes = 200
+stacks <- foreach(replicate = 1:reps,
+                    .packages = c("cmdstanr", "dplyr", "tidyr")
+                    #,.errorhandling = "remove"
                     ,.combine = rbind) %:%
                 foreach(N2 = samp_sizes, .combine = rbind) %dopar% {
 
       #data
       #N2 <- 10
       N <- ceiling(N2/2)
-      tmus <- c(3,5.5)
-      tw <- .7
+      tmus <- c(3,6.5)
+      tw <- .65
       all_y <- c()
       for (i in 1:N2) {
         smu <- sample(tmus, 1, prob = c(tw, 1-tw))
@@ -95,60 +94,64 @@ distance <- foreach(replicate = 1:reps,
       ##############
       #####MSGP#####
       ##############
-      etas <- seq(.01, 10, length.out = 30)
-      min_eta <- c()
-      for (n in 1:N) {
-        yloo <- y[-n]
-        mscrpss <- c()
-        
-        all_alphas <- array(NA, dim = c(C,C,length(yloo)))
-        all_betas <- matrix(NA, nrow = length(yloo), ncol = C)
-        for (l in 1:length(yloo)) {
-          
-          mean_diff <- outer(mus, mus, "-")
-          var_sum <- outer(sigmas^2, sigmas^2, "+")
-          param_func <- array(c(mean_diff, var_sum), dim = c(C, C, 2))
-          
-          all_alphas[,,l] <- apply(param_func, MARGIN = c(1,2), FUN = alphaik)
-          
-          all_betas[l,] <- sapply(yloo[l], FUN = betai, mu = mus, sigma = sigmas)
-          
-        }
-        
-        
-        etas <- seq(.01, 20, length.out = 30)
-        mscrpss <- c()
-        for (i in 1:length(etas)) {
-          et <- etas[i]
-          stan_dat <- list(
-            N = length(yloo),
-            y = yloo,
-            num_comp = nrow(all_alphas[,,1]),
-            eta = et,
-            alphas = aperm(all_alphas[,,1]),
-            betas = all_betas[,],
-            alpha = rep(1, C),
-            mus = mus,
-            sigmas = sigmas,
-            sigma_s = rep(3,5)
-          )
-          
-          fit <- gibbmod$variational(data = stan_dat)
-          # fit <- gibbmod$sample(data = stan_dat, chains = 1)
-          draws <- fit$draws(variables = "omega", format = "df") %>%
-            select(contains("omega"))
-          
-          
-          wmsgp <- apply(draws, MARGIN = 2, FUN = mean)
-          wmsgp <- wmsgp/sum(wmsgp)
-        
-        
-        mscrpss[i] <- mean(all_crps(y, mus, sigmas, ws = wmsgp)) + .0002*et
-        }
-        min_eta[n] <- etas[which.min(mscrpss)]
-      }
-      ms_et <- mean(min_eta)
-      
+      #etas <- seq(.5, 20, length.out = 15)
+      #etas <- 15
+      #min_eta <- c()
+      #for (n in 1:N) {
+      #  yloo <- y[-n]
+      #  mscrpss <- c()
+      #  
+      #  all_alphas <- array(NA, dim = c(C,C,length(yloo)))
+      #  all_betas <- matrix(NA, nrow = length(yloo), ncol = C)
+      #  for (l in 1:length(yloo)) {
+      #    
+      #    mean_diff <- outer(mus, mus, "-")
+      #    var_sum <- outer(sigmas^2, sigmas^2, "+")
+      #    param_func <- array(c(mean_diff, var_sum), dim = c(C, C, 2))
+      #    
+      #    all_alphas[,,l] <- apply(param_func, MARGIN = c(1,2), FUN = alphaik)
+      #    
+      #    all_betas[l,] <- sapply(yloo[l], FUN = betai, mu = mus, sigma = sigmas)
+      #    
+      #  }
+      #  
+      #  
+      #  #etas <- seq(.5, 20, length.out = 15)
+      #  mscrpss <- c()
+      #  for (i in 1:length(etas)) {
+      #    et <- etas[i]
+      #    stan_dat <- list(
+      #      N = length(yloo),
+      #      y = yloo,
+      #      num_comp = nrow(all_alphas[,,1]),
+      #      eta = et,
+      #      alphas = aperm(all_alphas[,,1]),
+      #      betas = all_betas[,],
+      #      alpha = rep(1, C),
+      #      mus = mus,
+      #      sigmas = sigmas,
+      #      sigma_s = rep(3,5)
+      #    )
+      #    
+      #    #fit <- gibbmod$variational(data = stan_dat)
+      #    fit <- gibbmod$sample(data = stan_dat, chains = 1, 
+      #                      iter_warmup = 500,
+      #                      iter_sampling = 1000, 
+      #                      init = list(list(omega = rep(1/C, C))))
+      #    draws <- fit$draws(variables = "omega", format = "df") %>%
+      #      dplyr::select(contains("omega"))
+      #    
+      #    
+      #    wmsgp <- apply(draws, MARGIN = 2, FUN = mean)
+      #    wmsgp <- wmsgp/sum(wmsgp)
+      #  
+      #  
+      #  mscrpss[i] <- mean(all_crps(y, mus, sigmas, ws = wmsgp)) + .0002*et
+      #  }
+      #  min_eta[n] <- etas[which.min(mscrpss)]
+      #}
+      #ms_et <- mean(min_eta)
+      ms_et <- 15 
       
       all_alphas <- array(NA, dim = c(C,C,N))
       all_betas <- matrix(NA, nrow = N, ncol = C)
@@ -182,7 +185,7 @@ distance <- foreach(replicate = 1:reps,
                             iter_sampling = 5000, 
                             init = list(list(omega = rep(1/C, C))))
       draws <- fit$draws(variables = "omega", format = "df") %>%
-        select(contains("omega"))
+        dplyr::select(contains("omega"))
         
         
       wmsgp <- apply(draws, MARGIN = 2, FUN = mean)
@@ -212,10 +215,14 @@ distance <- foreach(replicate = 1:reps,
                 unit_wass_dist(ecdf(pmsgp)))
       
       min_etas <- c(NA, avs_et, ms_et)
-      
-      data.frame(replicate = replicate, N = N2, method = methods, 
+      weights <- as.data.frame(rbind(wpmp, wavs, wmsgp))
+      colnames(weights) <- paste0("comp", 1:length(mus)) 
+      res <- data.frame(replicate = replicate, N = N2, method = methods, 
                  eta = min_etas, mcrps = mcrps, uwd1 = uwd1)
+
+      res <- cbind(res, weights)
+      res
 
 }
 
-
+saveRDS(stacks, "iid_stacks_res.rds")
