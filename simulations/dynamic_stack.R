@@ -4,11 +4,12 @@ library(cmdstanr)
 library(distr)
 library(dplyr)
 library(insight)
-source("./simulations/stack_functions.R")
+source("./stack_functions.R")
 library(parallel)
 library(doParallel)
 library(doMC)
 n.cores <- detectCores()
+#n.cores <- 1
 my.cluster <- makeCluster(n.cores, type = "PSOCK")
 doParallel::registerDoParallel(cl = my.cluster)
 foreach::getDoParRegistered()
@@ -16,7 +17,7 @@ foreach::getDoParWorkers()
 registerDoMC(cores = n.cores)
 
 
-gibbmod <- cmdstan_model(stan_file = './stan_models/simple_mix_norm_crps_T.stan')
+gibbmod <- cmdstan_model(stan_file = '../stan_models/simple_mix_norm_crps_T.stan')
 
 start <- 1
 methods <- c("bma", "avs", "sgp", "eqw")
@@ -151,13 +152,22 @@ stacks <- foreach(replicate = 1:reps,
   #########################################
   ###################SGP###################
   #########################################
-    stan_dat <- list(
+
+   if (d == 1) {
+	   betas <- matrix(all_betas[1:d,], nrow = 1)
+	   alphas <- array(all_alphas[,,1:d], dim = c(C,C,1))
+   } else {
+	   betas <- all_betas[1:d,]
+	   alphas <- all_alphas[,,1:d]
+   }
+
+   stan_dat <- list(
       T = d,
       y = y[1:d],
       num_comp = nrow(all_alphas),
       eta = ms_et,
-      alphas = aperm(all_alphas[,,1:d]),
-      betas = all_betas[1:d,],
+      alphas = aperm(alphas),
+      betas = betas,
       alpha = rep(1, length(sigmas)),
       wts = rep(1/length(mus), length(mus)),
       tweight = tweight
@@ -189,17 +199,17 @@ stacks <- foreach(replicate = 1:reps,
                                 w = matrix(wpmp, nrow = 1))
     
     
-    ca[d] <- scoringRules::crps(yt[d + 1], family = "mixnorm",
+    ca[d] <- scoringRules::crps(y[d + 1], family = "mixnorm",
                                 m = matrix(mus, nrow = 1),
                                 s = matrix(sigmas, nrow = 1),
                                 w = matrix(wavs, nrow = 1))
      
-    cs[d] <- scoringRules::crps(yt[d + 1], family = "mixnorm",
+    cs[d] <- scoringRules::crps(y[d + 1], family = "mixnorm",
                                 m = matrix(mus, nrow = 1),
                                 s = matrix(sigmas, nrow = 1),
                                 w = matrix(wmsgp, nrow = 1))
      
-    cm[d] <- scoringRules::crps(yt[d + 1], family = "mixnorm",
+    cm[d] <- scoringRules::crps(y[d + 1], family = "mixnorm",
                                 m = matrix(mus, nrow = 1),
                                 s = matrix(sigmas, nrow = 1),
                                 w = matrix(rep(1/C, C), nrow = 1))
@@ -211,17 +221,17 @@ stacks <- foreach(replicate = 1:reps,
                                 w = matrix(wpmp, nrow = 1))
     
     
-    la[d] <- scoringRules::logs(yt[d + 1], family = "mixnorm",
+    la[d] <- scoringRules::logs(y[d + 1], family = "mixnorm",
                                 m = matrix(mus, nrow = 1),
                                 s = matrix(sigmas, nrow = 1),
                                 w = matrix(wavs, nrow = 1))
     
-    ls[d] <- scoringRules::logs(yt[d + 1], family = "mixnorm",
+    ls[d] <- scoringRules::logs(y[d + 1], family = "mixnorm",
                                 m = matrix(mus, nrow = 1),
                                 s = matrix(sigmas, nrow = 1),
                                 w = matrix(wmsgp, nrow = 1))
     
-    lm[d] <- scoringRules::logs(yt[d + 1], family = "mixnorm",
+    lm[d] <- scoringRules::logs(y[d + 1], family = "mixnorm",
                                 m = matrix(mus, nrow = 1),
                                 s = matrix(sigmas, nrow = 1),
                                 w = matrix(rep(1/C, C), nrow = 1))
@@ -234,26 +244,32 @@ stacks <- foreach(replicate = 1:reps,
   }
   
   
-  mcrps <- c(mean(cb, na.rm = TRUE), mean(ca, na.rm = TRUE), 
-            mean(cs, na.rm = TRUE), mean(cm, na.rm = TRUE))
+  #mcrps <- c(mean(cb, na.rm = TRUE), mean(ca, na.rm = TRUE), 
+  #          mean(cs, na.rm = TRUE), mean(cm, na.rm = TRUE))
+  #
+  #mlogs <- c(mean(lb, na.rm = TRUE), mean(la, na.rm = TRUE), 
+  #          mean(ls, na.rm = TRUE), mean(lm, na.rm = TRUE))
+  #
+  #uwd1s <- c(unit_wass_dist(ecdf(pb)),
+  #              unit_wass_dist(ecdf(pa)),
+  #              unit_wass_dist(ecdf(ps)),
+  #              unit_wass_dist(ecdf(pm)))
+
+  crpss <- c(cb, ca, cs, cm)
+  logss <- c(lb, la, ls, lm)
+  pits <- c(pb, pa, ps, pm)
+  times <- 1:length(cb)
+  methodsl <- rep(methods, each = length(cb))
   
-  mlogs <- c(mean(lb, na.rm = TRUE), mean(la, na.rm = TRUE), 
-            mean(ls, na.rm = TRUE), mean(lm, na.rm = TRUE))
   
-  uwd1s <- c(unit_wass_dist(ecdf(pb)),
-                unit_wass_dist(ecdf(pa)),
-                unit_wass_dist(ecdf(ps)),
-                unit_wass_dist(ecdf(pm)))
-  
-  
-  data.frame(replicate = replicate, method = methods, 
-             eta = min_etas, mcrps = mcrps, mlogs = mlogs, uwd1 = uwd1s)
+  data.frame(replicate = replicate, method = methodsl,
+             eta = avs_et, time = times, mcrps = crpss, mlogs = logss, pit = pits)
   
   
 }
 
 
-saveRDS(stacks, "dynamic_stacks.rds")
+saveRDS(stacks, "dynamic_stacks_all_weeks.rds")
 
 
 
