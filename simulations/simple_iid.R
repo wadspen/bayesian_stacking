@@ -18,13 +18,12 @@ registerDoMC(cores = n.cores)
 gibbmod <- cmdstan_model(stan_file = '../stan_models/simple_mix_norm_crps.stan')
 
 methods <- c("bma", "avs", "msgp")
-samp_sizes <- c(10, 20, 50, 100, 200, 400, 800)/2
+samp_sizes <- c(10, 20, 50, 100, 200, 400, 800)
 #models
 mus <- c(0,2,4,6,8,10)
 C <- length(mus)
 sigmas <- rep(1, C)
 reps <- 500
-#samp_sizes = 200
 total_samp <- 1000
 stacks <- foreach(replicate = 1:reps,
                     .packages = c("cmdstanr", "dplyr", "tidyr")
@@ -203,6 +202,10 @@ stacks <- foreach(replicate = 1:reps,
                  mean(all_crps(y_test, mus, sigmas, ws = wavs)),
                  mean(all_crps(y_test, mus, sigmas, ws = wmsgp)))
       
+      mlogs <- c(mean(all_logs(y_test, mus, sigmas, ws = wpmp)),
+                 mean(all_logs(y_test, mus, sigmas, ws = wavs)),
+                 mean(all_logs(y_test, mus, sigmas, ws = wmsgp))) 
+      
       pbma <- c()
       pavs <- c()
       pmsgp <- c()
@@ -219,8 +222,8 @@ stacks <- foreach(replicate = 1:reps,
       min_etas <- c(NA, avs_et, ms_et)
       weights <- as.data.frame(rbind(wpmp, wavs, wmsgp))
       colnames(weights) <- paste0("comp", 1:length(mus)) 
-      res <- data.frame(replicate = replicate, N = N2, method = methods, 
-                 eta = min_etas, mcrps = mcrps, uwd1 = uwd1)
+      res <- data.frame(replicate = replicate, N = N, method = methods, 
+                 eta = min_etas, mcrps = mcrps, mlogs = mlogs, uwd1 = uwd1)
 
       res <- cbind(res, weights)
       res

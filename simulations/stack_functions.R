@@ -160,6 +160,22 @@ all_crps <- function(y, mus, sigmas, ws) {
 }
 
 
+
+all_logs <- function(y, mus, sigmas, ws) {
+  m <- length(y)
+  logss <- c()
+  for (i in 1:m) {
+    logss[i] <- scoringRules::logs(y[i], family = "mixnorm",
+                                   m = matrix(mus, nrow = 1),
+                                   s = matrix(sigmas, nrow = 1),
+                                   w = matrix(ws, nrow = 1))
+  }
+  
+  return(logss)
+}
+
+
+
 pmixnorm <- function(y, mus, sigmas, wts) {
   return(sum(wts*pnorm(y,mus,sigmas)))
 }
