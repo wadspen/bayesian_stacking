@@ -31,7 +31,7 @@ sum_weight_crps <- function(wt, mse_mat, absdiff_arr, alpha = .98, T) {
 }
 
 
-learning_rate <- function(eta, i, mse_mat, absdiff_arr, mod, lambda = .00001,
+learning_rate <- function(eta, i, mse_mat, absdiff_arr, mod, lambda = .0001,
                           tweight = .98, power = 2, return_wts = FALSE) {
   crps_grid <- c()
   for (d in i) {
@@ -70,8 +70,8 @@ learning_rate <- function(eta, i, mse_mat, absdiff_arr, mod, lambda = .00001,
     draws <- fit$draws(format = "df") %>%
       select(contains("omega"))
     wts <- apply(draws, MARGIN = 2, FUN = mean)
-    crps_grid[d] <- mix_mat_crps(wts, all_mse[,d+1], absdiff_arr[,,d+1])# +
-                  # lambda*exp(eta)
+    crps_grid[d] <- mix_mat_crps(wts, mse_mat[,d+1], absdiff_arr[,,d+1]) +
+                   lambda*exp(eta)
     
   }
   if (return_wts == FALSE) {
@@ -144,6 +144,23 @@ unit_wass_dist <- function(ppitd_est, d = 1) {
   (d + 1)*integrate(abs_punit, lower = 0, upper = 1, ppitd_est, d = d,
                     subdivisions = 3000)$value
 }
+
+
+
+
+all_crps_mse <- function(y, mus, sigmas, ws) {
+  m <- length(y)
+  crpss <- c()
+  for (i in 1:m) {
+    crpss[i] <- scoringRules::crps(y[i], family = "mixnorm",
+                                   m = matrix(mus, nrow = 1),
+                                   s = matrix(sigmas, nrow = 1),
+                                   w = matrix(ws, nrow = 1))
+  }
+  
+  return(crpss)
+}
+
 
 
 all_crps <- function(y, mus, sigmas, ws) {
