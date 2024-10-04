@@ -11,7 +11,7 @@ mod_loc <- "../../FluSight-forecast-hub/model-output/"
 models <- list.files(mod_loc)
 models <- models[models != "README.md"]
 sub_dates <- substr(list.files(paste0(mod_loc, "FluSight-baseline")), 1, 10)
-horizons <- -1:3
+horizons <- 0:3
 get_loc_file <- list.files(paste0(mod_loc, "FluSight-baseline/"))[4]
 get_loc_forc <- read.csv(paste0(mod_loc, "FluSight-baseline/", get_loc_file))
 locations <- unique(get_loc_forc$location)
@@ -30,6 +30,7 @@ score_files <- list.files("./bma_bps_stat/", pattern = ".rds")
 et <- .01
 all_crps_wts <- data.frame()
 for (i in 1:length(locations)) {
+	print(locations[i])
 	score_rds <- readRDS(paste0("./bma_bps_stat/loc", locations[i], ".rds"))
 	score_date <- score_rds$date
 	score_logs <- score_rds$logs
@@ -60,14 +61,13 @@ for (i in 1:length(locations)) {
 
 	select_ets <- c()
 	for (d in 1:(ncol(crpsh1) - 1)) {
-		print(d)
-		etas <- seq(.001, 3, length.out = 30)
+		etas <- seq(.001, 6, length.out = 35)
     		min_eta <- c()
     		for (n in 1:(d - 1)) {
       
       			avcrpss <- c()
-      			for(i in 1:length(etas)) {
-        			et <- etas[i]
+      			for(e in 1:length(etas)) {
+        			et <- etas[e]
         			wavs <- c()
         			for (m in 1:C) {
           				wavs[m] <- (1/C)*exp(-et*sum(
@@ -78,7 +78,7 @@ for (i in 1:length(locations)) {
 				for (k in 1:(n + 1)) {
 					all_crps[k] <- mix_mat_crps(wavs, all_mse[,k], absdiff_arr[,,k])
 				}
-        			avcrpss[i] <- mean(all_crps)
+        			avcrpss[e] <- mean(all_crps)
       			}
       			min_eta[n] <- etas[which.min(avcrpss)]
     		}
@@ -107,7 +107,7 @@ for (i in 1:length(locations)) {
 
 stack_bma <- stack_bma[!is.na(stack_bma)]
 stack_bps <- stack_bps[!is.na(stack_bps)]
-
+print(locations[i])
 crps_eta_wts <- data.frame(location = locations[i], season_week = 1:(ncol(crpsh1)),
 			   bma_crps = stack_bma, 
 			   bps_crps = stack_bps, eta = select_ets) 

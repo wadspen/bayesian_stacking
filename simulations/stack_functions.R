@@ -56,8 +56,8 @@ learning_rate <- function(eta, i, mse_mat, absdiff_arr, mod, lambda = .0001,
     
     fit <- mod$sample(data = stan_dat,
                       chains = 1,
-                      iter_warmup = 5000,
-                      iter_sampling = 5000,
+                      iter_warmup = 10000,
+                      iter_sampling = 50000,
                       init = list(list(omegas =
                                          rep(1/stan_dat$num_comp,
                                              stan_dat$num_comp)))

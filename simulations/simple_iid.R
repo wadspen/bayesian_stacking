@@ -17,7 +17,7 @@ registerDoMC(cores = n.cores)
 
 gibbmod <- cmdstan_model(stan_file = '../stan_models/simple_mix_norm_crps.stan')
 
-methods <- c("bma", "avs", "msgp")
+methods <- c("eqw", "bma", "avs", "msgp")
 samp_sizes <- c(10, 20, 50, 100, 200, 400, 800)
 #models
 mus <- c(0,2,4,6,8,10)
@@ -48,7 +48,12 @@ stacks <- foreach(replicate = 1:reps,
       y <- all_y[train_ind]
       y_test <- all_y[-train_ind]
       
-      
+      ##############
+      ######EQW#####
+      ##############
+      weq <- rep(1/length(mus), length(mus))
+
+
       ##############
       #####BMA######
       ##############
@@ -182,8 +187,8 @@ stacks <- foreach(replicate = 1:reps,
       
         # fit <- gibbmod$variational(data = stan_dat)
       fit <- gibbmod$sample(data = stan_dat, chains = 1, 
-                            iter_warmup = 5000,
-                            iter_sampling = 5000, 
+                            iter_warmup = 10000,
+                            iter_sampling = 50000, 
                             init = list(list(omega = rep(1/C, C))))
       draws <- fit$draws(variables = "omega", format = "df") %>%
         dplyr::select(contains("omega"))
@@ -198,29 +203,34 @@ stacks <- foreach(replicate = 1:reps,
       ########Evaluate#########
       #########################
       
-      mcrps <- c(mean(all_crps(y_test, mus, sigmas, ws = wpmp)),
+      mcrps <- c(mean(all_crps(y_test, mus, sigmas, ws = weq)),
+		 mean(all_crps(y_test, mus, sigmas, ws = wpmp)),
                  mean(all_crps(y_test, mus, sigmas, ws = wavs)),
                  mean(all_crps(y_test, mus, sigmas, ws = wmsgp)))
       
-      mlogs <- c(mean(all_logs(y_test, mus, sigmas, ws = wpmp)),
+      mlogs <- c(mean(all_logs(y_test, mus, sigmas, ws = weq)),
+		 mean(all_logs(y_test, mus, sigmas, ws = wpmp)),
                  mean(all_logs(y_test, mus, sigmas, ws = wavs)),
                  mean(all_logs(y_test, mus, sigmas, ws = wmsgp))) 
       
+      peq <- c()
       pbma <- c()
       pavs <- c()
       pmsgp <- c()
       for (i in 1:length(y_test)) {
+	peq[i] <- pmixnorm(y_test[i], mus, sigmas, weq)
         pbma[i] <- pmixnorm(y_test[i], mus, sigmas, wpmp)
         pavs[i] <- pmixnorm(y_test[i], mus, sigmas, wavs)
         pmsgp[i] <- pmixnorm(y_test[i], mus, sigmas, wmsgp)
       }
       
-      uwd1 <- c(unit_wass_dist(ecdf(pbma)),
+      uwd1 <- c(unit_wass_dist(ecdf(weq)),
+		unit_wass_dist(ecdf(pbma)),
                 unit_wass_dist(ecdf(pavs)),
                 unit_wass_dist(ecdf(pmsgp)))
       
-      min_etas <- c(NA, avs_et, ms_et)
-      weights <- as.data.frame(rbind(wpmp, wavs, wmsgp))
+      min_etas <- c(NA, NA, avs_et, ms_et)
+      weights <- as.data.frame(rbind(weq, wpmp, wavs, wmsgp))
       colnames(weights) <- paste0("comp", 1:length(mus)) 
       res <- data.frame(replicate = replicate, N = N, method = methods, 
                  eta = min_etas, mcrps = mcrps, mlogs = mlogs, uwd1 = uwd1)

@@ -53,7 +53,7 @@ stack_res <- foreach(loc = locations,
             #look natural 45, 
             #look unatrual 46 not better after 10, 22 not better after 120ish
             # loc <- sample(locations, 1)
-            comp_file <- paste0("../crps_comps/crps_comps_", loc, ".rds")	
+            comp_file <- paste0("../crps_comps2/crps_comps_", loc, ".rds")	
             #if (file.exists(comp_file) == FALSE) {next}	
             crps_comps <- readRDS(comp_file)
             

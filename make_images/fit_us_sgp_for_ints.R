@@ -7,8 +7,8 @@ library(ggplot2)
 source("../simulations/stack_functions.R")
 mod <- cmdstan_model(stan_file = '../stan_models/emp_mix_crps_time_weight.stan')
 
-
-mod_loc <- "../../../forecast-hub/FluSight-forecast-hub/model-output/" #local machine
+mod_loc <- "../../FluSight-forecast-hub/model-output/"
+#mod_loc <- "../../../forecast-hub/FluSight-forecast-hub/model-output/" #local machine
 models <- list.files(mod_loc)
 models <- models[models != "README.md"]
 sub_dates <- substr(list.files(paste0(mod_loc, "FluSight-baseline")), 1, 10)
@@ -21,7 +21,8 @@ locations <- unique(get_loc_forc$location)
 #locations <- locations[sample(length(locations), 6)]
 
 comp_forcs <- readRDS("../comp_forcs.rds")
-all_flu <- read.csv("../../../forecast-hub/FluSight-forecast-hub/target-data/target-hospital-admissions.csv") #local machine
+all_flu <- read.csv("../../FluSight-forecast-hub/target-data/target-hospital-admissions.csv") 
+#all_flu <- read.csv("../../../forecast-hub/FluSight-forecast-hub/target-data/target-hospital-admissions.csv") #local machine
 #etas <- seq(.5, 30, length.out = 30)
 etas <- seq(-1, 5, length.out = 20)
 #locations <- c("01", "16")
@@ -100,5 +101,5 @@ for (k in 1:length(ds)) {
             } 
 }
 
-saveRDS(fits_list, "us_all_season_fits")
+saveRDS(fits_list, "us_all_season_fits.rds")
 

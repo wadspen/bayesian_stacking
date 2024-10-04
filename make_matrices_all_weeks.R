@@ -1,7 +1,7 @@
 library(dplyr)
 library(lubridate)
 library(stringr)
-source("./stack_functions.R")
+source("./simulations/stack_functions.R")
 library(cmdstanr)
 library(dplyr)
 library(evmix)
@@ -9,6 +9,7 @@ library(parallel)
 library(doParallel)
 library(doMC)
 n.cores <- detectCores()
+#n.cores <- 1
 my.cluster <- makeCluster(n.cores, type = "PSOCK")
 doParallel::registerDoParallel(cl = my.cluster)
 foreach::getDoParRegistered()
@@ -20,7 +21,7 @@ mod_loc <- "../FluSight-forecast-hub/model-output/"
 models <- list.files(mod_loc)
 models <- models[models != "README.md"]
 sub_dates <- substr(list.files(paste0(mod_loc, "FluSight-baseline")), 1, 10)
-horizons <- -1:3
+horizons <- 0:3
 get_loc_file <- list.files(paste0(mod_loc, "FluSight-baseline/"))[4]
 get_loc_forc <- read.csv(paste0(mod_loc, "FluSight-baseline/", get_loc_file))
 locations <- unique(get_loc_forc$location)
@@ -115,7 +116,7 @@ all_stack_crps <- list()
 		}
 		print(d)
 	}
-	save_name <- paste0("./crps_comps/crps_comps_", loc, ".rds")
+	save_name <- paste0("./crps_comps2/crps_comps_", loc, ".rds")
 	saveRDS(list(absdiff = absdiff_arr, mse = all_mse, h_date = h_dates), save_name)
 	
 	
