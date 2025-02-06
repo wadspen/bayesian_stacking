@@ -11,6 +11,7 @@ mod_loc <- "../../FluSight-forecast-hub/model-output/"
 models <- list.files(mod_loc)
 models <- models[models != "README.md"]
 sub_dates <- substr(list.files(paste0(mod_loc, "FluSight-baseline")), 1, 10)
+sub_dates <- sub_dates[sub_dates < "2024-07-01"]
 horizons <- 0:3
 get_loc_file <- list.files(paste0(mod_loc, "FluSight-baseline/"))[4]
 get_loc_forc <- read.csv(paste0(mod_loc, "FluSight-baseline/", get_loc_file))
@@ -18,7 +19,7 @@ locations <- unique(get_loc_forc$location)
 
 #locations <- locations[sample(length(locations), 6)]
 
-comp_forcs <- readRDS("comp_forcs.rds")
+comp_forcs <- readRDS("../comp_forcs.rds")
 all_flu <- read.csv("../../FluSight-forecast-hub/target-data/target-hospital-admissions.csv")
 #all_flu <- read.csv("../../../forecast-hub/FluSight-forecast-hub/target-data/target-hospital-admissions.csv") #local machine
 

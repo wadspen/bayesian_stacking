@@ -68,7 +68,7 @@ for (i in 1:length(locations)) {
         		wavs <- c()
         		for (m in 1:C) {
           		wavs[m] <- (1/C)*exp(-et*sum(
-            		alpha^(n:1 - 1)*crpsh1[m:1:n]))
+            		alpha^(n:1 - 1)*crpsh1[m,1:n]))
         		}
         		wavs <- wavs/sum(wavs)
         		avcrpss[i] <- mean(all_crps(y[n + 1], mus, sigmas, ws = wavs))
@@ -79,7 +79,7 @@ for (i in 1:length(locations)) {
 
 		wbma <- c()
 		for (m in 1:C) {
-			wbma[m] <- (1/C)*prod(-exp(logsh1[m,1:d]))
+			wbma[m] <- (1/C)*prod(exp(-logsh1[m,1:d]))
 		}
 		bma_wt[,d + 1] <- wbma/sum(wbma)
 		wavs <- c()

@@ -32,7 +32,8 @@ sum_weight_crps <- function(wt, mse_mat, absdiff_arr, alpha = .98, T) {
 
 
 learning_rate <- function(eta, i, mse_mat, absdiff_arr, mod, lambda = .0001,
-                          tweight = .98, power = 2, return_wts = FALSE) {
+                          tweight = .98, power = 2, return_wts = FALSE,
+                          alpha = 1) {
   crps_grid <- c()
   for (d in i) {
     if (d == 1){ 
@@ -48,7 +49,7 @@ learning_rate <- function(eta, i, mse_mat, absdiff_arr, mod, lambda = .0001,
       T = d,
       num_comp = nrow(mse_mat),
       eta = exp(eta),
-      alpha = rep(1, nrow(mse_mat)),
+      alpha = rep(alpha, nrow(mse_mat)),
       mae = mae,
       absdiff = absdiff
       , tweight = tweight
@@ -76,8 +77,10 @@ learning_rate <- function(eta, i, mse_mat, absdiff_arr, mod, lambda = .0001,
   }
   if (return_wts == FALSE) {
     return(mean(crps_grid, na.rm = TRUE))
-  } else {
+  } else if (return_wts == TRUE) {
     return(wts)
+  } else if (return_wts == "draws") {
+    return(draws)
   }
 }
 
