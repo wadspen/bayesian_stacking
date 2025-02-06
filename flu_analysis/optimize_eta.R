@@ -76,17 +76,31 @@ stack_res <- foreach(loc = locations,
             stack_crps <- c()
             
             etad[1] <- 1
+            etad[2] <- 1
             
               
               if (d == 1) {
                 stack_crps[d] <- mix_mat_crps(weight[,d], all_mse[,d], 
                                               absdiff_arr[,,d])
 	    	wts <- weight[,d]
+              } else if (d == 2) {
+                
+                wts <- try(learning_rate(log(etad[d]), d-1, mse_mat = all_mse, 
+                                         absdiff_arr = absdiff_arr, 
+                                         mod = mod, power = 1, 
+                                         alpha = 1, return_wts = TRUE))
+                wts[wts < 0] <- 0
+                wts <- wts/sum(wts)
+                weight[,d] <- wts
+                
+                stack_crps[d] <- mix_mat_crps(weight[,d], all_mse[,d], 
+                                              absdiff_arr[,,d])
+              
               } else {
                   ev_grid <- c()
                   for (i in 1:length(etas)) {
                     ev_grid[i] <- 
-                      try(learning_rate(etas[i], d - 1, mse_mat = all_mse, 
+                      try(learning_rate(etas[i], d - 2, mse_mat = all_mse, 
                                         absdiff_arr = absdiff_arr, 
                                         mod = mod, power = 1, alpha = 1))
                     
