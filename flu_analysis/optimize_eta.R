@@ -88,13 +88,14 @@ stack_res <- foreach(loc = locations,
                     ev_grid[i] <- 
                       try(learning_rate(etas[i], d - 1, mse_mat = all_mse, 
                                         absdiff_arr = absdiff_arr, 
-                                        mod = mod, power = 1))
+                                        mod = mod, power = 1, alpha = 1))
                     
                   }
                   etad[d] <- exp(etas[which.min(ev_grid)])
-                  wts <- try(learning_rate(log(etad[d]), d, mse_mat = all_mse, 
+                  wts <- try(learning_rate(log(etad[d]), d-1, mse_mat = all_mse, 
                                            absdiff_arr = absdiff_arr, 
-                                           mod = mod, power = 1, return_wts = TRUE))
+                                           mod = mod, power = 1, 
+					   alpha = 1, return_wts = TRUE))
                   wts[wts < 0] <- 0
                   wts <- wts/sum(wts)
                   weight[,d] <- wts
