@@ -57,8 +57,8 @@ learning_rate <- function(eta, i, mse_mat, absdiff_arr, mod, lambda = .0001,
     
     fit <- mod$sample(data = stan_dat,
                       chains = 1,
-                      iter_warmup = 2000,
-                      iter_sampling = 2000,
+                      iter_warmup = 10000,
+                      iter_sampling = 60000,
                       init = list(list(omegas =
                                          rep(1/stan_dat$num_comp,
                                              stan_dat$num_comp)))
@@ -71,8 +71,10 @@ learning_rate <- function(eta, i, mse_mat, absdiff_arr, mod, lambda = .0001,
     draws <- fit$draws(format = "df") %>%
       select(contains("omega"))
     wts <- apply(draws, MARGIN = 2, FUN = mean)
-    crps_grid[d] <- mix_mat_crps(wts, mse_mat[,d+1], absdiff_arr[,,d+1]) +
+    
+    crps_grid[d] <- mix_mat_crps(wts, mse_mat[,d], absdiff_arr[,,d]) +
                    lambda*exp(eta)
+    
     
   }
   if (return_wts == FALSE) {
@@ -91,7 +93,6 @@ learning_rate <- function(eta, i, mse_mat, absdiff_arr, mod, lambda = .0001,
 
 
 
-alphaik <- function(par_fun) {
   mu_diff <- par_fun[1]
   sig2_sum <- par_fun[2]
   # wt_prod <- par_fun[3]
