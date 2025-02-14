@@ -71,10 +71,10 @@ learning_rate <- function(eta, i, mse_mat, absdiff_arr, mod, lambda = .0001,
     draws <- fit$draws(format = "df") %>%
       select(contains("omega"))
     wts <- apply(draws, MARGIN = 2, FUN = mean)
-    
+    # print("dude")
     crps_grid[d] <- mix_mat_crps(wts, mse_mat[,d], absdiff_arr[,,d]) +
                    lambda*exp(eta)
-    
+    # print("dudette")
     
   }
   if (return_wts == FALSE) {
@@ -93,6 +93,7 @@ learning_rate <- function(eta, i, mse_mat, absdiff_arr, mod, lambda = .0001,
 
 
 
+alphaik <- function(par_fun) {
   mu_diff <- par_fun[1]
   sig2_sum <- par_fun[2]
   # wt_prod <- par_fun[3]
