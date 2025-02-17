@@ -1,17 +1,19 @@
 library(SimInf)
 library(forecast)
+library(tidyr)
 library(ggplot2)
 library(cmdstanr)
 library(dplyr)
 library(car)
 library(stats)
-library(scoringutils)
+#library(scoringutils)
+library(scoringRules)
 source("./stack_functions.R")
 library(parallel)
 library(doParallel)
 library(doMC)
 n.cores <- detectCores()
-#n.cores <- 1
+#n.cores <- 1 
 my.cluster <- makeCluster(n.cores, type = "PSOCK")
 doParallel::registerDoParallel(cl = my.cluster)
 foreach::getDoParRegistered()
@@ -21,13 +23,13 @@ registerDoMC(cores = n.cores)
 asg_mod <- cmdstan_model(stan_file = '../stan_models/asg.stan')
 sir_mod <- cmdstan_model(stan_file = '../stan_models/sir.stan')
 mod <- cmdstan_model(stan_file = '../stan_models/emp_mix_crps_time_weight.stan')
-drawn <- 50000
-warm <- 10000
+drawn <- 2000
+warm <- 1000
 reps <- 500
 
-sir_res <- foreach(rep = 1:reps,
-                     .packages = c("cmdstanr", "stringr",
-                                   "lubridate", "dplyr")
+sir_res <- foreach(replicate = 1:reps,
+                     .packages = c("cmdstanr", "stringr", "scoringRules",
+                                   "lubridate", "dplyr", "tidyr")
                      ,.errorhandling = "remove"
                      ,.combine = rbind)  %dopar% {
     N <- 800
@@ -78,7 +80,7 @@ sir_res <- foreach(rep = 1:reps,
       stan_dat <- list(
         n_weeks = length(sdat),
         n_params = length(m0),
-        ili = sdat/N,
+        ili = sdat/N + .000001,
         weeks = 1:length(sdat),
         m0 = m0,
         C0 = C0,
@@ -107,7 +109,7 @@ sir_res <- foreach(rep = 1:reps,
         ts = 1:length(sdat),
         S0 = .9,
         t0 = 0,
-        ili = sdat/N,
+        ili = sdat/N + .000001,
         rho_mu = .68,
         rho_sigma = .08,
         beta_mu = .8,
@@ -118,7 +120,7 @@ sir_res <- foreach(rep = 1:reps,
       )
       
       fit_sir <- sir_mod$sample(data = stan_dat, chains = 1,
-                            iter_warmup = drawn,
+                            iter_warmup = warm,
                             iter_sampling = drawn,
                             adapt_delta = .99)
       
@@ -248,7 +250,7 @@ sir_res <- foreach(rep = 1:reps,
     
     
     eq_wt <- rep(1, 4)/4
-    dim(absdiff_arr)
+    
     etas <- seq(.1, 5, length.out = 20)
     etas <- seq(-3, 8, length.out = 20)
     etas <- 1
@@ -358,8 +360,10 @@ sir_res <- foreach(rep = 1:reps,
     
     methods <- rep(c("BMA", "AVS", "EQW", "SGP"), each = length(sgp_crps))
     scores <- c(bma_crps, avs_crps, eqw_crps, sgp_crps)
-    
-    data.frame(rep, methods, scores)
+     
+    test <- data.frame(replicate, methods, scores)
+    write.csv(test, "test.csv")
+    test    
 
 }
 
