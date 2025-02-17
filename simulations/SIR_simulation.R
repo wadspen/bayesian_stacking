@@ -312,7 +312,7 @@ sir_res <- foreach(replicate = 1:reps,
             try(learning_rate(etas[i], d-1, mse_mat = all_mse, 
                               absdiff_arr = absdiff_arr, 
                               mod = mod, power = 1, tweight = .98,
-                              alpha = 50))
+                              alpha = 1))
           
         }
         etad[d] <- exp(etas[which.min(ev_grid)])
@@ -320,7 +320,7 @@ sir_res <- foreach(replicate = 1:reps,
                                  absdiff_arr = absdiff_arr, 
                                  mod = mod, power = 1, return_wts = "draws",
                                  tweight = .98,
-                                 alpha = 50))
+                                 alpha = 1))
         
         
         # pp_crps <- c()
@@ -367,4 +367,4 @@ sir_res <- foreach(replicate = 1:reps,
 
 }
 
-write.csv(sir_res, "sir_res.csv")
+write.csv(sir_res, "sir_res_alpha1.csv")

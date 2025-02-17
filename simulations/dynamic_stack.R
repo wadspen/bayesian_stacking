@@ -19,7 +19,7 @@ registerDoMC(cores = n.cores)
 
 gibbmod <- cmdstan_model(stan_file = '../stan_models/simple_mix_norm_crps_T.stan')
 
-start <- 1
+start <- 2
 methods <- c("bma", "avs", "sgp", "eqw")
 tw <- .65
 true_wt <- c(tw, 1-tw)
@@ -101,9 +101,10 @@ stacks <- foreach(replicate = 1:reps,
   ls <- c()
   lm <- c()
   
-  
+  print(paste("start", start))
+  print(paste("betas", nrow(all_betas)))
   for (d in start:(nrow(all_betas) - 1)) {
-    
+   print(paste("d is", d)) 
   #########################################
   ###################BMA###################
   #########################################
@@ -121,28 +122,38 @@ stacks <- foreach(replicate = 1:reps,
     etas <- seq(.001, 3, length.out = 30)
     min_eta <- c()
     for (n in 1:(d - 1)) {
-      ylfo <- y[1:n]
-      
+      ylfo <- y[n]
+      print(1:(d-1))
+      print(n)
       avcrpss <- c()
       for(i in 1:length(etas)) {
         et <- etas[i]
         wavs <- c()
+	#print("dude")
         for (m in 1:C) {
+		#print(ylfo)
+		#print(m); print(C); print(n); print(d);
           wavs[m] <- (1/C)*exp(-et*sum(
-            tweight^(n:1 - 1)*scoringRules::crps(ylfo,
+            #tweight^(n:1 - 1)*
+		    scoringRules::crps(ylfo,
                                family = "norm", mean = mus[m], sd = 1)))
         }
         wavs <- wavs/sum(wavs)
+	#print("bro")
         avcrpss[i] <- mean(all_crps(y[n + 1], mus, sigmas, ws = wavs))
       }
+     
       min_eta[n] <- etas[which.min(avcrpss)]
+      print(min_eta)
     }
+    print("who's your daddy?")
     avs_et <- mean(min_eta)
-  
+    print("yourmom")
     wavs <- c()
     for (m in 1:C) {
       wavs[m] <- (1/C)*exp(-avs_et*sum(
-        tweight^(d:1 - 1)*scoringRules::crps(y[1:d],
+        #tweight^(d:1 - 1)*
+		scoringRules::crps(y[d],
                            family = "norm", mean = mus[m], sd = 1)))
     }
     wavs <- wavs/sum(wavs)
@@ -269,7 +280,7 @@ stacks <- foreach(replicate = 1:reps,
 }
 
 
-saveRDS(stacks, "dynamic_stacks_all_weeks.rds")
+saveRDS(stacks, "dynamic_stacks_all_weeks2.rds")
 
 
 
