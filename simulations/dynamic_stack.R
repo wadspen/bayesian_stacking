@@ -76,11 +76,12 @@ stacks <- foreach(replicate = 1:reps,
   all_alphas <- array(NA, dim = c(C,C,T))
   all_betas <- matrix(NA, nrow = T, ncol = C)
   
-  for (i in t) {
+  
     mean_diff <- outer(mus, mus, "-")
     var_sum <- outer(sigmas^2, sigmas^2, "+")
     param_func <- array(c(mean_diff, var_sum), dim = c(C, C, 2))
     
+  for (i in t) { 
     all_alphas[,,i] <- apply(param_func, MARGIN = c(1,2), FUN = alphaik)
     all_betas[i,] <- sapply(y[i], FUN = betai, mu = mus, sigma = sigmas)
   }
@@ -121,34 +122,33 @@ stacks <- foreach(replicate = 1:reps,
   
     etas <- seq(.001, 3, length.out = 30)
     min_eta <- c()
-    for (n in 1:(d - 1)) {
-      ylfo <- y[n]
-      print(1:(d-1))
-      print(n)
-      avcrpss <- c()
-      for(i in 1:length(etas)) {
-        et <- etas[i]
-        wavs <- c()
-	#print("dude")
-        for (m in 1:C) {
-		#print(ylfo)
-		#print(m); print(C); print(n); print(d);
-          wavs[m] <- (1/C)*exp(-et*sum(
-            #tweight^(n:1 - 1)*
-		    scoringRules::crps(ylfo,
-                               family = "norm", mean = mus[m], sd = 1)))
+    avsind <- 1:(d - 1)
+    avsind <- avsind[avsind != 0]
+    for (n in 1:avsind) {
+      
+      if (n == 1) {
+        min_eta[1] <- 1
+      } else {
+        ylfo <- y[n]
+        avcrpss <- c()
+        for(i in 1:length(etas)) {
+          et <- etas[i]
+          wavs <- c()
+          for (m in 1:C) {
+            wavs[m] <- (1/C)*exp(-et*sum(
+              #tweight^(n:1 - 1)*
+  		    scoringRules::crps(ylfo,
+                                 family = "norm", mean = mus[m], sd = 1)))
+          }
+          wavs <- wavs/sum(wavs)
+          avcrpss[i] <- mean(all_crps(y[n + 1], mus, sigmas, ws = wavs))
         }
-        wavs <- wavs/sum(wavs)
-	#print("bro")
-        avcrpss[i] <- mean(all_crps(y[n + 1], mus, sigmas, ws = wavs))
       }
      
       min_eta[n] <- etas[which.min(avcrpss)]
-      print(min_eta)
+      print(paste(n, min_eta))
     }
-    print("who's your daddy?")
     avs_et <- mean(min_eta)
-    print("yourmom")
     wavs <- c()
     for (m in 1:C) {
       wavs[m] <- (1/C)*exp(-avs_et*sum(
