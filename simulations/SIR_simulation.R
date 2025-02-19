@@ -25,7 +25,7 @@ sir_mod <- cmdstan_model(stan_file = '../stan_models/sir.stan')
 mod <- cmdstan_model(stan_file = '../stan_models/emp_mix_crps_time_weight.stan')
 drawn <- 2000
 warm <- 1000
-reps <- 500
+reps <- 1000
 
 sir_res <- foreach(replicate = 1:reps,
                      .packages = c("cmdstanr", "stringr", "scoringRules",
@@ -57,8 +57,6 @@ sir_res <- foreach(replicate = 1:reps,
     anweek <- 0
     all_mse <- matrix(NA, nrow = 4, ncol = length(5:(length(wkI) - 1)))
     all_samps <- list()
-    weight <- matrix(NA, nrow = 4, ncol = length(5:(length(wkI) - 1)))
-    weight[,1] <- eq_wt
     # for (w in 5:8) {
     for (w in 5:(length(wkI) - 1)) {
       anweek <- anweek + 1  
@@ -261,7 +259,7 @@ sir_res <- foreach(replicate = 1:reps,
     etas <- 1
     # etas <- c(100, 150)
     # etas <- c(3, 7)
-    etas <- .5
+    #etas <- .5
     etad <- c()
     weight <- matrix(NA, nrow = 4, ncol = dim(absdiff_arr)[3])
     weight[,1] <- eq_wt
@@ -288,7 +286,7 @@ sir_res <- foreach(replicate = 1:reps,
             try(learning_rate(etas[i], d-1, mse_mat = all_mse, 
                               absdiff_arr = absdiff_arr, 
                               mod = mod, power = 1, tweight = .98,
-                              alpha = 1))
+                              alpha = 50))
           
         }
         etad[d] <- exp(etas[which.min(ev_grid)])
@@ -296,7 +294,7 @@ sir_res <- foreach(replicate = 1:reps,
                                  absdiff_arr = absdiff_arr, 
                                  mod = mod, power = 1, return_wts = "draws",
                                  tweight = .98,
-                                 alpha = 1))
+                                 alpha = 50))
         
         
         # pp_crps <- c()
@@ -381,7 +379,7 @@ sir_res <- foreach(replicate = 1:reps,
      
     test <- data.frame(rep = replicate, time, method = methods, 
                        crps, logs, pit)
-    write.csv(test, "test.csv")
+    write.csv(test, "test2.csv")
     test
 
 }
