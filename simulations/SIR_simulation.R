@@ -25,7 +25,7 @@ sir_mod <- cmdstan_model(stan_file = '../stan_models/sir.stan')
 mod <- cmdstan_model(stan_file = '../stan_models/emp_mix_crps_time_weight.stan')
 drawn <- 2000
 warm <- 1000
-reps <- 1000
+reps <- 50
 
 sir_res <- foreach(replicate = 1:reps,
                      .packages = c("cmdstanr", "stringr", "scoringRules",
@@ -256,7 +256,7 @@ sir_res <- foreach(replicate = 1:reps,
     
     # etas <- seq(.1, 5, length.out = 20)
     etas <- seq(-3, 8, length.out = 20)
-    etas <- 1
+    etas <- 0
     # etas <- c(100, 150)
     # etas <- c(3, 7)
     #etas <- .5
