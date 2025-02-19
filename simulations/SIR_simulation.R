@@ -275,26 +275,27 @@ sir_res <- foreach(replicate = 1:reps,
       
       if (d == 1) {
         sgp_crps[d] <- mix_mat_crps(weight[,d], all_mse[,d],
-                                      absdiff_arr[,,d])
+                                    absdiff_arr[,,d])
         wts <- weight[,d]
       } 
       
       else {  
-        ev_grid <- c()
-        for (i in 1:length(etas)) {
-          ev_grid[i] <- 
-            try(learning_rate(etas[i], d-1, mse_mat = all_mse, 
-                              absdiff_arr = absdiff_arr, 
-                              mod = mod, power = 1, tweight = .98,
-                              alpha = 50))
-          
-        }
-        etad[d] <- exp(etas[which.min(ev_grid)])
-        wts <- try(learning_rate(log(etad[d]), d-1, mse_mat = all_mse, 
+        # ev_grid <- c()
+        # for (i in 1:length(etas)) {
+        #   ev_grid[i] <- 
+        #     try(learning_rate(etas[i], d-1, mse_mat = all_mse, 
+        #                       absdiff_arr = absdiff_arr, 
+        #                       mod = mod, power = 1, tweight = .98,
+        #                       alpha = 50))
+        #   
+        # }
+        # etad[d] <- exp(etas[which.min(ev_grid)])
+        
+        wts <- try(learning_rate(log(etas), d-1, mse_mat = all_mse, 
                                  absdiff_arr = absdiff_arr, 
                                  mod = mod, power = 1, return_wts = "draws",
                                  tweight = .98,
-                                 alpha = 50))
+                                 alpha = 1))
         
         
         # pp_crps <- c()
@@ -315,6 +316,51 @@ sir_res <- foreach(replicate = 1:reps,
         weight[,d] <- wts
         
         sgp_crps[d] <- mix_mat_crps(weight[,d], all_mse[,d], 
+                                    absdiff_arr[,,d])
+      }
+      
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    weight50 <- matrix(NA, nrow = 4, ncol = dim(absdiff_arr)[3])
+    weight50[,1] <- eq_wt
+    sgp50_crps <- c()
+    pp_sgp50_crps <- c()
+    for (d in 1:ncol(all_mse)) {
+      
+      
+      
+      etad[1] <- 1
+      etad[2] <- 1
+      
+      
+      if (d == 1) {
+        sgp50_crps[d] <- mix_mat_crps(weight50[,d], all_mse[,d],
+                                      absdiff_arr[,,d])
+        wts <- weight50[,d]
+      } 
+      
+      else {  
+        
+        wts <- try(learning_rate(log(etas), d-1, mse_mat = all_mse, 
+                                 absdiff_arr = absdiff_arr, 
+                                 mod = mod, power = 1, return_wts = "draws",
+                                 tweight = .98,
+                                 alpha = 50))
+        
+        
+        wts <- apply(wts, MARGIN = 2, FUN = mean)
+        wts[wts < 0] <- 0
+        wts <- wts/sum(wts)
+        weight[,d] <- wts
+        
+        sgp50_crps[d] <- mix_mat_crps(weight50[,d], all_mse[,d], 
                                       absdiff_arr[,,d])
       }
       
@@ -334,22 +380,27 @@ sir_res <- foreach(replicate = 1:reps,
     
     
     sgp_logs <- c()
+    sgp50_logs <- c()
     bma_logs <- c()
     avs_logs <- c()
     eqw_logs <- c()
     
     pit_sgp <- c()
+    pit_sgp50 <- c()
     pit_bma <- c()
     pit_avs <- c()
     pit_eqw <- c()
     for (d in 1:length(all_samps)) {
       emp_stack_sgp <- c()
+      emp_stack_sgp50 <- c()
       emp_stack_bma <- c()
       emp_stack_avs <- c()
       emp_stack_eqw <- c()
       for (m in 1:drawn) {
         emp_stack_sgp[m] <- sample(all_samps[[d]][, sample(4, 1, 
                                                        prob = weight[,d])], 1)
+        emp_stack_sgp50[m] <- sample(all_samps[[d]][, sample(4, 1, 
+                                                      prob = weight50[,d])], 1)
         emp_stack_bma[m] <- sample(all_samps[[d]][, sample(4, 1, 
                                                        prob = bma_wt[,d])], 1)
         emp_stack_avs[m] <- sample(all_samps[[d]][, sample(4, 1, 
@@ -358,29 +409,32 @@ sir_res <- foreach(replicate = 1:reps,
                                                        prob = eq_wt)], 1)
       }
       sgp_logs[d] <- logs_sample(wkI[d + 5], emp_stack_sgp)
+      sgp50_logs[d] <- logs_sample(wkI[d + 5], emp_stack_sgp50)
       bma_logs[d] <- logs_sample(wkI[d + 5], emp_stack_bma)
       avs_logs[d] <- logs_sample(wkI[d + 5], emp_stack_avs)
       eqw_logs[d] <- logs_sample(wkI[d + 5], emp_stack_eqw)
       
       pit_sgp[d] <- ecdf(emp_stack_sgp)(wkI[d + 5])
+      pit_sgp50[d] <- ecdf(emp_stack_sgp50)(wkI[d + 5])
       pit_bma[d] <- ecdf(emp_stack_bma)(wkI[d + 5])
       pit_avs[d] <- ecdf(emp_stack_avs)(wkI[d + 5])
       pit_eqw[d] <- ecdf(emp_stack_eqw)(wkI[d + 5])
     }
     
-    methods <- rep(c("BMA", "AVS", "EQW", "SGP"), each = length(sgp_crps))
+    methods <- rep(c("BMA", "AVS", "EQW", "SGP", "SGP50"), 
+                   each = length(sgp_crps))
     time <- rep(1:length(sgp_crps), 4)
-    crps <- c(bma_crps, avs_crps, eqw_crps, sgp_crps)
-    logs <- c(bma_logs, avs_logs, eqw_logs, sgp_logs)
-    pit <- c(pit_bma, pit_avs, pit_eqw, pit_sgp)
+    crps <- c(bma_crps, avs_crps, eqw_crps, sgp_crps, sgp50_crps)
+    logs <- c(bma_logs, avs_logs, eqw_logs, sgp_logs, sgp50_logs)
+    pit <- c(pit_bma, pit_avs, pit_eqw, pit_sgp, pit_sgp50)
     
     
     
      
-    test <- data.frame(rep = replicate, time, method = methods, 
+    scores <- data.frame(rep = replicate, time, method = methods, 
                        crps, logs, pit)
-    write.csv(test, "test2.csv")
-    test
+    write.csv(scores, "test2.csv")
+    scores
 
 }
 
