@@ -108,8 +108,12 @@ stacks <- foreach(replicate = 1:reps,
   #########################################
   ###################BMA###################
   #########################################
+    # wpmp <- sapply(mus, FUN = function(x) {
+    #   prod(dnorm(x = y[1:d], x))
+    # })
+    
     wpmp <- sapply(mus, FUN = function(x) {
-      prod(dnorm(x = y[1:d], x))
+      exp(sum(tweight^(d:1 - 1)*log(dnorm(x = y[1:d], x))))
     })
     wpmp <- wpmp/sum(wpmp)
     
@@ -135,7 +139,7 @@ stacks <- foreach(replicate = 1:reps,
           wavs <- c()
           for (m in 1:C) {
             wavs[m] <- (1/C)*exp(-et*sum(
-              #tweight^(n:1 - 1)*
+              tweight^(n:1 - 1)*
   		    scoringRules::crps(ylfo,
                                  family = "norm", mean = mus[m], sd = 1)))
           }
@@ -151,7 +155,7 @@ stacks <- foreach(replicate = 1:reps,
     wavs <- c()
     for (m in 1:C) {
       wavs[m] <- (1/C)*exp(-avs_et*sum(
-        #tweight^(d:1 - 1)*
+        tweight^(d:1 - 1)*
 		scoringRules::crps(y[d],
                            family = "norm", mean = mus[m], sd = 1)))
     }
