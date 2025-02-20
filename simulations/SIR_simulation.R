@@ -20,12 +20,15 @@ foreach::getDoParRegistered()
 foreach::getDoParWorkers()
 registerDoMC(cores = n.cores)
 
+args <- commandArgs()
+step <- as.numeric(args[6])
+
 asg_mod <- cmdstan_model(stan_file = '../stan_models/asg.stan')
 sir_mod <- cmdstan_model(stan_file = '../stan_models/sir.stan')
 mod <- cmdstan_model(stan_file = '../stan_models/emp_mix_crps_time_weight.stan')
 drawn <- 2000
 warm <- 1000
-reps <- 50
+reps <- 60
 
 sir_res <- foreach(replicate = 1:reps,
                      .packages = c("cmdstanr", "stringr", "scoringRules",
@@ -256,7 +259,7 @@ sir_res <- foreach(replicate = 1:reps,
     
     # etas <- seq(.1, 5, length.out = 20)
     etas <- seq(-3, 8, length.out = 20)
-    etas <- 0
+    etas <- 1
     # etas <- c(100, 150)
     # etas <- c(3, 7)
     #etas <- .5
@@ -291,7 +294,7 @@ sir_res <- foreach(replicate = 1:reps,
         # }
         # etad[d] <- exp(etas[which.min(ev_grid)])
         
-        wts <- try(learning_rate(log(etas), d-1, mse_mat = all_mse, 
+        wts <- try(learning_rate(etas, d-1, mse_mat = all_mse, 
                                  absdiff_arr = absdiff_arr, 
                                  mod = mod, power = 1, return_wts = "draws",
                                  tweight = .98,
@@ -348,7 +351,7 @@ sir_res <- foreach(replicate = 1:reps,
       
       else {  
         
-        wts <- try(learning_rate(log(etas), d-1, mse_mat = all_mse, 
+        wts <- try(learning_rate(etas, d-1, mse_mat = all_mse, 
                                  absdiff_arr = absdiff_arr, 
                                  mod = mod, power = 1, return_wts = "draws",
                                  tweight = .98,
@@ -358,7 +361,7 @@ sir_res <- foreach(replicate = 1:reps,
         wts <- apply(wts, MARGIN = 2, FUN = mean)
         wts[wts < 0] <- 0
         wts <- wts/sum(wts)
-        weight[,d] <- wts
+        weight50[,d] <- wts
         
         sgp50_crps[d] <- mix_mat_crps(weight50[,d], all_mse[,d], 
                                       absdiff_arr[,,d])
@@ -423,7 +426,7 @@ sir_res <- foreach(replicate = 1:reps,
     
     methods <- rep(c("BMA", "AVS", "EQW", "SGP", "SGP50"), 
                    each = length(sgp_crps))
-    time <- rep(1:length(sgp_crps), 4)
+    time <- rep(1:length(sgp_crps), 5)
     crps <- c(bma_crps, avs_crps, eqw_crps, sgp_crps, sgp50_crps)
     logs <- c(bma_logs, avs_logs, eqw_logs, sgp_logs, sgp50_logs)
     pit <- c(pit_bma, pit_avs, pit_eqw, pit_sgp, pit_sgp50)
@@ -431,11 +434,11 @@ sir_res <- foreach(replicate = 1:reps,
     
     
      
-    scores <- data.frame(rep = replicate, time, method = methods, 
+    scores <- data.frame(seq = step, rep = replicate, time, method = methods, 
                        crps, logs, pit)
     write.csv(scores, "test2.csv")
     scores
 
 }
 
-write.csv(sir_res, "sir_res_alpha1.csv")
+write.csv(sir_res, paste0("sir_res/seq_", step, ".csv"))

@@ -48,7 +48,7 @@ learning_rate <- function(eta, i, mse_mat, absdiff_arr, mod, lambda = .0001,
     stan_dat <- list(
       T = d,
       num_comp = nrow(mse_mat),
-      eta = exp(eta),
+      eta = eta,
       alpha = rep(alpha, nrow(mse_mat)),
       mae = mae,
       absdiff = absdiff

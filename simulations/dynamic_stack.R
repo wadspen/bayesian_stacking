@@ -19,7 +19,7 @@ registerDoMC(cores = n.cores)
 
 gibbmod <- cmdstan_model(stan_file = '../stan_models/simple_mix_norm_crps_T.stan')
 
-start <- 2
+start <- 1
 methods <- c("bma", "avs", "sgp", "eqw")
 tw <- .65
 true_wt <- c(tw, 1-tw)
@@ -35,19 +35,19 @@ sigmas <- rep(1, C)
 tweight <- .98
 ms_et <- 15
 
-T <- 100
+T <- 15
 M <- length(true_wt)
 t <- 1:T
 
-reps <- 500
+reps <- 50
 
 
 stacks <- foreach(replicate = 1:reps,
                   .packages = c("cmdstanr", "dplyr", "tidyr")
-                  ,.errorhandling = "remove"
+                  #,.errorhandling = "remove"
                   ,.combine = rbind) %dopar% {
 
-
+#for (replicate in 1) {
   zeta <- matrix(NA, nrow = T, ncol = M)
   Sigma <- diag(rep(.1,M))
   
@@ -102,8 +102,7 @@ stacks <- foreach(replicate = 1:reps,
   ls <- c()
   lm <- c()
   
-  print(paste("start", start))
-  print(paste("betas", nrow(all_betas)))
+ 
   for (d in start:(nrow(all_betas) - 1)) {
    print(paste("d is", d)) 
   #########################################
@@ -125,11 +124,11 @@ stacks <- foreach(replicate = 1:reps,
     avsind <- 1:(d - 1)
     avsind <- avsind[avsind != 0]
     for (n in 1:avsind) {
-      
+        
       if (n == 1) {
         min_eta[1] <- 1
       } else {
-        ylfo <- y[n]
+        ylfo <- y[1:n]
         avcrpss <- c()
         for(i in 1:length(etas)) {
           et <- etas[i]
@@ -143,10 +142,10 @@ stacks <- foreach(replicate = 1:reps,
           wavs <- wavs/sum(wavs)
           avcrpss[i] <- mean(all_crps(y[n + 1], mus, sigmas, ws = wavs))
         }
-      }
+      
      
-      min_eta[n] <- etas[which.min(avcrpss)]
-      print(paste(n, min_eta))
+      	min_eta[n] <- etas[which.min(avcrpss)]
+      }
     }
     avs_et <- mean(min_eta)
     wavs <- c()
@@ -280,7 +279,7 @@ stacks <- foreach(replicate = 1:reps,
 }
 
 
-saveRDS(stacks, "dynamic_stacks_all_weeks2.rds")
+saveRDS(stacks, "dynamic_stacks_all_weeks_fin2.rds")
 
 
 
