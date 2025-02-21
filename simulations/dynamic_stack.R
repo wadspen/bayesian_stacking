@@ -9,7 +9,7 @@ library(parallel)
 library(doParallel)
 library(doMC)
 n.cores <- detectCores()
-n.cores <- 1
+#n.cores <- 1
 my.cluster <- makeCluster(n.cores, type = "PSOCK")
 doParallel::registerDoParallel(cl = my.cluster)
 foreach::getDoParRegistered()
@@ -32,7 +32,7 @@ tsigmas <- rep(1, length(tmus))
 mus <- c(0,2,4,6,8,10)
 C <- length(mus)
 sigmas <- rep(1, C)
-tweight <- .98
+tweight <- 1# .98
 ms_et <- 15
 
 T <- 13
@@ -127,10 +127,8 @@ stacks <- foreach(replicate = 1:reps,
     min_eta <- c()
     avsind <- 1:(d - 1)
     avsind <- avsind[avsind != 0]
-    print(d)
-    print(avsind)
-
-    for (n in 1:avsind) {
+    
+    for (n in avsind) {
         
       if (n == 1) {
         min_eta[1] <- 1
@@ -142,25 +140,24 @@ stacks <- foreach(replicate = 1:reps,
           wavs <- c()
           for (m in 1:C) {
             wavs[m] <- (1/C)*exp(-et*sum(
-              tweight^(n:1 - 1)*scoringRules::crps(ylfo,
+              tweight^(n:1 - 1)*
+		      scoringRules::crps(ylfo,
                                  family = "norm", mean = mus[m], sd = 1)))
           }
           wavs <- wavs/sum(wavs)
           avcrpss[i] <- mean(all_crps(y[n + 1], mus, sigmas, ws = wavs))
         }
-	print("do we even get here?")
-      
+	      
      
       	min_eta[n] <- etas[which.min(avcrpss)]
-	print(paste(n, min_eta[n]))
-      }
+	}
     }
     avs_et <- mean(min_eta)
-    print(paste("avs_et", avs_et))
     wavs <- c()
     for (m in 1:C) {
       wavs[m] <- (1/C)*exp(-avs_et*sum(
-        tweight^(d:1 - 1)*scoringRules::crps(y[d],
+        tweight^(d:1 - 1)*
+				       scoringRules::crps(y[d],
                            family = "norm", mean = mus[m], sd = 1)))
     }
     wavs <- wavs/sum(wavs)
