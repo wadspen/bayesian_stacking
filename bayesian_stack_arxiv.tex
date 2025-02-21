@@ -1,0 +1,159 @@
+\documentclass{article}
+
+
+
+\usepackage{arxiv}
+\RequirePackage[colorlinks,citecolor=blue,urlcolor=blue,allcolors=blue]{hyperref}
+\usepackage[utf8]{inputenc} % allow utf-8 input
+\usepackage[T1]{fontenc}    % use 8-bit T1 fonts
+\usepackage{url}            % simple URL typesetting
+\usepackage{booktabs}       % professional-quality tables
+\usepackage{amsfonts}       % blackboard math symbols
+\usepackage{nicefrac}       % compact symbols for 1/2, etc.
+\usepackage{microtype}      % microtypography
+\usepackage{lipsum}		% Can be removed after putting your text content
+\usepackage{graphicx}
+\usepackage{natbib}
+\usepackage{doi}
+\usepackage{amsmath,amsthm,amssymb,scrextend,mathtools}
+\usepackage{xr}
+\externaldocument{supplemental_arxiv}
+% \RequirePackage[colorlinks,citecolor=blue,urlcolor=blue]{hyperref}
+
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{definition}{Definition}
+\usepackage{natbib}
+\usepackage{lmodern} %%helps deal with font size problems
+\usepackage{dsfont}
+\newcommand{\1}[1]{\mathds{1}\left[#1\right]}
+
+\newcommand{\spencer}[1]{{\color{blue} Spencer: #1}}
+\newcommand{\jarad}[1]{{\color{white} Jarad: #1}}
+
+
+
+\title{Bayesian stacking via proper scoring rule optimization using a Gibbs posterior}
+% \shorttitle{Quantile Gaussian Process Matching}
+
+%\date{September 9, 1985}	% Here you can change the date presented in the paper title
+%\date{} 					% Or removing it
+
+\author{Spencer Wadsworth \\
+% \href{https://orcid.org/0000-0000-0000-0000}{
+% \includegraphics[scale=0.06]{orcid.pdf}\hspace{1mm}David S.~Hippocampus}
+% \thanks{Use footnote for providing further
+% 		information about author (webpage, alternative
+% 		address)---\emph{not} for acknowledging funding agencies.} \\
+	Iowa State University\\
+	Ames, Iowa\\
+	\texttt{sgw96@iastate.edu} \\
+	%% examples of more authors
+	\And
+	Jarad Niemi \\
+	% \href{https://orcid.org/0000-0000-0000-0000}
+	% {\includegraphics[scale=0.06]{orcid.pdf}\hspace{1mm}Elias D.~Striatum} \\
+	Iowa State University\\
+	Ames, Iowa\\
+	\texttt{niemi@iastate.edu} \\
+	%% \AND
+	%% Coauthor \\
+	%% Affiliation \\
+	%% Address \\
+	%% \texttt{email} \\
+	%% \And
+	%% Coauthor \\
+	%% Affiliation \\
+	%% Address \\
+	%% \texttt{email} \\
+	%% \And
+	%% Coauthor \\
+	%% Affiliation \\
+	%% Address \\
+	%% \texttt{email} \\
+}
+
+% Uncomment to remove the date
+\date{}
+
+% Uncomment to override  the `A preprint' in the header
+\renewcommand{\headeright}{}
+%\renewcommand{\undertitle}{Technical Report}
+\renewcommand{\shorttitle}{Stacked Gibbs Posterior}
+
+%%% Add PDF metadata to help others organize their library
+%%% Once the PDF is generated, you can check the metadata with
+%%% $ pdfinfo template.pdf
+% \hypersetup{
+% pdftitle={A template for the arxiv style},
+% pdfsubject={q-bio.NC, q-bio.QM},
+% pdfauthor={David S.~Hippocampus, Elias D.~Striatum},
+% pdfkeywords={First keyword, Second keyword, More},
+% }
+
+\begin{document}
+\maketitle
+% 
+\begin{abstract}
+Combining probabilistic forecasts into an ensemble forecast is standard practice 
+in collaborative forecast projects where linear pooling is one of the most 
+common methods. A common idea is that weight selection methods should be 
+tailored to the specific research question and often selecting weights via 
+optimization of a proper scoring rule. Bayesian predictive synthesis has also 
+emerged as a model probability updating scheme which provides a Bayesian 
+solution to selecting model weights more flexible than Bayesian model 
+averaging.
+Existing methods may or may not improve ensembles for given datasets, and 
+there is room for additional methodology.
+In this manuscript, we introduce a Gibbs posterior on stacked model weights 
+based on minimizing a proper scoring rule. The Gibbs posterior extends stacking 
+into a Bayesian framework by allowing for optimal weight solutions to be 
+influenced by a prior distribution and include uncertainty quantification. 
+We compare ensemble forecast performance with model averaging methods and equal 
+weighted models in simulation studies and in a real data example from the 
+2023-24 US Centers for Disease Control FluSight competition. In both the 
+simulation studies and the FluSight analysis, the stacked Gibbs posterior 
+produces ensemble forecasts which perform better than the ensembles from other 
+methods considered.
+\end{abstract}
+% 
+% 
+% % keywords can be removed
+\keywords{Optimal linear pooling \and Gibbs posterior
+\and Probabilistic forecasting \and Proper scoring rules}
+
+\input{manuscript}
+
+
+
+\bibliographystyle{unsrtnat}
+\bibliography{master_bib}  %%% Uncomment this line and comment out the ``thebibliography'' section below to use the external .bib file (using bibtex) .
+
+
+%%% Uncomment this section and comment out the \bibliography{references} line above to use inline references.
+% \begin{thebibliography}{1}
+
+% 	\bibitem{kour2014real}
+% 	George Kour and Raid Saabne.
+% 	\newblock Real-time segmentation of on-line handwritten arabic script.
+% 	\newblock In {\em Frontiers in Handwriting Recognition (ICFHR), 2014 14th
+% 			International Conference on}, pages 417--422. IEEE, 2014.
+
+% 	\bibitem{kour2014fast}
+% 	George Kour and Raid Saabne.
+% 	\newblock Fast classification of handwritten on-line arabic characters.
+% 	\newblock In {\em Soft Computing and Pattern Recognition (SoCPaR), 2014 6th
+% 			International Conference of}, pages 312--318. IEEE, 2014.
+
+% 	\bibitem{hadash2018estimate}
+% 	Guy Hadash, Einat Kermany, Boaz Carmeli, Ofer Lavi, George Kour, and Alon
+% 	Jacovi.
+% 	\newblock Estimate and replace: A novel approach to integrating deep neural
+% 	networks with existing applications.
+% 	\newblock {\em arXiv preprint arXiv:1804.09028}, 2018.
+
+% \end{thebibliography}
+
+% \input{sup_man}
+\end{document}
