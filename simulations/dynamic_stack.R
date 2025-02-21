@@ -9,7 +9,7 @@ library(parallel)
 library(doParallel)
 library(doMC)
 n.cores <- detectCores()
-#n.cores <- 1
+n.cores <- 1
 my.cluster <- makeCluster(n.cores, type = "PSOCK")
 doParallel::registerDoParallel(cl = my.cluster)
 foreach::getDoParRegistered()
@@ -35,11 +35,11 @@ sigmas <- rep(1, C)
 tweight <- .98
 ms_et <- 15
 
-T <- 15
+T <- 13
 M <- length(true_wt)
 t <- 1:T
 
-reps <- 50
+reps <- 65
 
 
 stacks <- foreach(replicate = 1:reps,
@@ -127,6 +127,9 @@ stacks <- foreach(replicate = 1:reps,
     min_eta <- c()
     avsind <- 1:(d - 1)
     avsind <- avsind[avsind != 0]
+    print(d)
+    print(avsind)
+
     for (n in 1:avsind) {
         
       if (n == 1) {
@@ -139,24 +142,25 @@ stacks <- foreach(replicate = 1:reps,
           wavs <- c()
           for (m in 1:C) {
             wavs[m] <- (1/C)*exp(-et*sum(
-              tweight^(n:1 - 1)*
-  		    scoringRules::crps(ylfo,
+              tweight^(n:1 - 1)*scoringRules::crps(ylfo,
                                  family = "norm", mean = mus[m], sd = 1)))
           }
           wavs <- wavs/sum(wavs)
           avcrpss[i] <- mean(all_crps(y[n + 1], mus, sigmas, ws = wavs))
         }
+	print("do we even get here?")
       
      
       	min_eta[n] <- etas[which.min(avcrpss)]
+	print(paste(n, min_eta[n]))
       }
     }
     avs_et <- mean(min_eta)
+    print(paste("avs_et", avs_et))
     wavs <- c()
     for (m in 1:C) {
       wavs[m] <- (1/C)*exp(-avs_et*sum(
-        tweight^(d:1 - 1)*
-		scoringRules::crps(y[d],
+        tweight^(d:1 - 1)*scoringRules::crps(y[d],
                            family = "norm", mean = mus[m], sd = 1)))
     }
     wavs <- wavs/sum(wavs)
@@ -191,8 +195,8 @@ stacks <- foreach(replicate = 1:reps,
     
     # fit <- gibbmod$variational(data = stan_dat)
     fit <- gibbmod$sample(data = stan_dat, chains = 1, 
-                          iter_warmup = 10000,
-                          iter_sampling = 50000, 
+                          iter_warmup = 200,
+                          iter_sampling = 200, 
                           init = list(list(omega = rep(1/C, C))))
     
     draws <- fit$draws(variables = "omega", format = "df") %>%
@@ -283,7 +287,7 @@ stacks <- foreach(replicate = 1:reps,
 }
 
 
-saveRDS(stacks, "dynamic_stacks_all_weeks_fin2.rds")
+saveRDS(stacks, "dynamic_stacks_all_weeks_test.rds")
 
 
 
