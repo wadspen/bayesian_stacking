@@ -32,14 +32,14 @@ tsigmas <- rep(1, length(tmus))
 mus <- c(0,2,4,6,8,10)
 C <- length(mus)
 sigmas <- rep(1, C)
-tweight <- 1# .98
+tweight <- .98
 ms_et <- 15
 
-T <- 13
+T <- 55
 M <- length(true_wt)
 t <- 1:T
 
-reps <- 65
+reps <- 500
 
 
 stacks <- foreach(replicate = 1:reps,
@@ -124,6 +124,7 @@ stacks <- foreach(replicate = 1:reps,
   #########################################
   
     etas <- seq(.001, 3, length.out = 30)
+    #etas <- 1
     min_eta <- c()
     avsind <- 1:(d - 1)
     avsind <- avsind[avsind != 0]
@@ -157,7 +158,7 @@ stacks <- foreach(replicate = 1:reps,
     for (m in 1:C) {
       wavs[m] <- (1/C)*exp(-avs_et*sum(
         tweight^(d:1 - 1)*
-				       scoringRules::crps(y[d],
+				       scoringRules::crps(y[1:d],
                            family = "norm", mean = mus[m], sd = 1)))
     }
     wavs <- wavs/sum(wavs)
@@ -192,8 +193,8 @@ stacks <- foreach(replicate = 1:reps,
     
     # fit <- gibbmod$variational(data = stan_dat)
     fit <- gibbmod$sample(data = stan_dat, chains = 1, 
-                          iter_warmup = 200,
-                          iter_sampling = 200, 
+                          iter_warmup = 1000,
+                          iter_sampling = 1000, 
                           init = list(list(omega = rep(1/C, C))))
     
     draws <- fit$draws(variables = "omega", format = "df") %>%
@@ -284,7 +285,7 @@ stacks <- foreach(replicate = 1:reps,
 }
 
 
-saveRDS(stacks, "dynamic_stacks_all_weeks_test.rds")
+saveRDS(stacks, "dynamic_stacks_all_weeks_fin.rds")
 
 
 
