@@ -121,6 +121,8 @@ stack_res <- foreach(loc = locations,
                            forecast_date = sub_dates[d],
                            stack_crps = stack_crps[d], eq_crps = mean_crps[d],
 			   eta = etad[d])
+                
+        write.csv(weight, paste0("loc_wts/", loc, "_wts.csv"))
 
 	    	ress
 	        #wtsdf <- data.frame(t(as.matrix(wts)))

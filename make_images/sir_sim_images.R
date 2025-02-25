@@ -56,10 +56,10 @@ logsp <- sim_scores %>%
                 linetype = method), size = 1.1) +
   scale_colour_manual(name = "Model",
                       labels = c("AVS", "BMA", "EQW", "SGP", "SGP50")
-                      ,values = c("grey80", "grey60", "grey40", 
+                      ,values = c("grey80", "grey60", "grey40",
                                   "grey20", "grey0")) +
   scale_linetype_manual(name= "Model",
-                        values=c("twodash", "dotdash", "longdash", 
+                        values=c("twodash", "dotdash", "longdash",
                                  "solid", "dotted"),
                         labels=c("AVS", "BMA", "EQW", "SGP", "SGP50")) +
   ylab("LogS") +

@@ -361,19 +361,7 @@ Figure \ref{fig:iid_scores} shows boxplots of the CRPS and the LogS for the thre
 
 \begin{figure}
 \centering
-%\begin{subfigure}{}
-  % \centering
-  \includegraphics[width=.48\linewidth]{Images/iid_crps_box.png}
-  % \caption{A subfigure}
-  % \label{fig:sub1}
-%\end{subfigure}%
-\hspace{0.01\textwidth}
-%\begin{subfigure}{}
-  \centering
-  \includegraphics[width=.48\linewidth]{Images/iid_logs_box.png}
-  % \caption{A subfigure}
-  % \label{fig:sub2}
-%\end{subfigure}
+  \includegraphics[width=.48\linewidth]{Images/iid_sim_res.png}
 \caption{Boxplots of the mean of 1,000 Monte Carlo CRPSs (left) and LogSs (right) for 500 replicates. Plots are colored by weighting method.}
 \label{fig:iid_scores}
 \end{figure}
@@ -423,45 +411,60 @@ A single observation $y_t$ is simulated at each time step $t \in \{1, ..., T = 1
 The performance of the ensemble forecasts are assessed in terms of proper scoring rules as well as by the PIT, that is the uniformity of the histogram of observations evaluated by the probabilistic forecast. The PIT is evaluated both by looking at the PIT histogram and by measuring the distance between the PIT and the uniform distribution using the unit Wasserstein distance metric (UWD1) used in chapter 3 of \cite{wadsworth2024quantile}. SGP is compared with AVS and BMA, and because this is a forecasting problem the performance of ensemble forecasts under EQW is also included. Figure \ref{fig:dyn_pit} shows the PIT results for one step ahead forecasts for forecasts of times 2 to 100 over 500 replications of simulated data. The histogram plots clearly show the SGP PIT histogram is much nearer to uniformity than the PIT histograms for the other methods. The boxplots of the 500 UWD1 distances show smaller UWD1 values for the SGP PIT meaning the distances between the PIT and the standard uniform distribution are largely smaller for SGP, further showing superior calibration compared to the other methods.
 
 
+% \begin{figure}
+% \centering
+% %\begin{subfigure}{}
+%   % \centering
+%   \includegraphics[width=.48\linewidth]{Images/dyn_sim_pit.png}
+%   % \caption{A subfigure}
+%   % \label{fig:sub1}
+% %\end{subfigure}%
+% \hspace{0.01\textwidth}
+% %\begin{subfigure}{}
+%   \centering
+%   \includegraphics[width=.48\linewidth]{Images/uwd1_box.png}
+%   % \caption{A subfigure}
+%   % \label{fig:sub2}
+% %\end{subfigure}
+% \caption{Plots for assessing calibration of one step ahead forecasts for the four weighting methods. The figure shows the PIT for all $99 \times 500$ simulated one-step-ahead forecasts for AVS, BMA, EQW, and SGP (left) and boxplots of the UWD1 distance between a standard uniform distribution and the empirical distribution of the PIT for the weighting schemes for 99 predictions (right).}
+% \label{fig:dyn_pit}
+% \end{figure}
+
 \begin{figure}
 \centering
-%\begin{subfigure}{}
-  % \centering
-  \includegraphics[width=.48\linewidth]{Images/dyn_sim_pit.png}
-  % \caption{A subfigure}
-  % \label{fig:sub1}
-%\end{subfigure}%
-\hspace{0.01\textwidth}
-%\begin{subfigure}{}
-  \centering
-  \includegraphics[width=.48\linewidth]{Images/uwd1_box.png}
-  % \caption{A subfigure}
-  % \label{fig:sub2}
-%\end{subfigure}
+  \includegraphics[width=.8\linewidth]{Images/dyn_sim_res.png}
 \caption{Plots for assessing calibration of one step ahead forecasts for the four weighting methods. The figure shows the PIT for all $99 \times 500$ simulated one-step-ahead forecasts for AVS, BMA, EQW, and SGP (left) and boxplots of the UWD1 distance between a standard uniform distribution and the empirical distribution of the PIT for the weighting schemes for 99 predictions (right).}
-\label{fig:dyn_pit}
+\label{fig:dyn_sim}
 \end{figure}
 
 Figure \ref{fig:dyn_scores} shows how the CRPS and LogS for one step ahead forecasts behave over time. The lines represent the mean scores over the 500 simulation replicates. Again the SGP outperforms AVS, BMA, and EQW ensembles with the superior performance appearing more starkly for LogS than for CRPS. Unsurprisingly the EQW forecast scores remain relatively constant through time while the other methods improve as time goes on. Interestingly, the behavior of AVS shown in the i.i.d. case in the previous study to perform very well with small amounts of data but to worsen with larger data does not manifest in this study of dynamic forecasting.
 
 
+% \begin{figure}
+% \centering
+% %\begin{subfigure}{}
+%   % \centering
+%   \includegraphics[width=.48\linewidth]{Images/dyn_crps.png}
+%   % \caption{A subfigure}
+%   % \label{fig:sub1}
+% %\end{subfigure}%
+% \hspace{0.01\textwidth}
+% %\begin{subfigure}{}
+%   \centering
+%   \includegraphics[width=.48\linewidth]{Images/dyn_logs.png}
+%   % \caption{A subfigure}
+%   % \label{fig:sub2}
+% %\end{subfigure}
+% \caption{The mean CRPS (left) and LogS (right) over 500 replicates of one step ahead predictions at 99 time points colored by weighting methods.}
+% \label{fig:dyn_scores}
+% \end{figure}
+
+
 \begin{figure}
 \centering
-%\begin{subfigure}{}
-  % \centering
-  \includegraphics[width=.48\linewidth]{Images/dyn_crps.png}
-  % \caption{A subfigure}
-  % \label{fig:sub1}
-%\end{subfigure}%
-\hspace{0.01\textwidth}
-%\begin{subfigure}{}
-  \centering
-  \includegraphics[width=.48\linewidth]{Images/dyn_logs.png}
-  % \caption{A subfigure}
-  % \label{fig:sub2}
-%\end{subfigure}
-\caption{The mean CRPS (left) and LogS (right) over 500 replicates of one step ahead predictions at 99 time points colored by weighting methods.}
-\label{fig:dyn_scores}
+  \includegraphics[width=.8\linewidth]{Images/sir_sim_res.png}
+\caption{}
+\label{fig:sir_sim}
 \end{figure}
 
 The two studies in this section show the SGP's ability to construct accurate forecasts for cases of both i.i.d. and dynamic data. The SGP outperformed AVS, BMA, and EQW ensembles both in terms of proper scoring rules and in PIT uniformity. In the following section, the SGP ensemble construction is applied to forecasts from the CDC flu forecast competition with comparisons of performance against AVS, BMA, and EQW. 
