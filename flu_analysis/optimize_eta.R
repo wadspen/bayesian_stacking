@@ -1,8 +1,9 @@
-
 library(dplyr)
 library(lubridate)
 library(stringr)
 library(cmdstanr)
+library(evalcast)
+library(tidyr)
 source("../simulations/stack_functions.R")
 library(parallel)
 library(doParallel)
@@ -23,6 +24,7 @@ mod_loc <- "../../FluSight-forecast-hub/model-output/"
 models <- list.files(mod_loc)
 models <- models[models != "README.md"]
 sub_dates <- substr(list.files(paste0(mod_loc, "FluSight-baseline")), 1, 10)
+sub_dates <- sub_dates[sub_dates < "2024-07-01"]
 sub_dates <- sub_dates[-length(sub_dates)]
 horizons <- -1:3
 get_loc_file <- list.files(paste0(mod_loc, "FluSight-baseline/"))[4]
@@ -35,7 +37,11 @@ comp_forcs <- readRDS("comp_forcs.rds")
 all_flu <- read.csv("../../FluSight-forecast-hub/target-data/target-hospital-admissions.csv")
 # all_flu <- read.csv("../../forecast-hub/FluSight-forecast-hub/target-data/target-hospital-admissions.csv") #local machine
 #etas <- seq(.5, 30, length.out = 30)
+all_flu <- all_flu %>%
+  mutate(reference_date = date, true_value = value) %>%
+  dplyr::select(-date, -value)
 etas <- seq(-1, 5, length.out = 20)
+etas <- 1
 #locations <- c("01", "16")
 dat <- sub_dates[1]
 horizon <- 0
@@ -98,15 +104,15 @@ stack_res <- foreach(loc = locations,
               
               } else {
                   ev_grid <- c()
-                  for (i in 1:length(etas)) {
-                    ev_grid[i] <- 
-                      try(learning_rate(etas[i], d - 2, mse_mat = all_mse, 
-                                        absdiff_arr = absdiff_arr, 
-                                        mod = mod, power = 1, alpha = 1))
-                    
-                  }
-                  etad[d] <- exp(etas[which.min(ev_grid)])
-                  wts <- try(learning_rate(log(etad[d]), d-1, mse_mat = all_mse, 
+                  # for (i in 1:length(etas)) {
+                  #   ev_grid[i] <- 
+                  #     try(learning_rate(etas[i], d - 2, mse_mat = all_mse, 
+                  #                       absdiff_arr = absdiff_arr, 
+                  #                       mod = mod, power = 1, alpha = 1))
+                  #   
+                  # }
+                  # etad[d] <- exp(etas[which.min(ev_grid)])
+                  wts <- try(learning_rate(etas, d-1, mse_mat = all_mse, 
                                            absdiff_arr = absdiff_arr, 
                                            mod = mod, power = 1, 
 					   alpha = 1, return_wts = TRUE))
@@ -117,12 +123,82 @@ stack_res <- foreach(loc = locations,
                   stack_crps[d] <- mix_mat_crps(weight[,d], all_mse[,d], 
                                                absdiff_arr[,,d])
               } 
+            
+            
+            
+            comps <- comp_forcs %>% 
+              filter(location == loc)
+            
+            comp_mods <- unique(comps$model)
+            
+            forcs <- data.frame()
+            for (c in 1:length(comp_mods)) {
+              comp_file <- paste0(mod_loc, comp_mods[c], "/", sub_dates[d], 
+                                  "-", comp_mods[c], ".csv")
+              
+              forc <- read.csv(comp_file) %>%
+                mutate(location = as.character(location)) %>%
+                mutate(location = ifelse(nchar(location) < 2, 
+                                         paste0("0", location), location)) %>%
+                filter(horizon == horiz, target == "wk inc flu hosp",
+                       location == loc) %>%
+                left_join(all_flu, by = c("reference_date", "location"))
+              
+              forc$model <- comp_mods[c]
+              forcs <- rbind(forcs, forc)
+            }
+            
+            wts_df <- data.frame(model = comp_mods, wt = wts)
+            forcs <- forcs %>%
+              left_join(wts_df, by = "model")
+            
+            
+            wis_wt <- forcs %>% 
+              group_by(output_type_id, true_value) %>%
+              summarise(value = sum(wt*value)) %>%
+              ungroup() %>%
+              summarise(wis = weighted_interval_score(as.numeric(output_type_id), 
+                                                      value, unique(true_value)))
+            
+            
+            
+            wis_med <- forcs %>% 
+              group_by(output_type_id, true_value) %>%
+              summarise(value = median(value)) %>%
+              ungroup() %>%
+              summarise(wis = weighted_interval_score(as.numeric(output_type_id), 
+                                                      value, unique(true_value)))
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
                 ress <- data.frame(location = loc, week = d, 
                            forecast_date = sub_dates[d],
                            stack_crps = stack_crps[d], eq_crps = mean_crps[d],
+                           stack_wis = wis_wt, med_wis = wis_med
 			   eta = etad[d])
                 
-        write.csv(weight, paste0("loc_wts/", loc, "_wts.csv"))
+        
 
 	    	ress
 	        #wtsdf <- data.frame(t(as.matrix(wts)))
