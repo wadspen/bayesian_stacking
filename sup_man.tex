@@ -1,0 +1,97 @@
+\begin{figure}[hbt!]
+\centering
+%\begin{subfigure}{}
+  % \centering
+  \includegraphics[width=.48\linewidth]{Images/avs_eta_min.png}
+  % \caption{A subfigure}
+  % \label{fig:sub1}
+%\end{subfigure}%
+%\begin{subfigure}{}
+  \centering
+  \includegraphics[width=.48\linewidth]{Images/sgp_eta_min.png}
+  % \caption{A subfigure}
+  % \label{fig:sub2}
+%\end{subfigure}
+\caption{An example of CRPS values for different values of $\eta$ after 
+optimizing competing model weights for AVS (left) and for SGP (right).}
+\label{fig:min_etas}
+\end{figure}
+
+
+\begin{figure}[hbt!]
+\centering
+%\begin{subfigure}{}
+  % \centering
+  \includegraphics[width=.48\linewidth]{Images/dyn_wts_tr_ex.png}
+  % \caption{A subfigure}
+  % \label{fig:sub1}
+%\end{subfigure}%
+\hspace{0.01\textwidth}
+%\begin{subfigure}{}
+  \centering
+  \includegraphics[width=.48\linewidth]{Images/dyn_wts_opt_ex.png}
+  % \caption{A subfigure}
+  % \label{fig:sub2}
+%\end{subfigure}
+\caption{An example of simulated component weights for 100 time steps. 
+The figure shows the simulated weights for the two components of the true 
+distribution (left) and the weights optimized under SGP for the six competing 
+component models (right).}
+\label{fig:dyn_wts_ex}
+\end{figure}
+
+
+
+\begin{figure}[hbt!]
+\centering
+  \includegraphics[width=.98\linewidth]{Images/sir_sim_med.png}
+\caption{Plots showing results for one step ahead forecasts for SIR
+data for the four
+weighting methods SGP, AVS, BMA, and EQW. The median LogS (left) and 
+CRPS (right) over 3,000 replicates of one step
+ahead predictions at 29 time points colored by weighting methods.
+}
+\label{fig:sir_sim_med}
+\end{figure}
+
+
+
+\begin{figure}[hbt!]
+\centering
+
+  \includegraphics[width=.6\linewidth]{Images/flu_region_wis.png}
+\caption{
+Mean over regions WIS for the four ensemble methods divided
+by mean WIS for the SGP
+separated by shape and color.}
+\label{fig:flu_wis}
+\end{figure}
+
+
+\begin{table}[h!]
+\centering
+\caption{Table showing the number of times ensemble forecasts for each method, 
+SGP, AVS, BMA, and EQW, were ranked 1st, 2nd, 3rd, and 4th according to mean 
+CRPS by region or week. There were 53
+regions evaluated and 29 weeks, so each column under region should sum to 53
+and each column under week to 29.}
+ \begin{tabular}{cccccccc}
+ % {@{\extracolsep{\fill}}
+ %    l
+ %    *{8}{c}
+ %    S[table-format=4.0]}
+ \\
+  Ranking
+  & \multicolumn{3}{c}{By region CRPS}
+  &
+  & \multicolumn{3}{c}{By week CRPS} \\
+  \cmidrule{2-4}  \cmidrule{6-8}
+  & MED & EQW & SGP & & MED & EQW & SGP\\
+  \midrule
+  $1^{st}$ & 21 & 1  & \textbf{31} & & 11 & 1  & \textbf{17}\\
+  $2^{nd}$ & 22 & 12 & 19          & & 15 & 9  & 5\\
+  $3^{rd}$ & 10 & 40 & 3           & & 3  & 19 & 7\\
+  \bottomrule
+ \end{tabular}
+ \label{tab:forecast_rank_wis}
+\end{table}

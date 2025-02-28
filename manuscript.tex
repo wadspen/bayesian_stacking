@@ -1121,7 +1121,7 @@ SGP, AVS, BMA and EQW divided by the mean CRPS score of the SGP
 for all regions in one plot and over all weeks in the other. This value for 
 SGP is always 1, and any value less than 1 is an instance of an ensemble 
 method outperforming the SGP for one region.
-In 30 
+In 31 
 locations, the SGP ensemble forecasts have the best overall scores, and in
 only 3 regions does the SGP perform the worst among the methods compared.
 
@@ -1143,7 +1143,8 @@ only 3 regions does the SGP perform the worst among the methods compared.
 %\end{subfigure}
 \caption{90\% credible intervals for forecast weights estimated via SGP 
     for the 2023-24 CDC FluSite targetting flu hospitalizations at the
-    national level of the United States (left). The intervals in the bottom right
+    national level of the United States (left). The intervals in the bottom 
+    right
     corner are those from the uninformative Dirichlet prior.
 Mean over regions CRPS for the four ensemble methods divided
 by mean CRPS for the SGP
@@ -1154,15 +1155,20 @@ separated by shape and color (right).}
 
 Table \ref{tab:forecast_rank} summarises the forecast performance for the 
 four methods by showing in how many instances forecasts for each method were 
-ranked 1, 2, 3, or 4 over regions or weeks, a smaller ranking meaning better 
-performance. After SGP, AVS has the best performance followed by EQW and 
-finally BMA. 
+ranked 1, 2, 3, or 4 by mean CRPS over regions or weeks, a smaller 
+ranking meaning better performance. 
+By these rankings, SGP performed the best followed by BMA, AVS, and finall
+EQW. Figure \ref{fig:flu_wis} and table \ref{tab:forecast_rank_wis} are
+similar to those of figure \ref{fig:flu_crps} and 
+\ref{tab:forecast_rank} but with results being for ensembles constucted via 
+quantile averaging and forecasts scored by the WIS.
 
 
 \begin{table}[h!]
 \centering
 \caption{Table showing the number of times ensemble forecasts for each method, 
-SGP, AVS, BMA, and EQW, were ranked 1st, 2nd, 3rd, and 4th. There were 53
+SGP, AVS, BMA, and EQW, were ranked 1st, 2nd, 3rd, and 4th according to mean 
+CRPS by region or week. There were 53
 regions evaluated and 29 weeks, so each column under region should sum to 53
 and each column under week to 29.}
  \begin{tabular}{cccccccccc}
@@ -1177,10 +1183,10 @@ and each column under week to 29.}
   \cmidrule{2-5}  \cmidrule{7-10}
   & AVS & BMA & EQW & SGP & & AVS & BMA & EQW & SGP\\
   \midrule
-  $1^{st}$ & 0 & 0 & 0 & 30 & & 1 & 0 & 0 & 28\\
-  $2^{nd}$ & 44 & 3 & 6 & 12 & & 23 & 1 & 5 & 0\\
-  $3^{rd}$ & 7 & 3 & 43 & 1 & & 5 & 0 & 24 & 0\\
-  $4^{th}$ & 2 & 47 & 4 & 3 & & 0 & 28 & 0 & 1\\
+  $1^{st}$ & 5 & 17 & 0  & \textbf{31} & & 5  & 8  & 2  & \textbf{14}\\
+  $2^{nd}$ & 32 & 5 & 1  & 15 & & 17 & 4  & 0  & 8\\
+  $3^{rd}$ & 16 & 17& 16 & 4  & & 7  & 10 & 8  & 3\\
+  $4^{th}$ & 0 & 14 & 36 & 3  & & 0  & 7  & 19 & 3\\
   \bottomrule
  \end{tabular}
  \label{tab:forecast_rank}
@@ -1226,7 +1232,7 @@ linear pooled ensemble forecast by optimizing the dynamic risk function in
 used were posterior predictive samples from a model fit on quantile 
 forecasts, it was key to be able to make a Monte Carlo approximation of the 
 CRPS from (\ref{eq:crps_ens_mse}). Of the methods compared, the SGP is 
-arguably the most complicated, but in forecast performance it greatly 
+arguably the most complicated, but in forecast performance it  
 outperformed the other methods. 
 
 

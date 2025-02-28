@@ -27,6 +27,14 @@ all_crps <- sgp_eq %>%
             by = c("location", "season_week"))
 
 
+all_crps %>% 
+  ungroup() %>% 
+  summarise(mstack = mean(stack_crps),
+            meq = mean(eq_crps), 
+            mbps = mean(bps_crps),
+            mbma = mean(bma_crps))
+
+
 
 loc_mean_crps <- all_crps %>% 
   # mutate(bma_crps = bma_crps/stack_crps,
@@ -72,7 +80,7 @@ loc_mean_crps %>%
                       labels = c("AVS", "BMA", "EQW", "SGP")
                       ,values = c("grey80", "grey60", "grey40", 
                                   "grey20")) +
-  xlab("CRPS") +
+  xlab("RCRPS") +
   ylab("Region") +
   labs(fill = "Method", shape = "Method") +
   theme_bw() +
@@ -136,7 +144,7 @@ all_crps %>%
   geom_line(aes(x = season_week, y = mcrps, colour = method,
                 linetype = method), size = .7) +
   xlab("Week")+
-  ylab("CRPS") +
+  ylab("RCRPS") +
   labs(colour = "Method", linetype = "Method") +
   theme_bw() +
   theme(axis.text.y=element_text(size=10),
@@ -220,6 +228,28 @@ all_crps_long %>%
   reframe(table(rank))
   
   
+  time_mean_crps <- all_crps %>% 
+    # mutate(bma_crps = bma_crps/stack_crps,
+    #        bps_crps = bps_crps/stack_crps,
+    #        eq_crps = eq_crps/stack_crps,
+    #        stack_crps = stack_crps/stack_crps) %>% 
+    pivot_longer(4:7, names_to = "method", values_to = "crps") %>% 
+    group_by(season_week, method) %>% 
+    summarise(mcrps = mean(crps)) %>% 
+    mutate(ind = 1) %>% 
+    arrange(season_week, mcrps) %>% 
+    group_by(season_week) %>% 
+    mutate(rank = cumsum(ind)) %>% 
+    mutate(base_crps = mcrps[method == "stack_crps"]) %>% 
+    ungroup() %>% 
+    mutate(mcrps = mcrps/base_crps) %>%
+    group_by(method) %>%
+    reframe(table(rank))
+  
+  
+
+  
+  
 sgp_eq %>% 
   select(location, week, stack_wis, med_wis) %>% 
   pivot_longer(3:4, names_to = "method", values_to = "score") %>% 
@@ -232,8 +262,100 @@ sgp_eq %>%
   group_by(method) %>% 
   reframe(table(rank))
 
+
+
+###########################################
+################WIS scores#################
+###########################################
+
+
+
+all_wis <- sgp_eq %>% 
+  mutate(season_week = week) %>% 
+  select(location, season_week, forecast_date, stack_wis, med_wis, mean_wis)
+
+
+
+
+plot_wis <- all_wis %>% 
+  # mutate(bma_crps = bma_crps/stack_crps,
+  #        bps_crps = bps_crps/stack_crps,
+  #        eq_crps = eq_crps/stack_crps,
+  #        stack_crps = stack_crps/stack_crps) %>% 
+  pivot_longer(4:6, names_to = "method", values_to = "wis") %>% 
+  group_by(location, method) %>% 
+  summarise(mwis = mean(wis)) %>% 
+  mutate(ind = 1) %>% 
+  arrange(location, mwis) %>% 
+  group_by(location) %>% 
+  mutate(rank = cumsum(ind)) %>% 
+  mutate(base_wis = mwis[method == "stack_wis"]) %>% 
+  ungroup() %>% 
+  mutate(mwis = mwis/base_wis) %>% 
+  left_join(all_flu %>% 
+              select(location, location_name) %>% 
+              unique(), by = "location")
   
+
+
+sgpw_order <- plot_wis %>% 
+  filter(method == "med_wis") %>% 
+  arrange(mwis)
+
+
+plot_wis %>% 
+  # filter(method != "bma_crps") %>%
+  # filter(!(method %in% c("bma_crps", "eq_crps"))) %>%
+  mutate(method = ifelse(method == "stack_wis", "SGP", 
+                         ifelse(method == "mean_wis", "EQW", 
+                                ifelse(method == "med_wis", "MED",
+                                       NA)))) %>% 
+  mutate(method = factor(method, levels = c("MED", "EQW", "SGP"))) %>% 
+  mutate(location_name = factor(location_name, 
+                                levels = sgpw_order$location_name)) %>%
+  ggplot() +
+  geom_point(aes(y = location_name, x = mwis, fill = method, shape = method),
+             size = 3) +
+  scale_shape_manual(name = "Method", values=c(22:24)) +
+  scale_fill_manual(name = "Method",
+                    labels = c("MED", "EQW", "SGP")
+                    ,values = c("grey60", "grey40", 
+                                "grey20")) +
+  xlab("RWIS") +
+  ylab("Region") +
+  labs(fill = "Method", shape = "Method") +
+  theme_bw() +
+  theme(axis.text.y=element_text(size=10),
+        axis.text.x=element_text(size = 14),
+        axis.title=element_text(size=20),
+        strip.text.y = element_text(size = 12,),
+        strip.text.x = element_text(size = 14),
+        legend.title = element_text(size = 19),
+        legend.text = element_text(size = 17),
+        legend.position = c(.21,.75)
+        # ,legend.position = "none"
+  )
   
-  
-  
+ 
+plot_wis %>% 
+  group_by(method) %>% 
+  reframe(table(rank))
+
+
+plot_wis <- all_wis %>% 
+  # mutate(bma_crps = bma_crps/stack_crps,
+  #        bps_crps = bps_crps/stack_crps,
+  #        eq_crps = eq_crps/stack_crps,
+  #        stack_crps = stack_crps/stack_crps) %>% 
+  pivot_longer(4:6, names_to = "method", values_to = "wis") %>% 
+  group_by(season_week, method) %>% 
+  summarise(mwis = mean(wis)) %>% 
+  mutate(ind = 1) %>% 
+  arrange(season_week, mwis) %>% 
+  group_by(season_week) %>% 
+  mutate(rank = cumsum(ind)) %>% 
+  mutate(base_wis = mwis[method == "stack_wis"]) %>% 
+  ungroup() %>% 
+  mutate(mwis = mwis/base_wis)
+
   

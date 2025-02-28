@@ -13,7 +13,8 @@
 \usepackage{microtype}      % microtypography
 \usepackage{lipsum}		% Can be removed after putting your text content
 \usepackage{graphicx}
-\usepackage{natbib}
+% \usepackage{natbib}
+\usepackage{apacite}
 \usepackage{doi}
 \usepackage{amsmath,amsthm,amssymb,scrextend,mathtools}
 \usepackage{xr}
@@ -29,7 +30,10 @@
 \usepackage{dsfont}
 \newcommand{\1}[1]{\mathds{1}\left[#1\right]}
 
-\newcommand{\spencer}[1]{{\color{blue} Spencer: #1}}
+\usepackage{blindtext}
+\usepackage{multicol}
+
+\newcommand{\spencer}[1]{{\color{red} Spencer: #1}}
 \newcommand{\jarad}[1]{{\color{white} Jarad: #1}}
 
 
@@ -127,7 +131,7 @@ methods considered.
 
 
 
-\bibliographystyle{unsrtnat}
+\bibliographystyle{apa}
 \bibliography{master_bib}  %%% Uncomment this line and comment out the ``thebibliography'' section below to use the external .bib file (using bibtex) .
 
 
