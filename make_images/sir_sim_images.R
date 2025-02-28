@@ -1,4 +1,7 @@
-sim_scores <- read.csv("./sir_res/sir_res.csv") %>%
+library(ggplot2)
+library(dplyr)
+setwd(paste0(here::here(), "/make_images"))
+sim_scores <- read.csv("../simulations/sir_res/sir_res.csv") %>%
 select(-X)
 # sim_scores$time <- rep(rep(1:38, 4), 1000)
 
@@ -110,6 +113,84 @@ crpsp <- sim_scores %>%
 
 
 cowplot::plot_grid(logsp, pit_hist, crpsp, pit_box, nrow = 2, 
+                   ncol = 2, rel_heights = c(1,1))
+
+
+
+
+
+
+
+################################################
+#################median plots###################
+################################################
+
+
+logsp <- sim_scores %>%
+  filter(logs != Inf) %>% 
+  filter(time <= 30 & time > 1) %>%
+  # filter(methods == "BMA") %>%
+  group_by(method, time) %>%
+  summarise(mlogs = median(logs, na.rm = TRUE)) %>%
+  ggplot() +
+  geom_line(aes(x = time, y = mlogs, colour = method,
+                linetype = method), size = 1.1) +
+  scale_colour_manual(name = "Model",
+                      labels = c("AVS", "BMA", "EQW", "SGP", "SGP50")
+                      ,values = c("grey80", "grey60", "grey40",
+                                  "grey20", "grey0")) +
+  scale_linetype_manual(name= "Model",
+                        values=c("twodash", "dotdash", "longdash",
+                                 "solid", "dotted"),
+                        labels=c("AVS", "BMA", "EQW", "SGP", "SGP50")) +
+  ylab("LogS") +
+  xlab("") +
+  labs(colour = "Method", linetype = "Method") +
+  theme_bw() +
+  theme(axis.text.y=element_text(size=12),
+        axis.text.x=element_text(size = 15),
+        axis.title=element_text(size=18),
+        strip.text.y = element_text(size = 12,),
+        strip.text.x = element_text(size = 16),
+        legend.title = element_text(size = 14),
+        legend.text = element_text(size = 13)
+        ,legend.position = c(.87, .75)
+  )
+
+crpsp <- sim_scores %>%
+  filter(logs != Inf) %>% 
+  filter(time <= 30 & time > 1) %>%
+  # filter(methods == "BMA") %>%
+  group_by(method, time) %>%
+  summarise(mcrps = median(crps, na.rm = TRUE)) %>%
+  ggplot() +
+  geom_line(aes(x = time, y = mcrps, colour = method,
+                linetype = method), size = 1.1) +
+  scale_colour_manual(name = "Model",
+                      labels = c("AVS", "BMA", "EQW", "SGP", "SGP50")
+                      ,values = c("grey80", "grey60", "grey40", 
+                                  "grey20", "grey0")) +
+  scale_linetype_manual(name= "Model",
+                        values=c("twodash", "dotdash", "longdash", 
+                                 "solid", "dotted"),
+                        labels=c("AVS", "BMA", "EQW", "SGP", "SGP50")) +
+  ylab("CRPS") +
+  xlab("Time") +
+  labs(colour = "Method", linetype = "Method") +
+  theme_bw() +
+  theme(axis.text.y=element_text(size=12),
+        axis.text.x=element_text(size = 15),
+        axis.title=element_text(size=18),
+        strip.text.y = element_text(size = 12,),
+        strip.text.x = element_text(size = 16),
+        legend.title = element_text(size = 15),
+        legend.text = element_text(size = 14)
+        ,legend.position = "none"
+  )
+
+
+
+cowplot::plot_grid(logsp, crpsp, nrow = 1, 
                    ncol = 2, rel_heights = c(1,1))
 
 sim_scores %>% 

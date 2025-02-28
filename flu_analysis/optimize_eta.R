@@ -49,6 +49,7 @@ horiz <- 0
 loc <- "01"
 d <- 2
 
+
 #{
 stack_res <- foreach(loc = locations,
         .packages = c("cmdstanr", "stringr",
@@ -133,6 +134,27 @@ stack_res <- foreach(loc = locations,
               filter(location == loc)
             
             comp_mods <- unique(comps$model)
+            if (loc == "10") {
+              comp_mods <- comp_mods[comp_mods != "UMass-trends_ensemble"]
+              }
+            if (loc == "02") {
+              comp_mods <- comp_mods[comp_mods != "MIGHTE-Nsemble"]
+              }
+            if (loc == "15") {
+              comp_mods <- comp_mods[comp_mods != "CEPH-Rtrend_fluH"]
+              }
+            if (loc == "23") {
+              comp_mods <- comp_mods[comp_mods != "SigSci-TSENS"]
+              }
+            if (loc == "32") {
+              comp_mods <- comp_mods[comp_mods != "MIGHTE-Nsemble"]
+              }
+            if (loc == "33") {
+              comp_mods <- comp_mods[comp_mods != "MIGHTE-Nsemble"]
+              }
+            if (loc == "35") {
+              comp_mods <- comp_mods[comp_mods != "MIGHTE-Nsemble"]
+              }
             
             forcs <- data.frame()
             for (c in 1:length(comp_mods)) {

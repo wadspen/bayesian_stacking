@@ -4,10 +4,10 @@ library(stringr)
 library(readr)
 library(lubridate)
 library(tidyr)
-source("./simulations/stack_functions.R")
+source("../simulations/stack_functions.R")
 
-bma_bps <- readRDS("./flu_analysis/bma_bps_crps.rds")
-sgp_eq <- readRDS("./flu_analysis/sgp_eq.rds") %>% 
+bma_bps <- readRDS("../flu_analysis/bma_bps_crps.rds")
+sgp_eq <- readRDS("../flu_analysis/sgp_eq.rds") %>% 
   filter(week < 30)
 all_flu <- read.csv("../../forecast-hub/FluSight-forecast-hub/target-data/target-hospital-admissions.csv")
 
@@ -66,8 +66,12 @@ loc_mean_crps %>%
                                 levels = sgp_order$location_name)) %>%
   ggplot() +
   geom_point(aes(y = location_name, x = mcrps, fill = method, shape = method),
-             size = 2.5ß) +
+             size = 3) +
   scale_shape_manual(values=c(21:24)) +
+  scale_fill_manual(name = "Method",
+                      labels = c("AVS", "BMA", "EQW", "SGP")
+                      ,values = c("grey80", "grey60", "grey40", 
+                                  "grey20")) +
   xlab("CRPS") +
   ylab("Region") +
   labs(fill = "Method", shape = "Method") +
@@ -77,9 +81,9 @@ loc_mean_crps %>%
         axis.title=element_text(size=20),
         strip.text.y = element_text(size = 12,),
         strip.text.x = element_text(size = 14),
-        legend.title = element_text(size = 17),
-        legend.text = element_text(size = 15),
-        legend.position = c(.15,.25)
+        legend.title = element_text(size = 19),
+        legend.text = element_text(size = 17),
+        legend.position = c(.15,.45)
         # ,legend.position = "none"
         )
 
@@ -212,6 +216,19 @@ all_crps_long %>%
   mutate(ind = 1) %>% 
   group_by(location, season_week) %>% 
   mutate(rank = cumsum(ind)) %>% filter(rank == 1) %>% group_by(method) %>% summarise(n())
+  group_by(method) %>% 
+  reframe(table(rank))
+  
+  
+sgp_eq %>% 
+  select(location, week, stack_wis, med_wis) %>% 
+  pivot_longer(3:4, names_to = "method", values_to = "score") %>% 
+  group_by(location, method) %>% 
+  summarise(mscore = mean(score)) %>% 
+  arrange(location, mscore) %>% 
+  mutate(ind = 1) %>% 
+  group_by(location) %>% 
+  mutate(rank = cumsum(ind)) %>% 
   group_by(method) %>% 
   reframe(table(rank))
 

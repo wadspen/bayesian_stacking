@@ -2,9 +2,10 @@ library(dplyr)
 library(ggplot2)
 library(tidyr)
 
+setwd(paste0(here::here(), "/make_images"))
 
-
-dyn <- readRDS("../simulations/dynamic_stacks_all_weeks_fin2.rds")
+dyn <- readRDS("../simulations/dynamic_stacks_all_weeks_fin.rds") %>% 
+  filter(time < 50)
 
 dyn <- dyn %>% 
   mutate(method = ifelse(method == "avs", "AVS",
@@ -62,6 +63,14 @@ logsp <- dyn %>%
   ggplot() + 
   geom_line(aes(x = time, y = mlogss, 
                 colour = method, linetype = method), size = 1.1) +
+  scale_colour_manual(name = "Model",
+                      labels = c("AVS", "BMA", "EQW", "SGP", "SGP50")
+                      ,values = c("grey80", "grey60", "grey40",
+                                  "grey20", "grey0")) +
+  scale_linetype_manual(name= "Model",
+                        values=c("twodash", "dotdash", "longdash",
+                                 "solid", "dotted"),
+                        labels=c("AVS", "BMA", "EQW", "SGP", "SGP50")) +
   ylab("LogS") +
   xlab("") +
   labs(colour = "Method", linetype = "Method") +
@@ -87,6 +96,14 @@ crpsp <- dyn %>%
   ggplot() + 
   geom_line(aes(x = time, y = mcrpss, 
                 colour = method, linetype = method), size = 1.1) +
+  scale_colour_manual(name = "Model",
+                      labels = c("AVS", "BMA", "EQW", "SGP", "SGP50")
+                      ,values = c("grey80", "grey60", "grey40",
+                                  "grey20", "grey0")) +
+  scale_linetype_manual(name= "Model",
+                        values=c("twodash", "dotdash", "longdash",
+                                 "solid", "dotted"),
+                        labels=c("AVS", "BMA", "EQW", "SGP", "SGP50")) +
   ylab("CRPS") +
   xlab("t") +
   labs(colour = "Method", linetype = "Method") +
