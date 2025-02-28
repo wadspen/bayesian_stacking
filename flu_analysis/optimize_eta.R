@@ -39,14 +39,17 @@ all_flu <- read.csv("../../FluSight-forecast-hub/target-data/target-hospital-adm
 #etas <- seq(.5, 30, length.out = 30)
 all_flu <- all_flu %>%
   mutate(reference_date = date, true_value = value) %>%
-  dplyr::select(-date, -value)
+  dplyr::select(-date, -value) %>%
+  mutate(true_value = log(true_value + 1))
 etas <- seq(-1, 5, length.out = 20)
 etas <- 1
 #locations <- c("01", "16")
 dat <- sub_dates[1]
-horizon <- 0
+horiz <- 0
+loc <- "01"
+d <- 2
 
-
+#{
 stack_res <- foreach(loc = locations,
         .packages = c("cmdstanr", "stringr",
                       "lubridate", "dplyr")
@@ -89,18 +92,18 @@ stack_res <- foreach(loc = locations,
                 stack_crps[d] <- mix_mat_crps(weight[,d], all_mse[,d], 
                                               absdiff_arr[,,d])
 	    	wts <- weight[,d]
-              } else if (d == 2) {
+             # } else if (d == 2) {
                 
-                wts <- try(learning_rate(log(etad[d]), d-1, mse_mat = all_mse, 
-                                         absdiff_arr = absdiff_arr, 
-                                         mod = mod, power = 1, 
-                                         alpha = 1, return_wts = TRUE))
-                wts[wts < 0] <- 0
-                wts <- wts/sum(wts)
-                weight[,d] <- wts
+             #   wts <- try(learning_rate(log(etad[d]), d-1, mse_mat = all_mse, 
+             #                            absdiff_arr = absdiff_arr, 
+             #                            mod = mod, power = 1, 
+             #                            alpha = 1, return_wts = TRUE))
+             #   wts[wts < 0] <- 0
+             #   wts <- wts/sum(wts)
+             #   weight[,d] <- wts
                 
-                stack_crps[d] <- mix_mat_crps(weight[,d], all_mse[,d], 
-                                              absdiff_arr[,,d])
+             #   stack_crps[d] <- mix_mat_crps(weight[,d], all_mse[,d], 
+             #                                 absdiff_arr[,,d])
               
               } else {
                   ev_grid <- c()
@@ -137,6 +140,7 @@ stack_res <- foreach(loc = locations,
                                   "-", comp_mods[c], ".csv")
               
               forc <- read.csv(comp_file) %>%
+		mutate(value = log(value + 1)) %>%
                 mutate(location = as.character(location)) %>%
                 mutate(location = ifelse(nchar(location) < 2, 
                                          paste0("0", location), location)) %>%
@@ -157,7 +161,7 @@ stack_res <- foreach(loc = locations,
               group_by(output_type_id, true_value) %>%
               summarise(value = sum(wt*value)) %>%
               ungroup() %>%
-              summarise(wis = weighted_interval_score(as.numeric(output_type_id), 
+              summarise(stack_wis = weighted_interval_score(as.numeric(output_type_id), 
                                                       value, unique(true_value)))
             
             
@@ -166,8 +170,18 @@ stack_res <- foreach(loc = locations,
               group_by(output_type_id, true_value) %>%
               summarise(value = median(value)) %>%
               ungroup() %>%
-              summarise(wis = weighted_interval_score(as.numeric(output_type_id), 
+              summarise(med_wis = weighted_interval_score(as.numeric(output_type_id), 
                                                       value, unique(true_value)))
+
+
+
+	    wis_mean <- forcs %>% 
+              group_by(output_type_id, true_value) %>%
+              summarise(value = mean(value)) %>%
+              ungroup() %>%
+              summarise(mean_wis = weighted_interval_score(as.numeric(output_type_id), 
+                                                      value, unique(true_value)))
+
             
             
             
@@ -195,8 +209,8 @@ stack_res <- foreach(loc = locations,
                 ress <- data.frame(location = loc, week = d, 
                            forecast_date = sub_dates[d],
                            stack_crps = stack_crps[d], eq_crps = mean_crps[d],
-                           stack_wis = wis_wt, med_wis = wis_med
-			   eta = etad[d])
+                           stack_wis = wis_wt, med_wis = wis_med, mean_wis = wis_mean,
+			   eta = etas)
                 
         
 
