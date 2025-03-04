@@ -41,7 +41,8 @@ It's rare that nature's data generating processes can be known, so a common
 forecasting approach is to produce multiple statistical models or predictive 
 procedures each targeting the same event. One may then search for and select 
 the best forecasts or in some way combine forecasts to improve overall 
-forecasting \cite[]{yao2018using,clyde2013bayesian,biggerstaff2016results,
+forecast performance
+\cite[]{yao2018using,clyde2013bayesian,biggerstaff2016results,
 bernardo1994bayesian}. Large forecast competitions and official forecast 
 hubs exist to exploit the skill of multiple forecasts and forecasters 
 \cite[]{mathis2024evaluation,Cramer2022-hub-dataset,hyndman2020brief,
@@ -52,12 +53,12 @@ forecasts, typically assessed via a \textit{proper scoring rule}, are
 compared.
 Combining multiple candidate forecasts into an ensemble forecast is common 
 practice in forecast hubs, and this often leads to forecasts which are 
-superior to individual individual forecasts \cite[]{wang2023forecast,
+superior to the individual forecasts \cite[]{wang2023forecast,
 li2023bayesian,gyamerah2020probabilistic,li2019combining,
-reich2019collaborativeens}. For example in the 2023-24 United States Centers 
+reich2019collaborativeens}. For example, in the 2023-24 United States Centers 
 for Disease Control and Prevention (CDC) collaborative flu forecasting 
-competition, also known as FluSight, ensemble forecasts largely outperformed 
-individual forecasts in forecasting flu hospitalizations, and in fact the 
+competition --also known as FluSight-- ensemble forecasts largely outperformed 
+individual forecasts in predicting flu hospitalizations, and in fact the 
 forecast published weekly by the CDC as the official forecast is an ensemble 
 of all competing forecasts \cite[]{mathis2024evaluation}. Figure 
 \ref{fig:cdc_forecasts} shows an example of FluSight hospitalization 
@@ -85,7 +86,7 @@ manuscript is on combining forecasts via \textit{linear pooling}, also known as
 model stacking \cite[]{yao2018using,geweke2011optimal,hall2007combining,
 stone1961opinion}. Most linear pooling combination methods involve selecting 
 a set of combination weights, a point on the simplex, which optimize the 
-ensemble according to some criteria but which leave out room for providing 
+ensemble according to some criteria but which lack any weight
 uncertainty in the optimization. Weights in an ensemble may also be selected 
 by maximizing a likelihood or via a Bayesian posterior distribution, but when 
 so constructed ensemble forecasts may not be suited for the problem specific 
@@ -95,7 +96,6 @@ suited to problem specific needs. An important case of linear pooling is
 combining via a simple average over the forecasts. This equal weighting (EQW) 
 scheme frequently outperforms sophisticated combination methods leading to 
 what is known as the 
-\jarad{need to use `` '' for quotes}
 ``forecast combination puzzle'' \cite[]{frazier2023solving,
 claeskens2016forecast,smith2009simple}. 
 
@@ -119,11 +119,11 @@ performing forecast. Section \ref{sec:preliminaries} includes a brief
 review of probabilistic forecasts and linear pool combinations of forecasts. 
 In section \ref{sec:sgp} the SGP is developed, and important details of the 
 Gibbs posterior and proper scoring rules are covered. Section 
-\ref{sec:simulation} includes two simulation studies to analyze the SGP and 
+\ref{sec:simulation} includes three simulation studies to analyze the SGP and 
 compare it with other forecast combination methods. In these studies the SGP 
 outperforms model averaging and EQW methods for combining forecasts. In 
 \ref{sec:flu_analysis} the SGP is used to construct ensemble forecasts for the 
-FluSight project and again outperforming  model averaging and EQW approaches. 
+FluSight project where is also outperforms model averaging and EQW approaches. 
 The manuscript is concluded in section \ref{sec:4conc}. 
 
 
@@ -150,13 +150,15 @@ The manuscript is concluded in section \ref{sec:4conc}.
 
 \section{Probabilistic forecasts and linear pooling} \label{sec:preliminaries}
 
-We consider the situation where a set of data $y_1,..., y_T$ is given, and one 
+We consider the situation where a set of time indexed data $y_1,..., y_T$ 
+is given, and one 
 is tasked with producing a probabilistic forecast for the unobserved 
-$\tilde{y}_{T+h}$ for $h$ time steps ahead of the latest time $T$. The 
-forecaster produces a forecast $P$ which is probabilistic in nature and which 
+$\tilde{y}_{T+h}$ for $h$ time steps ahead of the latest observed time $T$. The 
+forecaster produces a forecast $P$ which is probabilistic and which 
 may also be indexed by $t \in \{1, ..., T\}$. $P$ may be a PDF, CDF, quantile 
 function, set of quantiles or intervals, or any other representation used in 
-probabilistic forecasting \cite[]{,gneiting2014probabilistic}. For the 
+probabilistic forecasting 
+\cite[]{wadsworth2023mixture,gneiting2014probabilistic}. For the 
 remainder of this paper, unless otherwise stated, we assume $P$ is the CDF 
 forecast of a continuous random variable and $p$ is the corresponding PDF. 
 \cite{gneiting2007probabilistic} argue that a probabilistic forecast should 
@@ -179,7 +181,7 @@ $\{y_t\}$. The setting where the true model
 $M_{\mathcal{T}} \notin \mathcal{M}$ is referred to as the $\mathcal{M}-$open 
 setting \cite[]{yao2018using,bernardo1994bayesian}. In real world problems, it 
 is often the case that forecasts belong to the $\mathcal{M}-$open setting. 
-Combining the candidate forecasts in the $\mathcal{M}-$open setting is a 
+Combining the candidate forecasts in this setting is a 
 powerful way to improve forecasts and has been done now for over half a 
 century \cite[]{wang2023forecast}. 
 
@@ -187,10 +189,11 @@ century \cite[]{wang2023forecast}.
 The most common method for combining several probabilistic forecasts is known 
 as \textit{linear opinion pooling} and is a linear combination of multiple 
 probabilistic forecasts. For $C$ candidate forecasts of the event 
-$\tilde{y}_{t+h}$, $h$ time steps into the future from an observed time $t$ 
-with CDFs $P_{c}(\tilde{y}_{t + h})$ for $c \in (1,...,C)$, and forecast 
-weights $w_c$, a linear pool is defined as the mixture distribution in 
-(\ref{eq:linp_forc}). To be a proper mixture distribution, the weights must 
+$\tilde{y}_{t+h}$, $h$ time steps into the %future from an observed time $t$ 
+with CDFs $P_{c}(\tilde{y}_{t + h})$ for $c \in (1,...,C)$, a linear pool 
+is defined as the mixture distribution in 
+(\ref{eq:linp_forc}). Here, the $w_c$ are linear pool weights. 
+To be a proper mixture distribution, the weights must 
 be constrained such that they are each nonnegative and together sum to 1, or 
 $w_c \geq 0$ and $\sum_{c = 1}^C w_c = 1$.
 
@@ -213,7 +216,8 @@ rule \cite[]{gneiting2007strictly}. It is common to select weights which
 minimize the logarithmic score (LogS) \cite[]{li2023bayesian,yao2018using,
 geweke2011optimal,hall2007combining} or weights that minimize the continuous 
 ranked probability score (CRPS) \cite[]{berrisch2023crps,li2019combining,
-thorey2017online}, both of which are negatively oriented proper scoring rules. 
+thorey2017online}. Both of these scores are negatively oriented proper 
+scoring rules. 
 More discussion on proper scoring rules is given in section \ref{sec:sgp}. 
 Weight selection methods are often tailored to be problem specific, for 
 example they may be formulated to be dynamic \cite[]{li2023bayesian,
@@ -221,7 +225,7 @@ billio2013time} or to vary at different points on the PDF
 \cite[]{berrisch2023crps}.
 
 
-Another way to select weights in (\ref{eq:linp_forc}) is through model 
+Alternatively, weights in (\ref{eq:linp_forc}) might be selected through model 
 averaging which \cite{wang2023forecast} emphasize is distinct from forecast 
 combination. Forecast combination is combining forecasts with the aim of 
 creating an optimal forecast, whereas model averaging determines model 
@@ -252,7 +256,7 @@ Adaptive variable selection (AVS) is an alternative model averaging method
 introduced by \cite{lavine2021adaptive}, and it falls within the Bayesian 
 predictive synthesis framework \cite[]{tallman2024bayesian,mcalinn2019dynamic}. 
 In AVS, a prior distribution is assigned to each candidate model, and a Gibbs 
-posterior model probability is computed for each candidate model where 
+posterior model probability is computed for each model. In AVS, 
 posterior updating is based on the exponential of some problem specific 
 function, $S(\cdot)$,
 % $S:\Theta \times \mathcal{Y} \rightarrow \mathbb{R}$ 
@@ -266,8 +270,7 @@ rather than on a model likelihood as in BMA. The AVS model probability is then
 where $\eta$ is a model tuning parameter to be selected based on the needs of 
 the problem. AVS allows for much more flexibility in updating posterior model 
 averages, but as we show in a simulation in section \ref{sec:simulation} AVS 
-may, like BMA, tend to prefer one candidate model over the other candidate 
-models.
+may, like BMA, tend to prefer one candidate model over the others.
 
 Among all weight selection methods for linear pooling, one of the most 
 consistently well performing combinations is to give equal weight to all 
@@ -277,7 +280,8 @@ phenomenon has received much attention (see for example
 and fitting a simple average is obviously easier than using most weight 
 optimization methods. Thus for another weight selection method to be worth 
 implementing, it should outperform the EQW scheme. It has thus be recommended 
-to use an EQW average as a baseline by which other methods should be compared 
+that an EQW average be used as a baseline by which other methods 
+are compared 
 \cite[]{li2023bayesian,clemen1989combining}.
 
 
@@ -305,15 +309,18 @@ sections \ref{sec:gibb_post} and \ref{sec:prop_score}.
 
 \begin{equation}
     \label{eq:sgp}
-    \pi^{(\eta)}_n (\omega) \propto \text{exp}\{-\eta n S_n(\omega)\} \pi(\omega)
+    \pi^{(\eta)}_n (\omega) \propto \text{exp}\{-\eta n S_n(\omega)\} 
+    \pi(\omega)
 \end{equation}
 
-The SGP is a probability distribution over weights which allows for inferential 
+The SGP is a probability distribution over the simplex
+which allows for inferential 
 analysis of the weights. This is in contrast to the stacking done by 
 \cite{yao2018using} where the weights are optimized as a point on the simplex. 
 The SGP also differs from the posterior model averaging in (\ref{eq:bma}) and 
-(\ref{eq:avs}). In the case of posterior model averaging, the posterior 
-probability is assigned directly to candidate models rather than model weights. 
+(\ref{eq:avs}) where the posterior 
+probability is point assigned directly to candidate models rather than 
+to the model weights. 
 In the remainder of this section a general Gibbs posterior is defined in 
 more detail following \cite{martin2022direct}, proper scoring rules are 
 defined following \cite{gneiting2007strictly} with specific emphasis on the 
@@ -331,13 +338,14 @@ inference on parameters which minimize some loss function rather than
 maximize a likelihood, the Gibbs posterior is a alternative to the standard 
 posterior distribution which allows for inference on the minimizer of a 
 selected function. The Gibbs posterior has been used in many applications, 
-and has shown promising results often outperforming the Bayesian posterior 
+and has shown promising results, often outperforming the Bayesian posterior 
 in question specific parameter estimation, prediction, model selection, and 
 model averaging \cite[]{martin2022direct,loaiza2021focused,
 lavine2021adaptive,syring2017gibbs,jiang2008gibbs}.
 
 
-The setup for constructing a Gibbs posterior is as follows. We are given data, 
+Following \cite{martin2022direct}, the setup for constructing a Gibbs posterior 
+is as follows. We are given data, 
 $y_1, ..., y_n \in \mathcal{Y}$ typically assumed to be independent and 
 identically distributed (i.i.d.) from some inaccessible distribution 
 $\mathcal{L}$. We do not assume a likelihood model for the data, either 
@@ -360,7 +368,7 @@ $\theta^*$ may not be unique.
     \theta^* \in \underset{\theta \in \Theta}{\mathrm{argmin}} R(\theta)
 \end{equation}
 Since $R(\theta)$ is inaccessible, an empirical risk function $R_n(\theta)$ 
-based on the given data is formulated as in (\ref{eq:emp_risk}). Then 
+based on the given data is formulated in (\ref{eq:emp_risk}). Then 
 $\hat{\theta}_n$, an estimate of $\theta^*$,  is estimated by the estimator 
 in (\ref{eq:emp_risk_min}).  
 
@@ -384,8 +392,9 @@ van1998asymptotic}.
 
 
 The purpose of the Gibbs posterior is to produce probabilistic uncertainty 
-quantification for the unknown risk minimizer. In this setting, the Gibbs 
-posterior is defined in (\ref{eq:gibb_post}) where $R_n$ is the empirical 
+for the unknown risk minimizer. In this setting, the Gibbs 
+posterior is defined in (\ref{eq:gibb_post}) where $R_n(\theta)$ 
+is the empirical 
 risk from (\ref{eq:emp_risk}). The Gibbs posterior is proportional to the 
 product of a prior distribution assigned to $\theta$ and the exponential of 
 the empirical risk times a parameter $\eta > 0$ which \cite{martin2022direct} 
@@ -417,10 +426,11 @@ $\eta$ by most well reasoned methods should be appropriate
 
 For the SGP in (\ref{eq:sgp}), the more general $\theta 
 \in \Theta$ is replaced with $\omega \in \{w_1, ..., w_C : 0 \leq w_c \leq 1, 
-\sum_c w_c = 1\}$, and we consider empirical risk functions based two loss 
+\sum_c w_c = 1\}$, and we consider empirical risk functions based on of 
+two loss 
 functions. The first of these functions is in (\ref{eq:er_iid}), and is used 
 for the simple case of i.i.d. data $y_1,..., y_n$ and candidate models which 
-are provided once and remain constant as more data becomes available.
+are provided once and remain constant as more data become available.
 
 \begin{equation}
     S_n(\omega) = G_n(\omega) = \frac{1}{n}\sum_{i = 1}^n 
@@ -445,12 +455,13 @@ $\tilde{y}_{T+h}$.
 In this dynamic setting, $\alpha^{T-t}$ is a discount factor 
 \cite[]{koop2013large,raftery2010online} used to lessen the influence of 
 previous forecasts and making the performance of the most recent forecasts 
-the most influential. In \cite{lavine2021adaptive} the discount factor is 
+the most influential. In \cite{lavine2021adaptive}, the discount factor is 
 fixed at $\alpha = 0.98$, and we use the same value herein. The linear pool 
 $\bar{P}_{t, \omega}$ is made up of competing models which may or may not be 
 time dependent. In the second simulation in section \ref{sec:simulation}, 
 the risk in (\ref{eq:er_dyn}) is used where competing models are fixed in 
-time whereas in the analysis of flu forecasts in section 
+time whereas in both the third simulation study and 
+the analysis of flu forecasts in section 
 \ref{sec:flu_analysis}, the forecasts vary in time.
 
 
@@ -542,15 +553,28 @@ Here $X$ and $X'$ are independent copies of the same random variable with
 CDF $P$. When there is no closed form solution to the CRPS but where one 
 can sample from the forecast distribution, the CRPS may still be estimated 
 via Monte Carlo approximation by estimating the expectations in 
-(\ref{eq:crps_mse}). We also note that if $P$ takes the form of an ensemble 
-forecast where all components are continuous distributions, then 
-(\ref{eq:crps_mse}) can be further reduced to (\ref{eq:crps_ens_mse}). A 
-simple proof for this is in appendix \ref{app:crps_ens_pf}. 
+(\ref{eq:crps_mse}). For the cases where $P$ takes the form of an ensemble 
+forecast where all components are continuous distributions, we contribute the
+additional reduction of
+(\ref{eq:crps_mse}) to (\ref{eq:crps_ens_mse}) found in proposition 
+\ref{prop:crps_ens_mse}. A 
+simple proof for proposition \ref{prop:crps_ens_mse} 
+is in appendix \ref{app:crps_ens_pf}. 
+
+\begin{proposition}
+Given $C$ CDFs of continuous distributions $P_1, ..., P_C$ and 
+a set of weights on a simplex $w_1, ..., w_C$, the CRPS of the mixture
+distribution with CDF $\bar{P}(x) = \sum_c w_c P_c (x)$ evaluated at $y$ has
+the form of equation (\ref{eq:crps_ens_mse}).
 \begin{equation}
     \label{eq:crps_ens_mse}
     CRPS(\bar{P}, y) = \sum_{c = 1}^C w_c E|X_c - y| - 
     \frac{1}{2}\sum_{c = 1}^C \sum_{c' = 1}^C w_c w_{c'} E|X_c - X_{c'}|
 \end{equation}
+Here $X_c$ is a random variable with corresponding CDF $P_c$, and $X_{c'}$ is 
+a random variable independent of $X_c$ but which is equal in distribution.
+\label{prop:crps_ens_mse}
+\end{proposition}
 \cite{li2019combining} showed this result for all mixture components being 
 Gaussian, but it's simple to show that it holds when all components are 
 continuous. This result allows for straightforward CRPS estimation for a 
@@ -608,7 +632,8 @@ the SGP proposed in (\ref{eq:sgp}) is affirmed by theorem \ref{thm:sgp_cons}.
      If $\boldsymbol{\omega}^* \in \Omega = \{w1, ..., w_C : 
      \sum_c w_c = 1, 0 \leq w_c \}$ uniquely minimizes $G(\omega) = 
      E[CRPS(\bar{P}_{\omega}, Y)]$ and for the prior distribution $\pi$, 
-     $\pi(\{\boldsymbol{\omega} : G(\boldsymbol{\omega}) - G(\boldsymbol{\omega}^*) < \delta\}) > 0$ 
+     $\pi(\{\boldsymbol{\omega} : G(\boldsymbol{\omega}) - 
+     G(\boldsymbol{\omega}^*) < \delta\}) > 0$ 
      for all $\delta > 0$, then for any $\epsilon > 0$
 
      \[
@@ -643,7 +668,7 @@ setting is that the models which have the best predictive abilities may be
 changing in time making $\omega^*$ a moving target. However, this does not 
 necessarily discount the SGP's ability to select model weights which produce 
 well performing ensemble forecasts in dynamic settings. This is explored in 
-second simulation study and in a real data example below.
+additional simulation studies and in a real data example below.
 
 
 
@@ -660,10 +685,18 @@ includes the same predictive models, but the data is generated dynamically and
 weights are optimized for one step ahead forecasts. The third study focuses on
 combining four models used to forecast data generated from the stochastic
 compartmental susceptible-infectious-recovered (SIR) disease outbreak model.
+Unless stated otherwise, the prior distribution used for the SGP was an
+uninformative Dirichlet distribution with the parameter being a vector of 1s.
+In all studies, the weights used in the SGP ensembles are selected as the 
+mean vectors of 
+individual draws from the Gibbs posterior obtained  Hamiltonian 
+Monte Carlo sampling using the \texttt{cmdstanr} \texttt{R} package 
+\cite[]{stan2024manual,gabry2022stan}.
+
 
 \subsection{I.I.D. data}
 
-The first study in this section shows how the SGP may be used to optimize 
+This first shows how the SGP may be used to optimize 
 weights among competing models in an $\mathcal{M}$-open scenario and is similar 
 to the first simulation study in \cite{yao2018using}. In this study there are 
 six candidate models for predicting the data. Data is generated from the 
@@ -675,7 +708,7 @@ Because all simulated data is i.i.d., the empirical risk function from
 distributed with variance 1, but each model has a unique mean parameter, 
 the unique means being $\{0, 2, 4, 6, 8, 10\}$. Figure \ref{fig:iid_sym_examp}
 \spencer{(may put in supplementary materials)}
-shows in red the mixture distribution from which data is simulated as well as 
+shows in black the mixture distribution from which data is simulated as well as 
 the candidate normal predictive models in grey. 
 
 
@@ -685,13 +718,14 @@ the candidate normal predictive models in grey.
     \caption{Mixture distribution density function from which data are 
     simulated (black) and 6 candidate normal predictive densities (grey). 
     The mixture distribution is 
-    $\nu \times N(3, 1) + (1 - \nu)\times N(6.5,1); w = 0.65)$. The candidate 
+    $\nu \times N(3, 1) + (1 - \nu)\times N(6.5,1); \nu = 0.65$. The candidate 
     predictive distributions are each normal with variance 1 and 
     means 0, 2, 4, 6, 8, and 10.}
     \label{fig:iid_sym_examp}
 \end{figure}
 
-The predictive performance of SGP is compared with that of AVS and BMA. For 
+The predictive performance of the SGP ensemble 
+is compared with that of BMA, AVS, and EQW. For 
 both AVS and SGP, the learning rate $\eta$ needed to be selected, and we opted 
 to select $\eta$ with the aim of minimizing the CRPS for prediction. Figure 
 \ref{fig:min_etas} in the supplementary materials shows an example of how the 
@@ -708,7 +742,8 @@ influence from the prior distribution.
 Figure \ref{fig:opt_dens} (\spencer{put in supplement?})
 shows examples from estimating model weights of 
 constructing a linear pool from the candidate models for samples sizes of 10, 
-20, 50, 100, and 200 for BMA, AVS, and SGP weight selection methods. The top 
+20, 50, 100, and 200 for BMA, AVS, EQW, and SGP weight selection methods. 
+The top 
 row shows how with a sample size as small as 10, BMA concentrates nearly all 
 model probability into one model. AVS does better at spreading the model 
 probability around, but as the sample size increases, it too will often favor 
@@ -720,18 +755,16 @@ spread of the true distribution as the sample size increases.
     \centering
     \includegraphics[scale=.2]{Images/iid_sym_density.png}
     \caption{Examples of estimated densities after weighting of competing 
-    models faceted by weighting method and sample size. The estimated 
+    models faceted by weighting method and sample size. 
+    The weighting methods shown include BMA, AVS, EQW, and SGP. The estimated 
     densities (black) overlay the true model density (grey).}
     \label{fig:opt_dens}
 \end{figure}
-\jarad{Include details about simulation study vs real data analysis.}
-\jarad{Include written out abbreviations, e.g. Bayesian Modeling Averaging 
-(BMA).}
-\jarad{Rewrite using parentheticals, e.g. Examples of estimated densities 
-(black lines) ... from true distributions (gray lines).}
+
 
 Figure \ref{fig:iid_scores} shows boxplots of the CRPS and the LogS for the 
-three methods of weight selection. The simulation was replicated 500 times for 
+four competing weight selection methods. 
+The simulation was replicated 500 times for 
 each sample size, and after selecting weights, the CRPS and LogS in these plots 
 were calculated as the Monte Carlo mean scores for 1,000 additional draws from 
 the true distribution after selecting weights. As the sample size increases, 
@@ -759,10 +792,10 @@ LogS and CRPS, lower is better. }
 The simulation study in this section has similarities to the previous study 
 including that it utilizes the same fixed candidate predictive models and the 
 data is simulated from a normal mixture distribution. Here, however, the 
-mixture distribution from which the data is simulated is dynamic over time 
+mixture distribution from which the data are simulated is dynamic over time 
 and the focus of making an ensemble model is to perform one step ahead 
 forecasting. 
-The data was simulated from the model in (\ref{eq:dyn_sim_mod}). The two 
+The data were simulated from the model in (\ref{eq:dyn_sim_mod}). The two 
 component normals in the mixture distribution are the same as in the previous 
 study, but here the weights for each model are updated at each time point 
 according to a random walk process. 
@@ -815,7 +848,7 @@ show that the
 SGP PIT histogram is much nearer to uniformity than the PIT histograms for the 
 other methods. The boxplots of the 500 UWD1 distances show smaller UWD1 values 
 for the SGP PIT meaning the distances between the PIT and the standard uniform 
-distribution are largely smaller for SGP, further showing superior calibration 
+distribution tend to be smaller for SGP, further showing superior calibration 
 compared to the other methods.
 
 
@@ -862,20 +895,21 @@ The SIR compartmental model was introduced by \cite{kermack1927contribution}
 and is a standard mathematical model used for modeling
 disease outbreaks. The SIR model models a population in which at any given 
 time each individual belongs to one of
-three compartments, susceptible, infected, or recovered. The most basic SIR
+three compartments: susceptible, infected, or recovered. The most basic SIR
 model is deterministic and defined by a set of ordinary differential equations
 --one for each compartment-- but stochastic extensions allow one to simulate
 from an SIR model with uncertainty 
 \cite[]{allen2008mathematical,widgren2019siminf}. When fitting an SIR model
 to track an epidemic, it is common practive to treat real outbreak measurements
 as analogous to the values in the infected compartment
-\cite[]{widgren2019siminf, osthus2019dynamic}. 
+\cite[]{widgren2019siminf, osthus2019dynamic}. \spencer{Add more details
+about the SIR model, maybe in the supplementary material?}
 
 The data used in this simulation study were generated from a stochastic SIR 
 model using the \texttt{SimInf} package in \texttt{R} 
 \cite[]{widgren2019siminf}. For each of 3,000 simulation replicates, 35 
-consecutive ``weeks" of infection counts were sampled. Starting at week 5, 
-we fit four individual forecast models and used to make one week ahead 
+consecutive ``weeks`` of infection counts were sampled. Starting at week 5, 
+we fit four individual forecast models and used each to make one week ahead 
 forecasts of 
 infections for each of weeks 6 to 35.
 Using the individual forecasts, we used the SGP to construct an 
@@ -893,7 +927,7 @@ the \texttt{forecast} package. The two Bayesian models were fit using the
 proportion of infections of the total population. 
 
 All forecasts were given
-as 10,000 draws from a predictive distribution, and using the draws the 
+as 10,000 draws from a predictive distribution, and using the draws, the 
 expectation components in \ref{eq:crps_ens_mse} were estimated in order to 
 evaluate the CRPS and select component weights. We constructed
 two ensembles using the SGP, one using a less informative prior distribution
@@ -902,7 +936,7 @@ were both uniform Dirichlets, that is Dirichlet distributions with equal
 expected weights for each component, but with differing tightness around 
 the prior expectation. For one the prior parameter vector was
 $\mathbf{1}_4$, and for the other the prior parameter vector was 
-$\mathbf{50}_4$. The latter distribution assigns a tigher probability to the
+$\mathbf{50}_4$. The latter distribution assigns a tighter probability to the
 equal weights and a thus a stronger regularization to an equally weighted 
 ensemble. In figure \ref{fig:sir_sim}, these two ensembles are denoted as
 SIR and SIR50 respectively. Unlike in the previous study, the value of 
@@ -913,19 +947,22 @@ we fixed $\eta = 1$.
 Figure \ref{fig:sir_sim} shows the results of the one step ahead forecasts for
 3,000 simulation replicates. The lines in the LogS and CRPS plots the
 average forecast scores over the 3,000 replicate by method. Here the
-SGP ensemble does not perform as well as in the previous two studies, but 
-the SGP50 with the stronger regularization prior performs very well with lower
+SGP ensemble does not perform as well as in the previous two studies when
+compared with other methods, but 
+the SGP50 with the stronger regularization prior performs very well, resulting
+in lower
 LogS and CRPS scores that the other methods for most of the 30 weeks shown. 
-This includes lower scores than the EQW method. 
 Figure \ref{fig:sir_sim_med} in the supplementary material shows similar plots
-for the forecasts scores only that the lines represent the median of scores
-rather than the mean. In that the SGP and AVS ensembles appear to perform the
-best. The results suggest that the regularization to equally weighted 
+for the forecasts scores differing only in that the lines represent the 
+median of scores
+rather than the mean. There the SGP and AVS ensembles appear to perform the
+best of all methods. The results suggests that the regularization to 
+equally weighted 
 forecast components makes ensembles forecasts robust to particularly high 
 scores.
 The PIT histograms and boxplots in figure \ref{fig:sir_sim}
 show that relative to the other methods, the SGP performs well in terms of 
-forecast calibration. The SGP50 is less calibrated and the histogram has a 
+forecast calibration. The SGP50 is less well calibrated and the histogram has a 
 shape much closer to that of the EQW ensemble forecasts.
 
 
@@ -933,8 +970,8 @@ shape much closer to that of the EQW ensemble forecasts.
 \centering
   \includegraphics[width=.8\linewidth]{Images/sir_sim_res.png}
 \caption{Plots showing results for one step ahead forecasts for SIR
-data for the four
-weighting methods SGP, AVS, BMA, and EQW. Two plots show performance
+data for the five
+weighting methods SGP, SGP50, AVS, BMA, and EQW. Two plots show performance
 according to proper scoring rules
 (left). The mean LogS (top) and CRPS (bottom) over 3,000 replicates of one step
 ahead predictions at 29 time points colored by weighting methods.
@@ -949,10 +986,11 @@ The studies in this section show the SGP's ability to construct accurate
 forecasts for cases of both i.i.d. and dynamic data. The SGP largely 
 outperformed AVS, 
 BMA, and EQW ensembles both in terms of mean proper scoring rules and in PIT 
-uniformity. The value of regularization to equal ensemble weights using a 
-stronger prior distribution was also shown. 
-In the following section, the SGP ensemble construction is applied 
-to forecasts from the CDC flu forecast competition with comparisons of 
+uniformity and calibration. 
+The value of regularization to equal ensemble weights using a 
+stronger prior distribution was also shown in the third study. 
+In the next section, the SGP ensemble construction is applied 
+to forecasts from the CDC FluSight, again with comparisons of 
 performance against AVS, BMA, and EQW. 
 
 
@@ -961,10 +999,11 @@ performance against AVS, BMA, and EQW.
 
 \section{Analysis on 2023-24 CDC flu forecast competition} \label{sec:flu_analysis}
 
-Every flu season, beginning in 2013 and with the exception of the 2020-21 flu 
+Every flu season, beginning in 2013 but with the exception of the 2020-21 flu 
 season, the CDC has hosted a national flu forecasting competition, also known 
 as FluSight. The competition begins in October and lasts around 30 weeks until
-May of the following year. There are generally a few dozen academic and 
+May of the following year. The competition generally involves 
+a few dozen academic and 
 industry research teams who each create separate probabilistic forecasts 
 targeting certain flu events for future weeks. At the end of the season, 
 forecast performance of all forecasts from each team are evaluated, and a 
@@ -977,8 +1016,9 @@ Every week during the competition, a team could submit a forecast for each
 target, and after the hospitalization count for the target was observed, the 
 forecast was then scored and compared with all other forecasts. Besides 
 reporting and scoring all forecasts individually, all submitted forecasts 
-were combined into an ensemble forecast, which ensemble was published at 
-\cite{cdc2024previous} as the official CDC forecast and also scored along 
+were combined into an ensemble forecast, which ensemble forecast 
+was then published at 
+\cite{cdc2024previous} as the official CDC forecast and scored along 
 with the individual forecasts 
 \cite[]{mathis2024evaluation,wadsworth2023mixture}.  
 
@@ -987,7 +1027,7 @@ and since the beginning of the competition there has been a large variety of
 methodologies used 
 \cite[]{mathis2024evaluation,mathis2023flusight,mcandrew2021adaptively,
 osthus2021multiscale,osthus2019dynamic,ulloa2019,morgan2018wisdom,
-farrow2017human}. To make scoring and ensemble modeling straightforward, 
+farrow2017human}. To make scoring and ensemble construction straightforward, 
 each submitted forecast was required to follow a specified representation. 
 During the 2022-23 and 2023-24 seasons, the requested forecast representation 
 was a set of estimated quantiles for each of 23 probability values established 
@@ -1026,7 +1066,7 @@ targeted by $P$.
         \frac{2}{\alpha}(l - y^*)\mathds{1}\{y^* < l\} + 
         \frac{2}{\alpha}(y^* - r) \mathds{1}\{y^* > r\}
 \end{equation}
-Like the CRPS the WIS is a global scoring rule, allowing for evaluation over 
+Like the CRPS, the WIS is a global scoring rule, allowing for evaluation over 
 the whole range of the forecast. In fact, as the number of forecast intervals 
 $I$ increases, the WIS becomes arbitrarily close to the CRPS 
 \cite[]{bracher2021evaluating,gneiting2011comparing}. 
@@ -1043,17 +1083,17 @@ Gaussian process quantile matching model from
 \cite{wadsworth2025quantile} was fit to the quantiles to approximate a 
 continuous
 distribution from which the quantiles were estimated. This was done via 
-Bayesian posterior MCMC sampling from a normal mixture distribution. The 
+Bayesian posterior Monte Carlo sampling from a normal mixture distribution. The 
 result was 50,000 posterior predictive draws for forecasts of each location, 
 week, and horizon. Monte Carlo approximations of the expected values in 
 (\ref{eq:crps_ens_mse}) were calculated from the posterior predictive samples 
 allowing for estimation of the CRPS for individual forecasts and ensemble 
-forecasts. This allowed for using the SGP to be used for selecting weights and 
+forecasts. This allowed for using the SGP for selecting weights and 
 constructing an ensemble forecast.
 
 The analysis of ensemble forecasts of flu hospitalizations herein was limited 
 to 1-week ahead forecasts. For each location, only the forecasts from teams 
-who submitted forecasts for every week during the competition were included 
+who submitted forecasts for every week during FluSight were included 
 so as to avoid dealing with missing forecasts. We expected that 
 competing forecasts would vary in skill throughout the flu season and thus 
 used the empirical risk function from (\ref{eq:er_dyn}) used in the dynamic 
@@ -1077,7 +1117,8 @@ Monte Carlo vector draws for the weights $\{\omega^{(m)}\}_{m = 1}^M$.
 For each $c$, the Monte Carlo mean of each weight 
 $\bar{w}_{c,t} = M^{-1}w^{(m)}_{c,t}$ was calculated, and the mean weights 
 were used in the ensemble forecast for hospitalizations at time $t+1$. 
-Selecting $\eta$ via cross validation did not appear to improve forecasts,
+Selecting the learning rate $\eta$ via cross validation did not appear to 
+improve forecasts,
 so $\eta$ was set to equal 1.
 % selected by fitting the SGP for all forecasts up 
 % to time $t-1$ and estimating model combination weights at all values of 
@@ -1118,11 +1159,12 @@ relatively equal in importance or display other patterns.
 The plot on the right of figure \ref{fig:flu_crps} shows the mean CRPS 
 scores for 
 SGP, AVS, BMA and EQW divided by the mean CRPS score of the SGP
-for all regions in one plot and over all weeks in the other. This value for 
-SGP is always 1, and any value less than 1 is an instance of an ensemble 
+for all regions in one plot and over all weeks in the other. The value for 
+SGP is thus always 1, and any value less than 1 for any other method 
+is an instance of an ensemble 
 method outperforming the SGP for one region.
 In 31 
-locations, the SGP ensemble forecasts have the best overall scores, and in
+locations, the SGP ensemble forecasts has the best overall scores, and in
 only 3 regions does the SGP perform the worst among the methods compared.
 
 
@@ -1157,7 +1199,7 @@ Table \ref{tab:forecast_rank} summarises the forecast performance for the
 four methods by showing in how many instances forecasts for each method were 
 ranked 1, 2, 3, or 4 by mean CRPS over regions or weeks, a smaller 
 ranking meaning better performance. 
-By these rankings, SGP performed the best followed by BMA, AVS, and finall
+By these rankings, SGP performed the best followed by BMA, AVS, and finally
 EQW. Figure \ref{fig:flu_wis} and table \ref{tab:forecast_rank_wis} are
 similar to those of figure \ref{fig:flu_crps} and 
 \ref{tab:forecast_rank} but with results being for ensembles constucted via 
@@ -1228,12 +1270,12 @@ and each column under week to 29.}
 
 This analysis demonstrates the effectiveness of selecting weights for a 
 linear pooled ensemble forecast by optimizing the dynamic risk function in 
-(\ref{eq:er_dyn}) via a Gibbs posterior distribution. Given that the forecasts 
+(\ref{eq:er_dyn}) via the SGP. Given that the forecasts 
 used were posterior predictive samples from a model fit on quantile 
 forecasts, it was key to be able to make a Monte Carlo approximation of the 
 CRPS from (\ref{eq:crps_ens_mse}). Of the methods compared, the SGP is 
-arguably the most complicated, but in forecast performance it  
-outperformed the other methods. 
+arguably the most complicated, but in forecast performance it more often than 
+not outperformed the other methods. 
 
 
 \section{Discussion} \label{sec:4conc}
@@ -1244,19 +1286,24 @@ optimization of the CRPS using a Gibbs posterior distribution, provides
 uncertainty quantification for optimal linear pool weights and allows for a 
 prior distribution to inform and influence weight selection. Included with 
 the development of the SGP is a theorem for the asymptotic consistency of 
-the Gibbs posterior. The SGP was used in two simulation studies and a data 
+the Gibbs posterior. The SGP was used in three simulation studies and a data 
 analysis on the 2023-24 FluSight forecasts to evaluate performance for model 
 weighting, and it was compared with two posterior model averaging methods 
 and an equally weighted linear pool ensemble. Performance of the methods was 
 determined by forecast performance in terms of minimizing the CRPS and LogS, 
-and in the second simulation study by analyzing the uniformity of the PIT. 
-In both the simulations and the flu forecast analysis, the SGP showed superior 
-performance when compared to the AVS, BMA, and EQW. 
+and in the second and third simulation studies 
+by analyzing the uniformity of the PIT. 
+In the simulation studies and the flu forecast analysis, the SGP showed 
+superior forecast 
+performance when compared to the AVS, BMA, and EQW. In the third simulation 
+study, a more informative prior distribution showed the value of regularization
+of ensemble weights to be equal.
 
 The promising results show that the SGP is a valuable contribution to the 
 field of probabilistic forecast combination. The content of the SGP explored 
 in this paper was primarily directed at forecasting a future event, but in 
-a scenario where model uncertainty is of more concern, further exploration 
+a scenario where ensemble component model uncertainty is of more concern, 
+further exploration 
 of the Gibbs posterior should be carried out. This may include further 
 exploration into the selection or design of objective prior distributions 
 \cite[]{giummole2019objective}. 
@@ -1268,7 +1315,7 @@ distribution case, other scoring rules exist and different rules may be
 preferable for use in different applications. The WIS, for example, remains 
 the preferred scoring method of the quantile forecasts for FluSight. An 
 adaption of the SGP where the empirical risk is based on the WIS instead of 
-the CRPS may be more fit for FluSight and other forecast hubs. Likewise, 
+the CRPS may be better suited for FluSight and other forecast hubs. Likewise, 
 optimizing the linear pool forecast model in (\ref{eq:linp_forc}) may not 
 be the ideal method for ensemble building. In fact the linear pool, while 
 relatively simple to construct, has its drawbacks such as the difficulty of 
@@ -1284,7 +1331,8 @@ probabilistic forecast models to vary in time making a single risk minimizer
 unlikely to exist without strict assumptions. Another limitation, present in 
 the flu forecast application is that forecasts are often missing. In the 
 analysis in section \ref{sec:flu_analysis}, only models with 100\% submission 
-over the course of the flu season for a given state were included. Over the 
+over the course of the flu season for a given region were included in 
+the ensemble forecasts. Over the 
 season, many forecast teams failed to submit forecasts during some weeks, 
 and even if their forecasts were highly skilled these could not be included 
 in the SGP 
