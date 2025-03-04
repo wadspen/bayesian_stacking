@@ -63,11 +63,11 @@ logsp <- dyn %>%
   ggplot() + 
   geom_line(aes(x = time, y = mlogss, 
                 colour = method, linetype = method), size = 1.1) +
-  scale_colour_manual(name = "Model",
+  scale_colour_manual(name = "Method",
                       labels = c("AVS", "BMA", "EQW", "SGP", "SGP50")
                       ,values = c("grey80", "grey60", "grey40",
                                   "grey20", "grey0")) +
-  scale_linetype_manual(name= "Model",
+  scale_linetype_manual(name= "Method",
                         values=c("twodash", "dotdash", "longdash",
                                  "solid", "dotted"),
                         labels=c("AVS", "BMA", "EQW", "SGP", "SGP50")) +
@@ -96,11 +96,11 @@ crpsp <- dyn %>%
   ggplot() + 
   geom_line(aes(x = time, y = mcrpss, 
                 colour = method, linetype = method), size = 1.1) +
-  scale_colour_manual(name = "Model",
+  scale_colour_manual(name = "Method",
                       labels = c("AVS", "BMA", "EQW", "SGP", "SGP50")
                       ,values = c("grey80", "grey60", "grey40",
                                   "grey20", "grey0")) +
-  scale_linetype_manual(name= "Model",
+  scale_linetype_manual(name= "Method",
                         values=c("twodash", "dotdash", "longdash",
                                  "solid", "dotted"),
                         labels=c("AVS", "BMA", "EQW", "SGP", "SGP50")) +

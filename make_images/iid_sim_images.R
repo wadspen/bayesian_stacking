@@ -28,7 +28,7 @@ crpsp <- iid %>%
   mutate(N = factor(N)) %>% 
   ggplot() +
   geom_boxplot(aes(x = N, y = mcrps, colour = method), size = .8) +
-  scale_colour_manual(name = "Model",
+  scale_colour_manual(name = "Method",
                       labels = c("BMA", "AVS", "EQW", "SGP")
                       ,values = c("grey60", "grey80", "grey40", 
                                   "grey20")) +
@@ -58,7 +58,7 @@ logsp <- iid %>%
   mutate(N = factor(N)) %>% 
   ggplot() +
   geom_boxplot(aes(x = N, y = mlogs, colour = method), size = .8) +
-  scale_colour_manual(name = "Model",
+  scale_colour_manual(name = "Method",
                       labels = c("BMA", "AVS", "EQW", "SGP")
                       ,values = c("grey60", "grey80", "grey40", 
                                   "grey20")) +
