@@ -1,0 +1,152 @@
+%%
+%% Copyright 2024 OXFORD UNIVERSITY PRESS
+%%
+%% This file is forl of the 'oup-authoring-template Bundle' for the Royal Statistical Society.
+%% ---------------------------------------------
+%%
+%% It may be distributed under the conditions of the LaTeX Project Public
+%% License, either version 1.2 of this license or (at your option) any
+%% later version.  The latest version of this license is in
+%%    http://www.latex-project.org/lppl.txt
+%% and version 1.2 or later is part of all distributions of LaTeX
+%% version 1999/12/01 or later.
+%%
+%% The list of all files belonging to the 'oup-authoring-template Bundle' is
+%% given in the file `manifest.txt'.
+%%
+%% Template article for OXFORD UNIVERSITY PRESS's document class `oup-authoring-template'
+%% with bibliographic references
+%%
+
+\documentclass[numsec,webpdf,modern,medium,namedate]{oup-authoring-template}
+
+\onecolumn
+
+%\usepackage{showframe}
+
+\graphicspath{{Fig/}}
+
+% line numbers
+%\usepackage[mathlines, switch]{lineno}
+%\usepackage[right]{lineno}
+
+\theoremstyle{thmstyleone}%
+\newtheorem{theorem}{Theorem}%  meant for continuous numbers
+%%\newtheorem{theorem}{Theorem}[section]% meant for sectionwise numbers
+%% optional argument [theorem] produces theorem numbering sequence instead of independent numbers for Proposition
+\newtheorem{proposition}[theorem]{Proposition}%
+%%\newtheorem{proposition}{Proposition}% to get separate numbers for theorem and proposition etc.
+\theoremstyle{thmstyletwo}%
+\newtheorem{example}{Example}%
+\newtheorem{remark}{Remark}%
+\theoremstyle{thmstylethree}%
+\newtheorem{definition}{Definition}
+\usepackage[doublespacing]{setspace}
+\usepackage[fontsize=12pt]{fontsize}
+
+%packages added by Spencer
+\usepackage{xr}
+\externaldocument{supplemental_arxiv}
+\usepackage{dsfont}
+\usepackage{booktabs}       % professional-quality tables
+
+\newcommand{\spencer}[1]{{\color{red} Spencer: #1}}
+\newcommand{\jarad}[1]{{\color{white} Jarad: #1}}
+
+\begin{document}
+
+\journaltitle{Journals of the Royal Statistical Society}
+\DOI{DOI HERE}
+\copyrightyear{XXXX}
+\pubyear{XXXX}
+\access{Advance Access Publication Date: Day Month Year}
+\appnotes{Original article}
+
+\firstpage{1}
+
+%\subtitle{Subject Section}
+
+\title[Stacked Gibbs Posterior]{Bayesian stacking via proper scoring rule optimization using a Gibbs posterior}
+
+\author[1,$\ast$]{Spencer Wadsworth}
+\author[2]{Jarad Niemi}
+% \author[3]{Third Author}
+% \author[3]{Fourth Author}
+% \author[4]{Fifth Author\ORCID{0000-0000-0000-0000}}
+
+\authormark{Author Name et al.}
+
+\address[1]{\orgdiv{Department}, \orgname{Organization}, \orgaddress{\street{Street}, \postcode{Postcode}, \state{State}, \country{Country}}}
+\address[2]{\orgdiv{Department of Statistics}, \orgname{Iowa State University}, \orgaddress{\street{Ames}, \postcode{50011}, \state{Iowa}, \country{USA}}}
+% \address[3]{\orgdiv{Department}, \orgname{Organization}, \orgaddress{\street{Street}, \postcode{Postcode}, \state{State}, \country{Country}}}
+% \address[4]{\orgdiv{Department}, \orgname{Organization}, \orgaddress{\street{Street}, \postcode{Postcode}, \state{State}, \country{Country}}}
+
+\corresp[$\ast$]{Address for correspondence. Name, institution, city, zip code, country. \href{Email:email-id.com}{email-id.com}}
+
+\received{Date}{0}{Year}
+\revised{Date}{0}{Year}
+\accepted{Date}{0}{Year}
+
+%\editor{Associate Editor: Name}
+
+%\abstract{
+%\textbf{Motivation:} .\\
+%\textbf{Results:} .\\
+%\textbf{Availability:} .\\
+%\textbf{Contact:} \href{name@email.com}{name@email.com}\\
+%\textbf{Supplementary information:} Supplementary data are available at \textit{Journal Name}
+%online.}
+
+\abstract{In collaborative forecast projects, the combining of multiple probabilistic 
+forecasts into an ensemble is standard practice, with linear pooling
+being a common combination method.
+The weighting scheme of a linear pool should be 
+tailored to the specific research question, and weight selection is often 
+performed via optimizing a proper scoring rule, known as optimal
+linear pooling.
+Besides optimal linear pooling, Bayesian predictive synthesis has 
+emerged as a model probability updating scheme which is more flexible than
+standard Bayesian model averaging and which provides a Bayesian 
+solution to selecting model weights for a linear pool.
+In many problems, equally weighted linear pool forecasts often 
+outperform forecasts constructed using sophisticated weight selection methods.
+% Existing methods may or may not improve ensembles for given datasets, and 
+% there is room for additional methodology.
+Thus regularization of weights to be equally weighted may be a valuable 
+addition to any weight selection method.
+In this manuscript, we introduce a optimal linear pool
+based on a Gibbs posterior over stacked model weights optimized
+over a proper scoring rule. The Gibbs posterior extends stacking 
+into a Bayesian framework by allowing for optimal weight solutions to be 
+influenced by a prior distribution, and it also provides uncertainty 
+quantification of weights in the form of a probability distribution. 
+We compare ensemble forecast performance with model averaging methods and equal 
+weighted models in simulation studies and in a real data example from the 
+2023-24 US Centers for Disease Control FluSight competition. In both the 
+simulation studies and the FluSight analysis, the stacked Gibbs posterior 
+produces ensemble forecasts which often outperform the ensembles of other 
+methods.}
+\keywords{Gibbs posterior, Optimal linear pooling,
+Probabilistic forecasting, Proper scoring rules}
+
+% \boxedtext{
+% \begin{itemize}
+% \item Key boxed text here.
+% \item Key boxed text here.
+% \item Key boxed text here.
+% \end{itemize}}
+
+\maketitle
+
+\input{manuscript}
+
+
+
+% \bibliographystyle{apa}
+% \bibliography{master_bib}
+\bibliographystyle{abbrvnat}
+% \bibliography{reference}
+\bibliography{master_bib}
+
+
+\end{document}
