@@ -1,0 +1,31 @@
+\begin{abstract}
+In collaborative forecast projects, the combining of multiple probabilistic 
+forecasts into an ensemble is standard practice, with linear pooling
+being a common combination method.
+The weighting scheme of a linear pool should be 
+tailored to the specific research question, and weight selection is often 
+performed via optimizing a proper scoring rule. This is known as optimal
+linear pooling.
+Besides optimal linear pooling, Bayesian predictive synthesis has 
+emerged as a model probability updating scheme which is more flexible than
+standard Bayesian model averaging and which provides a Bayesian 
+solution to selecting model weights for a linear pool.
+In many problems, equally weighted linear pool forecasts often 
+outperform forecasts constructed using sophisticated weight selection methods.
+% Existing methods may or may not improve ensembles for given datasets, and 
+% there is room for additional methodology.
+Thus regularization to an equal weighting of forecasts may be a valuable 
+addition to any weight selection method.
+In this manuscript, we introduce an optimal linear pool
+based on a Gibbs posterior over stacked model weights optimized
+over a proper scoring rule. The Gibbs posterior extends stacking 
+into a Bayesian framework by allowing for optimal weight solutions to be 
+influenced by a prior distribution, and it also provides uncertainty 
+quantification of weights in the form of a probability distribution. 
+We compare ensemble forecast performance with model averaging methods and equal 
+weighted models in simulation studies and in a real data example from the 
+2023-24 US Centers for Disease Control FluSight competition. In both the 
+simulation studies and the FluSight analysis, the stacked Gibbs posterior 
+produces ensemble forecasts which often outperform the ensembles of other 
+methods.
+\end{abstract}

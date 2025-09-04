@@ -51,9 +51,9 @@
 % \thanks{Use footnote for providing further
 % 		information about author (webpage, alternative
 % 		address)---\emph{not} for acknowledging funding agencies.} \\
-	Iowa State University\\
-	Ames, Iowa\\
-	\texttt{sgw96@iastate.edu} \\
+	University of Connecticut\\
+	Storrs, Connecticut\\
+	\texttt{iac25002@uconn.edu} \\
 	%% examples of more authors
 	\And
 	Jarad Niemi \\
@@ -106,7 +106,7 @@ forecasts into an ensemble is standard practice, with linear pooling
 being a common combination method.
 The weighting scheme of a linear pool should be 
 tailored to the specific research question, and weight selection is often 
-performed via optimizing a proper scoring rule, known as optimal
+performed via optimizing a proper scoring rule. This is known as optimal
 linear pooling.
 Besides optimal linear pooling, Bayesian predictive synthesis has 
 emerged as a model probability updating scheme which is more flexible than
@@ -116,9 +116,9 @@ In many problems, equally weighted linear pool forecasts often
 outperform forecasts constructed using sophisticated weight selection methods.
 % Existing methods may or may not improve ensembles for given datasets, and 
 % there is room for additional methodology.
-Thus regularization of weights to be equally weighted may be a valuable 
+Thus regularization to an equal weighting of forecasts may be a valuable 
 addition to any weight selection method.
-In this manuscript, we introduce a optimal linear pool
+In this manuscript, we introduce an optimal linear pool
 based on a Gibbs posterior over stacked model weights optimized
 over a proper scoring rule. The Gibbs posterior extends stacking 
 into a Bayesian framework by allowing for optimal weight solutions to be 
@@ -138,11 +138,13 @@ methods.
 \and Probabilistic forecasting \and Proper scoring rules}
 
 \input{manuscript}
+\section*{Supplemental Material for Bayesian Stacking via Proper Scoring Rule
+Optimization using a Gibbs Posterior}
+\input{sup_man}
 
 
-
-\bibliographystyle{apa}
-\bibliography{master_bib}  %%% Uncomment this line and comment out the ``thebibliography'' section below to use the external .bib file (using bibtex) .
+% \bibliographystyle{plainnat}
+% \bibliography{master_bib}  %%% Uncomment this line and comment out the ``thebibliography'' section below to use the external .bib file (using bibtex) .
 
 
 %%% Uncomment this section and comment out the \bibliography{references} line above to use inline references.
