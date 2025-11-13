@@ -203,9 +203,9 @@ sir_res <- foreach(replicate = 1:reps,
                          
                          
                          
-                       }
+                    }
                        
-                     }
+  
                      
                      
                      all_wts <- all_wts %>% 
