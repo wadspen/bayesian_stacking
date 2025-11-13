@@ -188,7 +188,7 @@ century \cite[]{wang2023forecast}.
 The most common method for combining several probabilistic forecasts is known 
 as \textit{linear opinion pooling} which is a linear combination of multiple 
 probabilistic forecasts. For $C$ candidate forecasts of the event 
-$\tilde{y}_{t+h}$, $h$ time steps into the %future from an observed time $t$ 
+$\tilde{y}_{t+h}$, $h$ time steps into the future, %future from an observed time $t$ 
 with CDFs $P_{c}(\tilde{y}_{t + h})$ for $c \in (1,...,C)$, a linear pool 
 is defined as the mixture distribution in 
 (\ref{eq:linp_forc}). Here, the $w_c$ are linear pool weights. 
@@ -362,7 +362,9 @@ The goal for prediction is to minimize the loss function.
 
 A risk function $R(\theta)$ is the expectation of the loss function 
 $l_{\theta}(y)$ over the distribution $\mathcal{L}$, or 
-$R(\theta) = E l_{\theta}(Y)$. Primarily, interest is in the risk minimizer 
+$R(\theta) = E l_{\theta}(Y)$, where $E$ denotes the expected value with 
+respect to the true data generating distribution of $y_i$.
+Primarily, interest is in the risk minimizer 
 $\theta^*$ defined in (\ref{eq:risk_min}) where $\in$ indicates that 
 $\theta^*$ may not be unique.
 
@@ -929,7 +931,7 @@ Using the individual forecasts, we used the SGP to construct an
 ensemble forecast and compared the performance to the performances of 
 ensembles constructed via the AVS, BMA, and EQW methods. The decision to use
 four component forecasts was based on the recommendation from 
-\cite{fox2024optimizing} to forecasts diseases such as influenza and COVID-19
+\cite{fox2024optimizing} to forecast diseases such as influenza and COVID-19
 with an ensemble of four or more components. The four models included 
 a Bayesian SIR model similar to that used to forecast the flu in 
 \cite{osthus2019dynamic}, a nonlinear Bayesian model similar to that used by 
@@ -937,25 +939,32 @@ a Bayesian SIR model similar to that used to forecast the flu in
 using the \texttt{forecast} package in \texttt{R} 
 \cite[]{hyndman2008automatic}, and a naive random walk model also fit using
 the \texttt{forecast} package. The two Bayesian models were fit using the 
-proportion of infections of the total population. 
+proportion of infections of the total population.
 
-All forecasts were given
-as 10,000 draws from a predictive distribution, and using the draws, the 
-expectation components in \ref{eq:crps_ens_mse} were estimated in order to 
-evaluate the CRPS and select component weights. We constructed
-two ensembles using the SGP, one using a less informative prior distribution
+Neither of the two Bayesian forecast component models produced closed form
+CDFs, but rather the distributions were estimated from 10,000 draws from 
+the posterior
+predictive distributions. Draws were also sampled from the the ARIMA and random
+walk predictive distributions, and to fit the SGP 
+the CRPS was approximated using equation
+(\ref{eq:crps_ens_mse}).
+% All forecasts were given
+% as 10,000 draws from a predictive distribution, and using the draws, the 
+% expectation components in (\ref{eq:crps_ens_mse}) were estimated in order to 
+% evaluate the CRPS and select component weights. 
+Two ensembles were constructed
+using the SGP, one using a less informative prior distribution
 and one using a more informative prior distribution. The prior distributions
 were both uniform Dirichlets, that is Dirichlet distributions with equal
-expected weights for each component, but with differing tightness around 
-the prior expectation. For one the prior parameter vector was
+expected weights for each component. For one the prior parameter vector was
 $\mathbf{1}_4$, and for the other the prior parameter vector was 
 $\mathbf{50}_4$. The latter distribution assigns a tighter probability to the
-equal weights and a thus a stronger regularization to an equally weighted 
+equal weights and thus provides stronger regularization to an equally weighted 
 ensemble. In figure \ref{fig:sir_sim}, these two ensembles are denoted as
 SGP and SGP50 respectively. Unlike in the previous study, the value of 
 the learning rate $\eta$
 did not appear to affect forecast performance, so for both AVS and SGP methods
-we fixed $\eta = 1$.
+it was fixed as $\eta = 1$.
 
 Figure \ref{fig:sir_sim} shows the results of the one step ahead forecasts for
 3,000 simulation replicates. The lines in the LogS and CRPS plot the
@@ -1198,7 +1207,7 @@ only 3 regions does the SGP perform the worst among the methods compared.
 \hspace{0.01\textwidth}
 %\begin{subfigure}{}
   \centering
-  \includegraphics[width=.48\linewidth]{Images/flu_region_crps.png}
+  \includegraphics[width=.48\linewidth]{Images/real_data_rcrps.png}
   % \caption{A subfigure}
   % \label{fig:sub2}
 %\end{subfigure}

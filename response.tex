@@ -1,0 +1,231 @@
+\documentclass{article}
+
+\usepackage{enumerate}
+\usepackage{hyperref}
+\usepackage{amsmath}
+% \usepackage{amsfonts}
+
+\usepackage{xcolor}
+\newcommand{\jarad}[1]{{\color{blue} Jarad: #1}}
+\newcommand{\spencerr}[1]{{\color{red} Response: #1}}
+\newcommand{\spencerq}[1]{{\color{green} Question: #1}}
+
+\begin{document}
+  
+  
+\Huge
+AE1
+\normalsize
+\section{Main Comments}
+\begin{enumerate}[(1)]
+  \item Having read the paper by Loaiza-Maya et al. (2021) when it was 
+  initially published, it
+appears to me that the approach suggested in (4) is a specific instantiation 
+of the “Focused
+Bayesian predictive” proposed by those authors in the specific case of linear 
+pools. I also note
+that such a case was indeed considered by those authors in that paper: in 
+their Section 4.1,
+Loaiza-Maya et al. (2021) directly apply the Gibbs posterior framework for a 
+mixture of two
+time series models used for financial returns (see their Equation (17) on page 
+13 in the arXiv
+version). The direct link between the current proposal and this earlier work 
+is not clear enough
+in the current draft and must be clarified right after the stacking posterior 
+is introduced.
+
+\spencerq{Things that I believe right off the bat that make this new
+\begin{itemize}
+  \item I provide a new definition of the CRPS which can accommodate a mixture
+    of continuous distributions for any finite number of components
+  \item The SGP works for any number of components, not just 2 and not only for 
+      normal components
+  \item The decay rate is added to my loss function
+\end{itemize}
+}
+
+
+  \item On page 6, it is odd on the one hand to write in (5) that
+  \[
+    \theta^* \in \mathrm{arg min} R(\theta)
+  \]
+  but then for the sample optimisation problem to write
+  \[
+    \hat{\theta}_n  = \mathrm{arg min} R_n(\theta)
+  \]
+We reserve the notation $\in$ to clarify that the minimiser is not unique. 
+But if the population
+minimiser is not unique, then why would the sample minimiser be unique?
+
+\item  On page 7, when you talk about the selection of the learning rate, it 
+may be useful to
+point out that there is a meaningful sense in which predictions become ``more`` 
+or ``less`` accurate for different choices of the learning rate. This fact was 
+indeed suggested in Loaiza-Maya et
+al. (2021) but was recently rigorously proven to be a valid conjecture by 
+McLatchie et al. (2025).
+
+\item I found the use of the two different loss functions based on the 
+dependence in the data to
+be a useful addition to the literature. The construction itself appears very 
+similar to the “Loss
+Discounting Framework” proposed in Section 3.1 of Bernaciak and Griffin (2024).
+Of course,
+you are discounting within the loss used to construct the posterior and they 
+are discounting the
+predictive itself. Still, this should be mentioned.
+
+\item  In Section 3.3, why do we care about consistency here? There is little 
+to no motivation here
+and that should be rectified. One way to argue for this is that posterior 
+consistency can be
+used to show that the resulting posterior predictive is more accurate than that 
+obtained via the
+Bayes posterior. When you talk about posterior consistency, you should bolster 
+your argument by mentioning that Loaiza-Maya et al. (2021) and Frazier et al. 
+(2024) have already obtained
+such results under certain conditions.
+
+\item by mentioning that Loaiza-Maya et al. (2021) and Frazier et al. 
+(2024) have already obtained such results under certain conditions.
+
+  \begin{enumerate}[1.]
+    \item On page 28 you talk about the DP prior, but the prior condition is 
+    stated as general in
+  your result. Rather than stating this, I suggest showing that this condition 
+  is satisfied in
+  your example by the DP prior and giving it as a separate result in the 
+  appendix.
+  
+  \spencerq{This seems weird to me. Why would a more specific case be desired
+            if it's covered under the given condition?}
+    \item Why have you only considered the CRPS in this result? My guess is that 
+    this is because
+    you can not generally find a simple upper bounding function for the log 
+    score; 
+    however,
+    Jensen should provide such a condition since $-\text{log}$ is concave.
+  \end{enumerate}
+  
+\item Page 11, for the learning rate in the example of Section 4.1, what sample 
+size was used for
+the selection of $\eta$ when using the CRPS? Please clarify in the supplement 
+precisely how this
+optimisation was performed.
+
+\item In Section 4.3, how was the posterior sampling conducted? In particular, 
+was the CRPS for
+this mixture actually available in closed-form or did an estimator need to be 
+used within the
+posterior? Given that one of the models was an SIR model, I would be surprised 
+if the predictive
+was Gaussian, which would mean getting the CRPS in closed-form would not be 
+feasible.
+
+
+\spencerr{Clarified by adding:
+``Neither of the two Bayesian forecast component models produced 
+closed form
+CDFs, but rather the distributions
+were estimated from 10,000 draws from the posterior
+predictive distributions. Draws were also sampled from the the ARIMA and random
+walk predictive distributions, and to fit the SGP 
+the CRPS was approximated using equation
+(15).``}
+
+\item The SGP50 and the EQW have quite similar histograms. What does the 
+posterior for the
+SGP50 look like? Is it just basically equal weight across the models?
+
+
+\end{enumerate}
+
+\subsection*{Minor Comments}
+\begin{enumerate}[1.]
+  \item Page 4, ``$h$ time steps into the with``. Missing ``future`` I guess.
+  
+  \spencerr{added ``future`` to make sentence complete}
+  
+  \item Page 6, when you introduce $R(\theta)$ as $El_{\theta}(y)$ 
+  clarify that $E$ is 
+  expectation wrt the true data
+generating distribution of the data $y$.
+
+\spencerr{added, ``where $E$ denotes the expected value with 
+respect to the true data generating distribution of $y_i$.``}
+
+  \item Page 19, ``a thus a stronger``
+  
+  \spencerr{fixed and edited to now read ``thus provides stronger``}
+  \item The grey scale in Figure 4 cannot be easily interpreted. Please 
+  use a different colour scheme
+or way of denoting the methods.
+\end{enumerate}
+\newpage
+
+
+
+
+
+
+\Huge
+R1
+\normalsize
+\\~\\
+In this paper, the authors develop a generalized Bayesian estimation framework 
+for determining the 
+weights of a mixture of given predictive distributions. Unlike standard 
+Bayesian updating based on the 
+likelihood function, their approach employs proper scoring rules, leading to 
+posterior distributions 
+over the simplex that concentrate on weights delivering high predictive 
+accuracy under the chosen 
+score. The paper illustrates the framework through a series of numerical 
+experiments and an 
+application to the influenza forecasting competition.
+\\~\\
+The paper is clearly written and thorough, but I view it more as an in-depth 
+elaboration of ideas 
+already present in the literature. For example, Section 4.1 of Loaiza-Maya et 
+al. (2021) (hereafter LMF) 
+also considers mixtures of given predictive distributions, with mixture weights 
+estimated via 
+generalized Bayesian inference under various scoring rules, including the CRPS. 
+The main difference is 
+that LMF restricted attention to two-component mixtures. Moreover, Lemma 1 in 
+LMF establishes a 
+concentration result (which extends naturally to mixtures with more components), 
+closely paralleling 
+the implications of Theorem 1 in the present paper. 
+\\~\\
+Another relevant connection is Frazier et al. (2024) (hereafter FLMK). In 
+Example 5.2, FLMK study 
+mixtures of normals with time-varying weights, where a Gibbs posterior—updated 
+via proper scoring 
+rules—is placed on all model parameters, including both weights and mixture 
+components. While 
+FLMK advocate variational inference for computational tractability, the target 
+remains the exact Gibbs 
+posterior defined by the scoring rule.
+\\~\\
+
+\spencerq{The work by Frazier is relevant in that it produces a Gibbs posterior
+on model parameters, but the difference in what I am doing is that the models
+are already given to me. I am not estimating model parameters. I am only 
+estimating the weights of a convex combination of distribution functions from
+the various given models. They also say that the CRPS cannot be calculated in 
+the case of the mixture }
+The main novel aspect I see in this paper is the use of a discounting factor 
+in the loss function to deal 
+with the potential time varying nature of the data generating process. 
+However, I do not believe this 
+aspect to have been developed or emphasised enough.
+\\~\\
+Taken together, these connections suggest that although this paper is 
+carefully executed and well 
+written, its contribution lies primarily in consolidating and extending 
+previously introduced ideas.
+
+
+\end{document}
