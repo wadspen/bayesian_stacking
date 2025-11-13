@@ -10,7 +10,7 @@ bma_bps <- readRDS("../flu_analysis/bma_bps_crps.rds")
 sgp_eq <- readRDS("../flu_analysis/sgp_eq.rds") %>% 
   filter(week < 30)
 all_flu <- read.csv("../../forecast-hub/FluSight-forecast-hub/target-data/target-hospital-admissions.csv")
-
+all_flu <- read.csv("./target-hospital-admissions.csv")
 # sgp_eq %>% 
 #   mutate(rel_stack = stack_crps/eq_crps) %>% 
 #   group_by(location) %>% 
@@ -77,9 +77,9 @@ loc_mean_crps %>%
              size = 3) +
   scale_shape_manual(values=c(21:24)) +
   scale_fill_manual(name = "Method",
-                      labels = c("AVS", "BMA", "EQW", "SGP")
-                      ,values = c("grey80", "grey60", "grey40", 
-                                  "grey20")) +
+                      labels = c("AVS", "BMA", "EQW", "SGP", "SGP50")
+                      ,values = c("#E69F00", "#56B4E9", "#009E73", 
+                                  "#D55E00", "#CC79A7")) +
   xlab("RCRPS") +
   ylab("Region") +
   labs(fill = "Method", shape = "Method") +

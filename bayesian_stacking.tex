@@ -1,0 +1,187 @@
+% \documentclass[ba,preprint]{imsart}% use this for supplement article
+\documentclass[ba]{imsart}
+
+%% Packages
+\RequirePackage{amsthm,amsmath,amsfonts,amssymb}
+\RequirePackage[numbers]{natbib}
+%\RequirePackage[authoryear]{natbib}%% uncomment this for author-year citations
+\RequirePackage[colorlinks,citecolor=blue,urlcolor=blue,backref=page,backref=page]{hyperref}
+\RequirePackage{graphicx}
+
+
+%%%%%%%%%%%packages added by Spencer%%%%%%%%%%%%%
+\usepackage{booktabs} %for the table in the analysis section
+\usepackage{enumerate} %for the short algorithm
+\usepackage{subfigure} %for making plots with multiple images
+\usepackage{tabularx} %for the spacing in tabular
+\usepackage{newtxmath} %for making indicator function
+\usepackage{changepage} %for adjusting the margins
+\usepackage{dsfont} %for getting the indicator function
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\1}[1]{\mathds{1}\left[#1\right]}
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}{Proposition}
+
+\pubyear{2025}
+\arxiv{0000.00000}
+\volume{TBA}
+\issue{TBA}
+\firstpage{1}
+\lastpage{1}
+
+\startlocaldefs
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                          %%
+%% Uncomment next line to change            %%
+%% the type of equation numbering           %%
+%%                                          %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\numberwithin{equation}{section}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                          %%
+%% For Axiom, Claim, Corollary, Hypothesis, %%
+%% Lemma, Theorem, Proposition              %%
+%% use \theoremstyle{plain}                 %%
+%%                                          %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\theoremstyle{plain}
+\newtheorem{axiom}{Axiom}
+\newtheorem{claim}[axiom]{Claim}
+% \newtheorem{theorem}{Theorem}[section]
+% \newtheorem{lemma}[theorem]{Lemma}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                          %%
+%% For Assumption, Definition, Example,     %%
+%% Notation, Property, Remark, Fact         %%
+%% use \theoremstyle{definition}            %%
+%%                                          %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem*{example}{Example}
+\newtheorem*{fact}{Fact}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                          %%
+%% For Case use \theoremstyle{remark}       %%
+%%                                          %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\theoremstyle{remark}
+\newtheorem{case}{Case}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Please put your definitions here:        %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\endlocaldefs
+
+\begin{document}
+
+\begin{frontmatter}
+\title{Bayesian Stacking via Proper Scoring Rule Optimization using a Gibbs 
+Posterior}
+%\title{A sample article title with some additional note\thanksref{t1}}
+\runtitle{Bayesian stacking via Gibbs posterior}
+%\thankstext{T1}{A sample additional note to the title.}
+
+\begin{aug}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Only one address is permitted per author. %%
+%% Only division, organization and e-mail is %%
+%% included in the address.                  %%
+%% Additional information can be included in %%
+%% the Acknowledgments section if necessary. %%
+%% ORCID can be inserted by command:         %%
+%% \orcid{0000-0000-0000-0000}               %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\author[A]{\snm{Spencer Wadsworth}\ead[label=e1]{iac25002@uconn.edu}}
+% \author[A]{\fnms{Second}~\snm{Author}\ead[label=e2]{second@somewhere.com}\orcid{0000-0000-0000-0000}}
+\and
+\author[B]{~\snm{Jarad Niemi}\ead[label=e2]{niemi@iastate.edu}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Addresses                                %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\address[A]{Department of Statistics,
+University of Connecticut, Storrs, CT 06269}
+\address[B]{Department of Statistics,
+Iowa State University, Ames, IA 50011}
+
+
+\runauthor{Wadsworth and Niemi}
+\end{aug}
+
+\input{abstract}
+
+% \begin{keyword}[class=MSC]
+% \kwd[Primary ]{00X00}
+% \kwd{00X00}
+% \kwd[; secondary ]{00X00}
+% \end{keyword}
+
+\begin{keyword}
+\kwd{Optimal linear pooling}
+\kwd{Gibbs posterior}
+\kwd{Probabilistic forecasting}
+\kwd{Proper scoring rules}
+\end{keyword}
+
+\end{frontmatter}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% `\ ' is used here because TeX ignores    %%
+%% spaces after text commands.              %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\input{manuscript}
+
+
+
+% \begin{acks}[Acknowledgments]
+% This work is partially supported by the National Science Foundation under 
+% Grant No. 2152117. Any opinions, findings, and conclusions or recommendations 
+% expressed in this material are those of the author(s) and do not necessarily 
+% reflect the views of the National Science Foundation.
+% \end{acks}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Funding information, if any,             %%
+%% should be provided in the                %%
+%% funding section.                         %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \begin{funding}
+% The first author was supported by NSF Grant DMS-??-??????.
+% 
+% 
+% \end{funding}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Supplementary Material, including data   %%
+%% sets and code, should be provided in     %%
+%% {supplement} environment with title      %%
+%% and short description. It cannot be      %%
+%% available exclusively as external link.  %%
+%% All Supplementary Material must be       %%
+%% available to the reader on Project       %%
+%% Euclid with the published article.       %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \begin{supplement}
+% Supplement to "Forecasting Influenza Hospitalizations Using a
+% Bayesian Hierarchical Nonlinear Model with
+% Discrepancy"\\
+% A. Additional plots for ILI \& Hospitalization data for select regions, results 
+% from simulation study, and 2023-24 flu analysis\\
+% % \end{supplement}
+% B. Prior distribution assignments\\
+% C. Posterior distribution plots for select parameters\\
+% % \sdescription{2. Plots of posterior distributions for parameters in both ILI and hospitalization models}
+% D. Comparison of ILI/hospitalization forecast model combinations\\
+% E. FluSight forecast competition scoring results in terms of WIS
+% \end{supplement}
+% \begin{supplement}
+% \stitle{3. FluSight forecast competition scoring results}
+% \sdescription{Flu forecast results with relative weighted interval scoring rule similar to that used in  FluSight}
+% \end{supplement}
+
+
+% \bibliographystyle{ba}
+% \bibliography{master_bib}
+
+\end{document}
+

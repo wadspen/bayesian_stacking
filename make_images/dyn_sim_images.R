@@ -119,6 +119,41 @@ cowplot::plot_grid(logsp, pit_hist, crpsp, pit_box, nrow = 2,
                    ncol = 2, rel_heights = c(1,1))
 
 
+
+crpsp <- dyn %>% 
+  # filter(time > 1) %>% 
+  group_by(method, time) %>% 
+  summarise(mcrpss = mean(mcrps),
+            mlogss = mean(mlogs),
+            selogs = sd(mlogs)/500,
+            secrps = sd(mcrps)/500) %>% 
+  ggplot() + 
+  geom_line(aes(x = time, y = mcrpss, 
+                colour = method, linetype = method), size = 1.1) +
+  scale_colour_manual(name = "Method",
+                      labels = c("AVS", "BMA", "EQW", "SGP", "SGP50")
+                      ,values = c("#E69F00", "#56B4E9", "#009E73", 
+                                  "#D55E00", "#CC79A7")) +
+  scale_linetype_manual(name= "Method",
+                        values=c("twodash", "dotdash", "longdash",
+                                 "solid", "dotted"),
+                        labels=c("AVS", "BMA", "EQW", "SGP", "SGP50")) +
+  ylab("CRPS") +
+  xlab("t") +
+  labs(colour = "Method", linetype = "Method") +
+  theme_bw() +
+  theme(axis.text.y=element_text(size=12),
+        axis.text.x=element_text(size = 15),
+        axis.title=element_text(size=18),
+        strip.text.y = element_text(size = 12,),
+        strip.text.x = element_text(size = 16)
+        ,legend.position = c(.85, .8)
+        )
+
+cowplot::plot_grid(crpsp, pit_box, nrow = 1, 
+                   ncol = 2, rel_heights = c(1,1))
+
+
 # dyn %>% 
 #   group_by(time, replicate) %>% 
 #   mutate(mincrps = min(mlogs)) %>% 

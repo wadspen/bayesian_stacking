@@ -49,7 +49,7 @@ hubs exist to exploit the skill of multiple forecasts and forecasters
 makridakis2020m4,reich2019collaborative,biggerstaff2016results,
 hong2016probabilistic}. In these initiatives, multiple forecasters submit 
 separate forecasts targeting the same event, and the performances of the 
-forecasts, typically assessed via a \textit{proper scoring rule}, are 
+forecasts -- typically assessed via a \textit{proper scoring rule} -- are 
 compared.
 Combining multiple candidate forecasts into an ensemble forecast is common 
 practice in forecast hubs, and this often leads to forecasts which are 
@@ -58,16 +58,17 @@ li2023bayesian,gyamerah2020probabilistic,li2019combining,
 reich2019collaborativeens}. For example, in the 2023-24 United States Centers 
 for Disease Control and Prevention (CDC) collaborative flu forecasting 
 competition --also known as FluSight-- ensemble forecasts largely outperformed 
-individual forecasts in predicting flu hospitalizations, and in fact the 
+individual forecasts in predicting flu hospitalizations. In fact the 
 forecast published weekly by the CDC as the official forecast is an ensemble 
 of all competing forecasts \cite[]{mathis2024evaluation}. Figure 
 \ref{fig:cdc_forecasts} shows an example of FluSight hospitalization 
 forecasts from many competing teams on the left where on the right is shown 
-the ensemble forecast constructed by combining all competing forecasts.  
+the ensemble forecast constructed by combining all competing forecasts. It was
+this forecast competition which motivated the work herein.
 
 \begin{figure}[hbt!]
     \centering
-    \includegraphics[scale=.65]{Images/national_official_forecasts.PNG}
+    \includegraphics[scale=.55]{Images/national_official_forecasts.PNG}
     \caption{United States flu hospitalization forecasts from multiple 
     competing forecast teams (left) for 1-4 week ahead horizons from the week 
     of November 6, 2023 and an ensemble forecast (right) made by combining all 
@@ -86,12 +87,12 @@ manuscript is on combining forecasts via \textit{linear pooling}, also known as
 model stacking \cite[]{yao2018using,geweke2011optimal,hall2007combining,
 stone1961opinion}. Most linear pooling combination methods involve selecting 
 a set of combination weights, a point on the simplex, which optimize the 
-ensemble according to some criteria but which lack any weight
+ensemble according to some criteria but which lack any measure of weight
 uncertainty in the optimization. Weights in an ensemble may also be selected 
 by maximizing a likelihood or via a Bayesian posterior distribution, but when 
 so constructed ensemble forecasts may not be suited for the problem specific 
 criteria under which forecasts are assessed. Bayesian model probabilities may 
-be used to select weights, but selecting weights this way may also not be well 
+be used to select weights, but this may also not be well 
 suited to problem specific needs. An important case of linear pooling is 
 combining via a simple average over the forecasts. This equal weighting (EQW) 
 scheme frequently outperforms sophisticated combination methods leading to 
@@ -113,17 +114,15 @@ posterior designed specifically to optimize model weights in a forecast with
 the object being to minimize a proper scoring rule 
 \cite[]{gneiting2007strictly}. 
 
-The motivation for this work was ensemble modeling of the hospitalization 
-forecasts for the FluSight project, with the hope of constructing a well 
-performing forecast. Section \ref{sec:preliminaries} includes a brief 
+Section \ref{sec:preliminaries} includes a brief 
 review of probabilistic forecasts and linear pool combinations of forecasts. 
 In section \ref{sec:sgp} the SGP is developed, and important details of the 
 Gibbs posterior and proper scoring rules are covered. Section 
 \ref{sec:simulation} includes three simulation studies to analyze the SGP and 
 compare it with other forecast combination methods. In these studies the SGP 
-outperforms model averaging and EQW methods for combining forecasts. In 
+outperforms model averaging and EQW methods for combining forecasts. In section
 \ref{sec:flu_analysis} the SGP is used to construct ensemble forecasts for the 
-FluSight project where is also outperforms model averaging and EQW approaches. 
+FluSight project where it also outperforms model averaging and EQW approaches. 
 The manuscript is concluded in section \ref{sec:4conc}. 
 
 
@@ -187,7 +186,7 @@ century \cite[]{wang2023forecast}.
 
 \subsection{Linear pooling}
 The most common method for combining several probabilistic forecasts is known 
-as \textit{linear opinion pooling} and is a linear combination of multiple 
+as \textit{linear opinion pooling} which is a linear combination of multiple 
 probabilistic forecasts. For $C$ candidate forecasts of the event 
 $\tilde{y}_{t+h}$, $h$ time steps into the %future from an observed time $t$ 
 with CDFs $P_{c}(\tilde{y}_{t + h})$ for $c \in (1,...,C)$, a linear pool 
@@ -269,7 +268,8 @@ rather than on a model likelihood as in BMA. The AVS model probability is then
 \end{equation}
 where $\eta$ is a model tuning parameter to be selected based on the needs of 
 the problem. AVS allows for much more flexibility in updating posterior model 
-averages, but as we show in a simulation in section \ref{sec:simulation} AVS 
+averages, but as we show in a simulation study 
+in section \ref{sec:simulation} AVS 
 may, like BMA, tend to prefer one candidate model over the others.
 
 Among all weight selection methods for linear pooling, one of the most 
@@ -279,7 +279,7 @@ phenomenon has received much attention (see for example
 \cite{frazier2023solving,claeskens2016forecast,smith2009simple}), 
 and fitting a simple average is obviously easier than using most weight 
 optimization methods. Thus for another weight selection method to be worth 
-implementing, it should outperform the EQW scheme. It has thus be recommended 
+implementing, it should outperform the EQW scheme. It has thus been recommended 
 that an EQW average be used as a baseline by which other methods 
 are compared 
 \cite[]{li2023bayesian,clemen1989combining}.
@@ -300,17 +300,20 @@ are compared
 
 For weight selection of a linear pooled ensemble forecast, the stacked Gibbs 
 posterior (SGP), introduced in this section, is used to estimate forecast 
-combination weights $\omega$, the vector of weights in the linear pool of 
+combination weights $\boldsymbol{\omega}$, 
+the vector of weights in the linear pool of 
 (\ref{eq:linp_forc}). The SGP is defined in (\ref{eq:sgp}) and consists of 
-three  components, including a prior distribution  on $\omega$, $\pi(\omega)$, 
+three  components, including a prior distribution on $\boldsymbol{\omega}$, 
+$\pi(\boldsymbol{\omega})$, 
 an empirical risk function $S_n(\cdot)$ based on a proper scoring rule, and a 
 tuning parameter $\eta$. Each of these is discussed in further detail in 
 sections \ref{sec:gibb_post} and \ref{sec:prop_score}.
 
 \begin{equation}
     \label{eq:sgp}
-    \pi^{(\eta)}_n (\omega) \propto \text{exp}\{-\eta n S_n(\omega)\} 
-    \pi(\omega)
+    \pi^{(\eta)}_n (\boldsymbol{\omega}) \propto 
+    \text{exp}\{-\eta n S_n(\boldsymbol{\omega})\} 
+    \pi(\boldsymbol{\omega})
 \end{equation}
 
 The SGP is a probability distribution over the simplex
@@ -350,7 +353,7 @@ $y_1, ..., y_n \in \mathcal{Y}$ typically assumed to be independent and
 identically distributed (i.i.d.) from some inaccessible distribution 
 $\mathcal{L}$. We do not assume a likelihood model for the data, either 
 because one is not available or because inference via a likelihood is not 
-useful for our problem. Instead we define a loss function parameterized by 
+useful for the problem. Instead we define a loss function parameterized by 
 $\theta \in \Theta$, 
 $l_{\theta}(y) : \Theta \times \mathcal{Y} \rightarrow \mathbb{R}$. 
 Two common loss functions are the squared-error and the absolute-error losses. 
@@ -359,7 +362,7 @@ The goal for prediction is to minimize the loss function.
 
 A risk function $R(\theta)$ is the expectation of the loss function 
 $l_{\theta}(y)$ over the distribution $\mathcal{L}$, or 
-$R(\theta) = E l_{\theta}(Y)$. The primary interest is in the risk minimizer 
+$R(\theta) = E l_{\theta}(Y)$. Primarily, interest is in the risk minimizer 
 $\theta^*$ defined in (\ref{eq:risk_min}) where $\in$ indicates that 
 $\theta^*$ may not be unique.
 
@@ -426,7 +429,7 @@ $\eta$ by most well reasoned methods should be appropriate
 
 For the SGP in (\ref{eq:sgp}), the more general $\theta 
 \in \Theta$ is replaced with $\omega \in \{w_1, ..., w_C : 0 \leq w_c \leq 1, 
-\sum_c w_c = 1\}$, and we consider empirical risk functions based on of 
+\sum_c w_c = 1\}$, and we consider empirical risk functions based on one of 
 two loss 
 functions. The first of these functions is in (\ref{eq:er_iid}), and is used 
 for the simple case of i.i.d. data $y_1,..., y_n$ and candidate models which 
@@ -454,7 +457,7 @@ $\tilde{y}_{T+h}$.
 \end{equation}
 In this dynamic setting, $\alpha^{T-t}$ is a discount factor 
 \cite[]{koop2013large,raftery2010online} used to lessen the influence of 
-previous forecasts and making the performance of the most recent forecasts 
+previous forecasts making the performance of the most recent forecasts 
 the most influential. In \cite{lavine2021adaptive}, the discount factor is 
 fixed at $\alpha = 0.98$, and we use the same value herein. The linear pool 
 $\bar{P}_{t, \omega}$ is made up of competing models which may or may not be 
@@ -513,7 +516,7 @@ defined in (\ref{eq:crps}) and evaluates a distribution through its CDF $P$.
 
 \begin{equation}
     \label{eq:crps}
-    \text{CRPS}(P, y) = \int_{-\infty}^{\infty} (P(x) - \mathds{1} 
+    \text{CRPS}(P, y) = \int_{-\infty}^{\infty} (P(x) - \mathds{1}
     (y \leq x))^2 dx
 \end{equation}
 For $P$ belonging to certain distribution families, there may be a closed 
@@ -615,8 +618,10 @@ For the SGP in (\ref{eq:sgp}) with the empirical risk function in
 (\ref{eq:er_iid}) the posterior consistency is shown for the distance 
 function being the Euclidean distance, 
 $d(\boldsymbol{a}, \boldsymbol{b}) = ||\boldsymbol{a} - \boldsymbol{b}||$, 
-and the prior distribution on the weight vector $\omega$ to be the Dirichlet 
-distribution $\pi(\omega) \sim Dirichlet(\lambda)$. Other distance functions 
+and the prior distribution on the weight vector $\boldsymbol{\omega}$ 
+to be the Dirichlet 
+distribution $\pi(\boldsymbol{\omega}) \sim Dirichlet(\lambda)$. 
+Other distance functions 
 and prior distributions may work, but importantly one of the conditions for 
 consistency is that the prior distribution gives sufficient mass to the risk 
 minimizer or that $\pi(\{\theta:R(\theta) - R(\theta^*) < \delta \}) > 0$ 
@@ -626,10 +631,14 @@ probability law $\mathcal{L}$ where $E|Y| < \infty$ and where the empirical
 risk function is the function in (\ref{eq:er_iid}), posterior consistency of 
 the SGP proposed in (\ref{eq:sgp}) is affirmed by theorem \ref{thm:sgp_cons}. 
 
+\setcounter{theorem}{0}
+% \stepcounter{theorem}
+
+
 \begin{theorem}
 \label{thm:sgp_cons}
      
-     If $\boldsymbol{\omega}^* \in \Omega = \{w1, ..., w_C : 
+     If $\boldsymbol{\omega}^* \in \Omega = \{w_1, ..., w_C : 
      \sum_c w_c = 1, 0 \leq w_c \}$ uniquely minimizes $G(\omega) = 
      E[CRPS(\bar{P}_{\omega}, Y)]$ and for the prior distribution $\pi$, 
      $\pi(\{\boldsymbol{\omega} : G(\boldsymbol{\omega}) - 
@@ -665,7 +674,8 @@ being i.i.d. and having competing models which are fixed, or unaltered by
 additional data. Such is the setting of the first simulation study in the 
 next section. One reason it may be difficult to develop theory in a dynamic 
 setting is that the models which have the best predictive abilities may be 
-changing in time making $\omega^*$ a moving target. However, this does not 
+changing in time making $\boldsymbol{\omega^*}$ a 
+moving target. However, this does not 
 necessarily discount the SGP's ability to select model weights which produce 
 well performing ensemble forecasts in dynamic settings. This is explored in 
 additional simulation studies and in a real data example below.
@@ -707,7 +717,7 @@ Because all simulated data is i.i.d., the empirical risk function from
 \ref{thm:sgp_cons} hold. The six competing models are each normally 
 distributed with variance 1, but each model has a unique mean parameter, 
 the unique means being $\{0, 2, 4, 6, 8, 10\}$. Figure \ref{fig:iid_sym_examp}
-\spencer{(may put in supplementary materials)}
+% \spencer{(may put in supplementary materials)}
 shows in black the mixture distribution from which data is simulated as well as 
 the candidate normal predictive models in grey. 
 
@@ -727,10 +737,10 @@ the candidate normal predictive models in grey.
 The predictive performance of the SGP ensemble 
 is compared with that of BMA, AVS, and EQW. For 
 both AVS and SGP, the learning rate $\eta$ needed to be selected, and we opted 
-to select $\eta$ with the aim of minimizing the CRPS for prediction. Figure 
-\ref{fig:min_etas} in the supplementary materials shows an example of how the 
+to select $\eta$ with the aim of minimizing the CRPS for prediction. A figure
+in the supplementary materials shows an example of how the 
 CRPS varies for different 
-values of $\eta$ for the AVS and SGP. In the case of AVS, LOO cross 
+values of $\eta$ for the AVS and SGP \cite{wadsworth2025bayesstack}. In the case of AVS, LOO cross 
 validation over a grid of values for $\eta$ was performed and the $\eta$ 
 which minimized the predictive CRPS was selected. For the SGP, the value of 
 the CRPS continues to decrease as $\eta$ increases. The improvement became 
@@ -739,7 +749,7 @@ influence from the prior distribution.
 
 
 
-Figure \ref{fig:opt_dens} (\spencer{put in supplement?})
+Figure \ref{fig:opt_dens} %(\spencer{put in supplement?})
 shows examples from estimating model weights of 
 constructing a linear pool from the candidate models for samples sizes of 10, 
 20, 50, 100, and 200 for BMA, AVS, EQW, and SGP weight selection methods. 
@@ -783,9 +793,9 @@ LogS and CRPS, lower is better. }
 \label{fig:iid_scores}
 \end{figure}
 
-\jarad{Include "lower is better".}
-\jarad{Write out CRPS and LogS}
-\jarad{Make n explicit}
+% \jarad{Include "lower is better".}
+% \jarad{Write out CRPS and LogS}
+% \jarad{Make n explicit}
 
 \subsection{Dynamic data simulation forecast}
 
@@ -814,7 +824,9 @@ according to a random walk process.
 A single observation $y_t$ is simulated at each time step 
 $t \in \{1, ..., T = 50\}$, and at each step the ensemble weights are 
 selected and an ensemble for forecasting $\tilde{y}_{t+1}$ is constructed. 
-Figure \ref{fig:dyn_wts_ex} in the supplementary materials
+A figure 
+% \ref{fig:dyn_wts_ex} 
+in the supplementary materials
 gives an example of the dynamic weights simulated 
 from (\ref{eq:dyn_sim_mod}). The left plot shows the simulated weight values, 
 and the right plot shows the SGP optimized weights of the competing forecasts 
@@ -900,10 +912,11 @@ model is deterministic and defined by a set of ordinary differential equations
 --one for each compartment-- but stochastic extensions allow one to simulate
 from an SIR model with uncertainty 
 \cite[]{allen2008mathematical,widgren2019siminf}. When fitting an SIR model
-to track an epidemic, it is common practive to treat real outbreak measurements
+to track an epidemic, it is common practice to treat real outbreak measurements
 as analogous to the values in the infected compartment
-\cite[]{widgren2019siminf, osthus2019dynamic}. \spencer{Should I add more details
-about the SIR model, maybe in the supplementary material?}
+\cite[]{widgren2019siminf, osthus2019dynamic}. 
+% \spencer{Should I add more details
+% about the SIR model, maybe in the supplementary material?}
 
 The data used in this simulation study were generated from a stochastic SIR 
 model using the \texttt{SimInf} package in \texttt{R} 
@@ -917,10 +930,10 @@ ensemble forecast and compared the performance to the performances of
 ensembles constructed via the AVS, BMA, and EQW methods. The decision to use
 four component forecasts was based on the recommendation from 
 \cite{fox2024optimizing} to forecasts diseases such as influenza and COVID-19
-with an ensemble of greater than three components. The four models included 
+with an ensemble of four or more components. The four models included 
 a Bayesian SIR model similar to that used to forecast the flu in 
 \cite{osthus2019dynamic}, a nonlinear Bayesian model similar to that used by 
-\cite{ulloa2019} and \cite{wadsworth2024forecasting}, an ARIMA model fit 
+\cite{ulloa2019} and \cite{wadsworth2025forecasting}, an ARIMA model fit 
 using the \texttt{forecast} package in \texttt{R} 
 \cite[]{hyndman2008automatic}, and a naive random walk model also fit using
 the \texttt{forecast} package. The two Bayesian models were fit using the 
@@ -939,20 +952,22 @@ $\mathbf{1}_4$, and for the other the prior parameter vector was
 $\mathbf{50}_4$. The latter distribution assigns a tighter probability to the
 equal weights and a thus a stronger regularization to an equally weighted 
 ensemble. In figure \ref{fig:sir_sim}, these two ensembles are denoted as
-SIR and SIR50 respectively. Unlike in the previous study, the value of 
+SGP and SGP50 respectively. Unlike in the previous study, the value of 
 the learning rate $\eta$
 did not appear to affect forecast performance, so for both AVS and SGP methods
 we fixed $\eta = 1$.
 
 Figure \ref{fig:sir_sim} shows the results of the one step ahead forecasts for
-3,000 simulation replicates. The lines in the LogS and CRPS plots the
+3,000 simulation replicates. The lines in the LogS and CRPS plot the
 average forecast scores over the 3,000 replicate by method. Here the
 SGP ensemble does not perform as well as in the previous two studies when
 compared with other methods, but 
 the SGP50 with the stronger regularization prior performs very well, resulting
 in lower
-LogS and CRPS scores that the other methods for most of the 30 weeks shown. 
-Figure \ref{fig:sir_sim_med} in the supplementary material shows similar plots
+LogS and CRPS scores than the other methods for most of the 30 weeks shown. 
+A figure 
+% \ref{fig:sir_sim_med} 
+in the supplementary material shows similar plots
 for the forecasts scores differing only in that the lines represent the 
 median of scores
 rather than the mean. There the SGP and AVS ensembles appear to perform the
@@ -1101,7 +1116,8 @@ setting. The FluSight candidate forecasts were dynamic, changing every week
 as the individual 
 forecast teams updated their forecasts and the flu season progressed.
 To complete the SGP, an uninformative Dirichlet prior with parameter 
-$\mathbf{1}_C$ was assigned to $\omega$. The SGP was fit via Hamiltonian 
+$\mathbf{1}_C$ was assigned to $\boldsymbol{\omega}$. 
+The SGP was fit via Hamiltonian 
 Monte Carlo sampling using the \texttt{cmdstanr} \texttt{R} package 
 \cite[]{stan2024manual,gabry2022stan}. To assess convergence of the fit, 
 the SGP for US forecasts at the national level for the week of 
@@ -1150,12 +1166,15 @@ all regions was also calculated.
 
 
 The plots on the left of figure \ref{fig:flu_crps} shows 90\% SGP 
-credible intervals for the 11 
-included forecast models for flu hospitalizations at the US national level 
+credible intervals for the 10 
+included forecast models for flu hospitalizations for the state of 
+Rhode Island --one of the regions where the SGP forecasts peprformed the best
+relative to other methods--
 for all weeks during the 2023-24 flu season. The plots show how the SGP model 
-probabilities change through the season where in some weeks one or two models 
-are strongly favored over the others, whereas in other weeks models appear
-relatively equal in importance or display other patterns.
+probabilities change through the season. At the beginning of the season, there
+was little separation in probabilities for individual forecast weights, but
+as the season progresses several component forecasts decrease in importance
+while a few increase but with higher variability.
 The plot on the right of figure \ref{fig:flu_crps} shows the mean CRPS 
 scores for 
 SGP, AVS, BMA and EQW divided by the mean CRPS score of the SGP
@@ -1172,7 +1191,7 @@ only 3 regions does the SGP perform the worst among the methods compared.
 \centering
 %\begin{subfigure}{}
   % \centering
-  \includegraphics[width=.48\linewidth]{Images/us_post_int.png}
+  \includegraphics[width=.48\linewidth]{Images/ri_post_int.png}
   % \caption{A subfigure}
   % \label{fig:sub1}
 %\end{subfigure}%
@@ -1200,10 +1219,13 @@ four methods by showing in how many instances forecasts for each method were
 ranked 1, 2, 3, or 4 by mean CRPS over regions or weeks, a smaller 
 ranking meaning better performance. 
 By these rankings, SGP performed the best followed by BMA, AVS, and finally
-EQW. Figure \ref{fig:flu_wis} and table \ref{tab:forecast_rank_wis} are
-similar to those of figure \ref{fig:flu_crps} and 
-\ref{tab:forecast_rank} but with results being for ensembles constucted via 
-quantile averaging and forecasts scored by the WIS.
+EQW. 
+In the supplementary material, a simlilar figure and table to 
+% Figure \ref{fig:flu_wis} and table \ref{tab:forecast_rank_wis} are
+% similar to those of 
+figure \ref{fig:flu_crps} and table
+\ref{tab:forecast_rank} show results for ensembles constucted via 
+quantile averaging and forecasts scored by the WIS instead of the CRPS.
 
 
 \begin{table}[h!]
@@ -1329,7 +1351,7 @@ and where the models of the linear pool are fixed. An issue with posterior
 consistency in the dynamic setting is the tendency for the skill of 
 probabilistic forecast models to vary in time making a single risk minimizer 
 unlikely to exist without strict assumptions. Another limitation, present in 
-the flu forecast application is that forecasts are often missing. In the 
+the flu forecast application, is that forecasts are often missing. In the 
 analysis in section \ref{sec:flu_analysis}, only models with 100\% submission 
 over the course of the flu season for a given region were included in 
 the ensemble forecasts. Over the 
@@ -1349,6 +1371,21 @@ This work is partially supported by the National Science Foundation under
 Grant No. 2152117. Any opinions, findings, and conclusions or recommendations 
 expressed in this material are those of the author(s) and do not necessarily 
 reflect the views of the National Science Foundation.
+
+% Include this in the Bayesian Analysis submission
+% \begin{supplement}
+% Supplement to ``Bayesian
+% Stacking via Proper Scoring Rule
+% Optimization using a Gibbs Posterior``\\
+% A. Additional plots from first simulation study\\
+% % \end{supplement}
+% B. Additional plots from second simulation study\\
+% C. Weighted interval score results from 2023 FluSight
+%  forecast analysis
+% \end{supplement}
+
+\bibliographystyle{ba}
+\bibliography{master_bib}
 
 %%%%
 % Reference section comes before the appendix
@@ -1375,10 +1412,10 @@ reflect the views of the National Science Foundation.
 % This section may or may not be included
 % Chapter 2 shows a double appendix example. Please use A or B as in Appendix A if there are multiple appendix. Use "Appendix A:" before writing the title
 % Chapter 3 shows a single appendix example. Use "Appendix:" before writing the title 
-\section{Appendix: Proofs of equation (\ref{eq:crps_ens_mse}) and theorem 
+\section{Appendix: Proofs of proposition \ref{prop:crps_ens_mse} and theorem 
 \ref{thm:sgp_cons}}
 
-\subsection{Proof of equation (\ref{eq:crps_ens_mse})} \label{app:crps_ens_pf}
+\subsection{Proof of proposition \ref{prop:crps_ens_mse}} \label{app:crps_ens_pf}
 
 \begin{proof}
 The random variables $X$ and $X'$ in (\ref{eq:crps_mse}) are independent 
