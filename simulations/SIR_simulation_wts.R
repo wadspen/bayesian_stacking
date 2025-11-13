@@ -12,8 +12,7 @@ source("./stack_functions.R")
 library(parallel)
 library(doParallel)
 library(doMC)
-n.cores <- detectCores()
-#n.cores <- 1 
+n.cores <- 64
 my.cluster <- makeCluster(n.cores, type = "PSOCK")
 doParallel::registerDoParallel(cl = my.cluster)
 foreach::getDoParRegistered()
@@ -169,13 +168,13 @@ sir_res <- foreach(replicate = 1:reps,
                        
                      }
                        
-                       
+                     
+		     etas <- 1  
                      all_wts <- data.frame()
                      for (d in 2:ncol(all_mse)) {
                        
-                       etad[1] <- 1
-                       etad[2] <- 1
                        
+                                              
                        for (alpha in c(1,50)) {
                          wts <- try(learning_rate(etas, d-1, mse_mat = all_mse, 
                                                   absdiff_arr = absdiff_arr, 
