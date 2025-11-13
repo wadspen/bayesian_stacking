@@ -18,6 +18,7 @@
 
 # modules for Rscript run
 module purge
+module load r/4.4.1
 module load r-rgdal gsl udunits/2.2.28-et3j662
 
 Rscript ./SIR_simulation.R "$1" 
