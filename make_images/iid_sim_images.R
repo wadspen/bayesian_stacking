@@ -86,6 +86,34 @@ mix <- UnivarMixingDistribution(Norm(3, 1),
                          mixCoeff = c(.65, .35))
 
 
+logsp <- iid %>% 
+  # filter(mcrps < 1.5) %>%
+  mutate(method = ifelse(method == "bma", "BMA",
+                         ifelse(method == "avs", "AVS",
+                                ifelse(method == "msgp", "SGP", 
+                                       ifelse(method == "eqw", 
+                                              "EQW", NA))))) %>% 
+  mutate(method = factor(method, levels = c("BMA", "AVS", "SGP", "EQW"))) %>% 
+  # filter(N %in% c(10, 50, 200, 400)) %>% 
+  mutate(N = factor(N)) %>% 
+  ggplot() +
+  geom_boxplot(aes(x = N, y = mlogs, colour = method), size = .8) +
+  scale_colour_manual(name = "Method",
+                      labels = c("BMA", "AVS", "EQW", "SGP")
+                      ,values = c("#56B4E9", "#E69F00", "#D55E00", "#009E73")) +
+  xlab("n") +
+  ylab("LogS") +
+  labs(colour = "Method") +
+  theme_bw() +
+  theme(axis.text.y=element_text(size=12),
+        axis.text.x=element_text(size = 19),
+        axis.title=element_text(size=23),
+        strip.text.y = element_text(size = 12,),
+        strip.text.x = element_text(size = 16),
+        legend.title = element_text(size = 20),
+        legend.text = element_text(size = 18),
+        legend.position = c(.81,.78))
+
 
 crpsp <- iid %>% 
   # filter(mcrps < 1.5) %>%
@@ -114,9 +142,11 @@ crpsp <- iid %>%
         strip.text.x = element_text(size = 16),
         legend.title = element_text(size = 20),
         legend.text = element_text(size = 18)
-        ,legend.position = c(.85, .8)
+        ,legend.position = "none"
         )
 
+
+cowplot::plot_grid(logsp, crpsp, ncol = 2)
 
 tmus <- c(3, 6.5)
 tsigmas <- c(1, 1)

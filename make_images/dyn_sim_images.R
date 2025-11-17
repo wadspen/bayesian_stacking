@@ -65,8 +65,8 @@ logsp <- dyn %>%
                 colour = method, linetype = method), size = 1.1) +
   scale_colour_manual(name = "Method",
                       labels = c("AVS", "BMA", "EQW", "SGP", "SGP50")
-                      ,values = c("grey80", "grey60", "grey40",
-                                  "grey20", "grey0")) +
+                      ,values = c("#E69F00", "#56B4E9", "#009E73", 
+                                  "#D55E00", "#CC79A7")) +
   scale_linetype_manual(name= "Method",
                         values=c("twodash", "dotdash", "longdash",
                                  "solid", "dotted"),
@@ -82,7 +82,7 @@ logsp <- dyn %>%
         strip.text.x = element_text(size = 16),
         legend.title = element_text(size = 15),
         legend.text = element_text(size = 14),
-        legend.position = c(.91,.78))
+        legend.position = c(.88,.78))
 
 
 
@@ -98,8 +98,8 @@ crpsp <- dyn %>%
                 colour = method, linetype = method), size = 1.1) +
   scale_colour_manual(name = "Method",
                       labels = c("AVS", "BMA", "EQW", "SGP", "SGP50")
-                      ,values = c("grey80", "grey60", "grey40",
-                                  "grey20", "grey0")) +
+                      ,values = c("#E69F00", "#56B4E9", "#009E73", 
+                                  "#D55E00", "#CC79A7")) +
   scale_linetype_manual(name= "Method",
                         values=c("twodash", "dotdash", "longdash",
                                  "solid", "dotted"),
