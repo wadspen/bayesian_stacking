@@ -1,4 +1,24 @@
-\documentclass{article}
+\documentclass[ba]{imsart}
+%% Packages
+\RequirePackage{amsthm,amsmath,amsfonts,amssymb}
+\RequirePackage[numbers]{natbib}
+%\RequirePackage[authoryear]{natbib}%% uncomment this for author-year citations
+\RequirePackage[colorlinks,citecolor=blue,urlcolor=blue,backref=page,backref=page]{hyperref}
+\RequirePackage{graphicx}
+
+
+%%%%%%%%%%%packages added by Spencer%%%%%%%%%%%%%
+\usepackage{booktabs} %for the table in the analysis section
+\usepackage{enumerate} %for the short algorithm
+\usepackage{subfigure} %for making plots with multiple images
+\usepackage{tabularx} %for the spacing in tabular
+\usepackage{newtxmath} %for making indicator function
+\usepackage{changepage} %for adjusting the margins
+\usepackage{dsfont} %for getting the indicator function
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\1}[1]{\mathds{1}\left[#1\right]}
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}{Proposition}
 
 \usepackage{enumerate}
 \usepackage{hyperref}
@@ -218,7 +238,7 @@ on model parameters, but the difference in what I am doing is that the models
 are already given to me. I am not estimating model parameters. I am only 
 estimating the weights of a convex combination of distribution functions from
 the various given models. They also say that the CRPS cannot be calculated in 
-the case of the mixture }
+the case of the mixture.}
 The main novel aspect I see in this paper is the use of a discounting factor 
 in the loss function to deal 
 with the potential time varying nature of the data generating process. 
@@ -230,5 +250,51 @@ carefully executed and well
 written, its contribution lies primarily in consolidating and extending 
 previously introduced ideas.
 
+\spencerr{In this manuscript, we introduce a new method which we call the stacked 
+Gibbs posterior (SGP), for combining probabilistic forecasts by optimizing a 
+linear pool. The SGP provides uncertainty quantification of the weights in 
+the ensemble and allows the use of a prior distribution to inform or 
+influence the optimized weights. 
+The SGP belongs within the \textit{focused Bayesian prediction} (FBP) framework
+introduced by Loaiza-Maya et al. \cite[]{loaiza2021focused}. 
+In FBP, model parameters and forecasts are attained by constructing a Gibbs 
+posterior which is a type of posterior probability distribution constructed 
+not within the standard Bayesian framework but by specifying a risk function 
+which one desires to optimize in place of a standard likelihood function 
+\cite[]{martin2022direct,bissiri2016general}. In a Gibbs posterior, a prior
+distribution is assigned to model parameters, and parameter uncertainty is
+updated via Bayes theorem. In \cite[]{loaiza2021focused}, the Gibbs posterior
+uses a risk function based on proper scoring rules so as to produce optimal
+probabilistic 
+forecasts. In \cite[]{frazier2025loss} this is extended by fitting
+the Gibbs posterior via variational Bayes and showing both theoretically and 
+empirically that VB predictions are similar to predictions made via Markov
+chain Monte Carlo posterior sampling.
+
+Herein the SGP elaborates upon FBP, but FBP is extended in two important ways.
+The risk function optimized in the SGP is based on the continuous ranked 
+probability score (CRPS), and it is used to optimize a linear pool of 
+an arbitrary finite number of continous forecasts. 
+This scenario is considered in section 4.1 of \cite[]{loaiza2021focused}, 
+but the number of components in the 
+linear pool components is limited to two. In section 5.2 of 
+\cite[]{frazier2025loss}, a linear pool of 20 normal component models is
+optimized via FBP, but optimization of the CRPS was explicitly excluded 
+as a formula for evaluating it was unavailable. Herein we use a closed form
+solution of the CRPS over a linear pool of a finite number of normal component
+models. We also present a novel definition of the CRPS which allows for
+Monte Carlo approximation when the distribution evaluated is a finite mixture
+distribution with continuous components. This makes fitting the SGP possible
+when distributions of individual forecasts in a linear pool can be sampled from.
+The second important extension is the use of a discount factor in the the risk
+function. When data to be forecast is dynamic in nature, the discount factor
+is used to downweight the influence of data from the distance past and 
+upweight more recent data in the forecast optimization. The discount factor
+used in the SGP is similar to that used in 
+\cite[]{bernaciak2024loss,koop2013large, raftery2010online}.
+More details of these two extensions are given in section 3.}
+
+\bibliographystyle{ba}
+\bibliography{master_bib}
 
 \end{document}
