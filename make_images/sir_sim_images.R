@@ -171,10 +171,10 @@ logsp <- sim_scores %>%
                 linetype = method), size = 1.1) +
   scale_colour_manual(name = "Method",
                       labels = c("AVS", "BMA", "EQW", "SGP", "SGP50")
-                      ,values = c("grey80", "grey60", "grey40",
-                                  "grey20", "grey0")) +
+                      ,values = c("#E69F00", "#56B4E9", "#009E73", 
+                                  "#D55E00", "#CC79A7")) +
   scale_linetype_manual(name= "Method",
-                        values=c("twodash", "dotdash", "longdash",
+                        values=c("twodash", "dotdash", "longdash", 
                                  "solid", "dotted"),
                         labels=c("AVS", "BMA", "EQW", "SGP", "SGP50")) +
   ylab("LogS") +
@@ -202,8 +202,8 @@ crpsp <- sim_scores %>%
                 linetype = method), size = 1.1) +
   scale_colour_manual(name = "Method",
                       labels = c("AVS", "BMA", "EQW", "SGP", "SGP50")
-                      ,values = c("grey80", "grey60", "grey40", 
-                                  "grey20", "grey0")) +
+                      ,values = c("#E69F00", "#56B4E9", "#009E73", 
+                                  "#D55E00", "#CC79A7")) +
   scale_linetype_manual(name= "Method",
                         values=c("twodash", "dotdash", "longdash", 
                                  "solid", "dotted"),

@@ -416,7 +416,7 @@ in (\ref{eq:emp_risk_min}).
 
 \begin{equation}
     \label{eq:emp_risk_min}
-    \hat{\theta}_n = \underset{\theta \in \Theta}{\mathrm{arg min}} R_n(\theta)
+    \hat{\theta}_n \in \underset{\theta \in \Theta}{\mathrm{arg min}} R_n(\theta)
 \end{equation}
 The estimator can be viewed as an $M$-estimator, the statistical properties 
 of which have been extensively studied \cite[]{boos2013essential, 
@@ -1000,7 +1000,7 @@ it was fixed as $\eta = 1$.
 
 Figure \ref{fig:sir_sim} shows the results of the one step ahead forecasts for
 3,000 simulation replicates. The lines in the LogS and CRPS plot the
-average forecast scores over the 3,000 replicate by method. Here the
+average forecast scores over the 3,000 replicates by method. Here the
 SGP ensemble does not perform as well as in the previous two studies when
 compared with other methods, but 
 the SGP50 with the stronger regularization prior performs very well, resulting
@@ -1016,10 +1016,9 @@ best of all methods. The results suggests that the regularization to
 equally weighted 
 forecast components makes ensembles forecasts robust to particularly high 
 scores.
-The PIT histograms and boxplots in figure \ref{fig:sir_sim}
-show that relative to the other methods, the SGP performs well in terms of 
-forecast calibration. The SGP50 is less well calibrated and the histogram has a 
-shape much closer to that of the EQW ensemble forecasts.
+
+
+
 
 
 \begin{figure}[hbt!]
@@ -1037,6 +1036,16 @@ boxplots by weighting method of the UWD1 for all forecasts of one simulation
 replicate is shown (bottom).}
 \label{fig:sir_sim}
 \end{figure}
+
+The PIT histograms and boxplots in figure \ref{fig:sir_sim}
+show that relative to the other methods, the SGP performs well in terms of 
+forecast calibration. The SGP50 is less well calibrated and the histogram has a 
+shape much closer to that of the EQW ensemble forecasts. In the supplementary 
+materials an additional figure is included to compare the SGP and SGP50 
+posterior weights for the component models in this study. The figure shows 
+how the added regularization in the SGP50 brings posterior weights closer to
+equality --in this case 1/4 since there are 4 component models-- but still 
+allows for favoring some components over others.
 
 The studies in this section show the SGP's ability to construct accurate 
 forecasts for cases of both i.i.d. and dynamic data. The SGP largely 
@@ -1507,7 +1516,7 @@ conditions are (\ref{eq:cons_ull}) and (\ref{eq:cons_sep}).
 
 \noindent We first show (\ref{eq:cons_ull}). By lemma 2.4 in 
 \cite{newey1994large}, if 
-\begin{enumerate}%[\hspace{.5cm}i)]
+\begin{enumerate}[i)]%[\hspace{.5cm}i)]
     \item the data are iid
     \item $\Omega$ is compact
     \item $CRPS(\bar{P}_{\omega}, y)$ is continuous at each $\omega \in 
@@ -1544,6 +1553,9 @@ its infimum. Now $\Omega \setminus \overline{B}_{\delta} \subset \Omega
 \]
 and (\ref{eq:cons_sep}) holds.
 \end{proof}
+
+
+
 % Now we show (\ref{eq:cons_sep}). To do this, we first show that (\ref{eq:crps_ens_mse}) is a convex function in $\Omega$. For $0 < \nu < 1$, $\omega, \omega^* \in \Omega$ 
 
 % \begin{align*}

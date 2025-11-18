@@ -49,7 +49,7 @@ component models (right).}
 \section{Additional plots from third simulation study}
 \begin{figure}[hbt!]
 \centering
-  \includegraphics[width=.98\linewidth]{Images/sir_sim_med.png}
+  \includegraphics[width=.98\linewidth]{Images/sir_sim_med_col.png}
 \caption{Plots showing results for one step ahead forecasts for SIR
 data for the four
 weighting methods SGP, AVS, BMA, and EQW. The median LogS (left) and 
@@ -59,6 +59,25 @@ ahead predictions at 29 time points colored by weighting methods.
 \label{fig:sir_sim_med}
 \end{figure}
 
+
+
+\begin{figure}[hbt!]
+\centering
+  \includegraphics[width=.98\linewidth]{Images/sir_post_res.png}
+\caption{Plots showing results of posterior weights for SGP and SGP50.
+ 95\% credible intervals for SGP and SGP50 
+weights for 30 time steps
+of 1 simulation replicate from simulation study (left) and 
+boxplots of mean posterior weights for each component model for selected
+time steps 4, 14, 24, and 34 for all 3,000 replicates faceted by 
+time step and component model (right). The four component forecast models are
+the ARIMA (AM), hierarchical Bayesian (HB), Bayesian mechanistic SIR (MB), and
+random walk (RW).
+}
+\label{fig:sir_post_res}
+\end{figure}
+
+
 \newpage
 
 \section{Weighted interval score results from 2023 FluSight forecast analysis}
@@ -66,7 +85,7 @@ ahead predictions at 29 time points colored by weighting methods.
 \begin{figure}[hbt!]
 \centering
 
-  \includegraphics[width=.6\linewidth]{Images/flu_region_wis.png}
+  \includegraphics[width=.6\linewidth]{Images/flu_region_wis_col.png}
 \caption{
 Mean over regions WIS for the four ensemble methods divided
 by mean WIS for the SGP

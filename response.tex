@@ -55,15 +55,9 @@ is not clear enough
 in the current draft and must be clarified right after the stacking posterior 
 is introduced.
 
-\spencerq{Things that I believe right off the bat that make this new
-\begin{itemize}
-  \item I provide a new definition of the CRPS which can accommodate a mixture
-    of continuous distributions for any finite number of components
-  \item The SGP works for any number of components, not just 2 and not only for 
-      normal components
-  \item The decay rate is added to my loss function
-\end{itemize}
-}
+  \spencerr{See final response to comments from reviewer R1}
+  
+  \spencerr{Added:??}
 
 
   \item On page 6, it is odd on the one hand to write in (5) that
@@ -77,6 +71,9 @@ is introduced.
 We reserve the notation $\in$ to clarify that the minimiser is not unique. 
 But if the population
 minimiser is not unique, then why would the sample minimiser be unique?
+
+\spencerr{It was a mistake to have $=$ in the (7) as the sample minimiser need
+not be unique. It was replaced with $\in$.}
 
 \item  On page 7, when you talk about the selection of the learning rate, it 
 may be useful to
@@ -107,8 +104,7 @@ your argument by mentioning that Loaiza-Maya et al. (2021) and Frazier et al.
 (2024) have already obtained
 such results under certain conditions.
 
-\item by mentioning that Loaiza-Maya et al. (2021) and Frazier et al. 
-(2024) have already obtained such results under certain conditions.
+\item On page 10, I have some questions about Theorem 1 and its proof.
 
   \begin{enumerate}[1.]
     \item On page 28 you talk about the DP prior, but the prior condition is 
@@ -157,6 +153,16 @@ the CRPS was approximated using equation
 \item The SGP50 and the EQW have quite similar histograms. What does the 
 posterior for the
 SGP50 look like? Is it just basically equal weight across the models?
+
+\spencerr{A figure showing the posterior weights for SGP and SGP50 was added
+to the supplementary materials. The following was added to the main text:
+\\~\\
+``In the supplementary 
+materials an additional figure is included to compare the SGP and SGP50 
+posterior weights for the component models in this study. The figure shows 
+how the added regularization in the SGP50 brings posterior weights closer to
+equality --in this case 1/4 since there are 4 component models-- but still 
+allows for favoring some components over others.``}
 
 
 \end{enumerate}
@@ -250,9 +256,9 @@ carefully executed and well
 written, its contribution lies primarily in consolidating and extending 
 previously introduced ideas.
 
-\spencerr{In response to these comments, the second to last paragraph in the 
+\spencerr{In response to these comments, one paragraph in the 
 introduction was replaced with 
-the following two:
+the following:
 
 ``In this manuscript, we introduce a new method which we call the stacked 
 Gibbs posterior (SGP), for combining probabilistic forecasts by optimizing a 
