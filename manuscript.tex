@@ -354,10 +354,19 @@ analysis of the weights. This is in contrast to the stacking done by
 \cite{yao2018using} where the weights are optimized as a point on the simplex. 
 The SGP also differs from the posterior model averaging in (\ref{eq:bma}) and 
 (\ref{eq:avs}) where the posterior 
-probability is point assigned directly to candidate models rather than 
-to the model weights. 
+probability is point assigned directly to the loss functions of 
+individual candidate models rather than 
+to the model weights of the linear pool as a whole. 
+The SGP is a specific case of FBP where the risk function is the CRPS evaluated
+over a linear pool of an arbitrary number of continous model components. 
+As far as we are aware, methods for evaluating the risk function have been 
+available only in the case of a two component linear pool model. In this 
+section, we provide a new definition of the CRPS which allows for evaluation
+of the CRPS for a linear pool of any finite number of continuous 
+model components.
 In the remainder of this section a general Gibbs posterior is defined in 
-more detail following \cite{martin2022direct}, proper scoring rules are 
+more detail following \cite{martin2022direct}, discussion of the use of a
+discount factor is given, proper scoring rules are 
 defined following \cite{gneiting2007strictly} with specific emphasis on the 
 CRPS, and a posterior consistency result is presented. 
 
@@ -451,10 +460,17 @@ selected by a data driven tuning or some other problem specific selection.
 Often the learning rate is tuned so that posterior credible intervals have 
 frequentist coverage probability, or it is selected via cross validation to 
 optimize some criteria \cite[]{martin2022direct,syring2017gibbs,
-bissiri2016general,zhang2006information}. Importantly the asymptotic 
+bissiri2016general,zhang2006information}. 
+While the tuning of $\eta$ may have a noticeable effect on predictive
+performance for small sample sizes,
+it was recently argued in \cite[]{mclatchie2025predictive} that for moderate
+to large sample sizes, the selection of $\eta$ will have little effect on 
+predictive accuracy.
+Importantly the asymptotic 
 consistency of the Gibbs posterior is not dependent on $\eta$, so selecting 
 $\eta$ by most well reasoned methods should be appropriate 
 \cite[]{martin2022direct,loaiza2021focused}.
+
 
 
 
@@ -489,11 +505,33 @@ $\tilde{y}_{T+h}$.
    G(\bar{P}_{t, \omega}, y_t)
     \label{eq:er_dyn}
 \end{equation}
-In this dynamic setting, $\alpha^{T-t}$ is a discount factor 
-\cite[]{koop2013large,raftery2010online} used to lessen the influence of 
+In this dynamic setting, $0 < \alpha \leq 1$ is a discount factor 
+used to lessen the influence of 
 previous forecasts making the performance of the most recent forecasts 
-the most influential. In \cite{lavine2021adaptive}, the discount factor is 
-fixed at $\alpha = 0.98$, and we use the same value herein. The linear pool 
+the most influential. For example, if $\alpha = 0.98$, 
+observations from 10 time steps in the passed
+receive approximately 83\% of the weight as the most recent value.
+If $\alpha = 1$, the risk function in 
+(\ref{eq:er_iid}) is recovered.
+
+Discount factors (also known as forgetting factors)
+have been used in the model averaging setting but not
+to our knowledge in the FBP setting 
+\cite[]{bernaciak2024loss,lavine2021adaptive, zhao2016dynamic, 
+koop2013large,raftery2010online}. 
+The discount
+factor has been largely used to improve upon BMA which is best for static 
+data as opposed to dynamic data. Previous literature suggests $\alpha$ 
+between 0.95 and 0.99 leads to more accurate predictions, and that varying 
+$\alpha$ has little effect except where there are dramatic changes in the 
+time series \cite[]{lavine2021adaptive, koop2013large}. 
+In the dynamic analyses below
+below we also tried other values of $\alpha$ between 0.9 and 0.99 but 
+found the specific value made little difference in predictive performance.
+In \cite{lavine2021adaptive}, the discount factor is 
+fixed at $\alpha = 0.98$, and we use the same value herein. 
+
+The linear pool 
 $\bar{P}_{t, \omega}$ is made up of competing models which may or may not be 
 time dependent. In the second simulation in section \ref{sec:simulation}, 
 the risk in (\ref{eq:er_dyn}) is used where competing models are fixed in 
@@ -623,6 +661,14 @@ $G(\cdot, \cdot) = CRPS(\cdot, \cdot)$ and $G_n$ take the form of either
 (\ref{eq:er_iid}) or (\ref{eq:er_dyn}).
 
 \subsection{SGP consistency}
+When using the SGP to produce forecasts, one would like assurance
+that the optimized weights converge to create a linear pool which produce the
+best forecasts subject to the CRPS. The consistency result in this section
+provides some of that assurance. We note that similar results under
+differing conditions were shown 
+in \cite[]{frazier2025loss} and 
+in \cite[]{loaiza2021focused}.
+
 In \cite{martin2022direct}, parameter asymptotic consistency results of the 
 Gibbs posterior similar to consistency results pertaining to the standard 
 Bayesian posterior are established, and minimal conditions for consistency 
@@ -688,21 +734,14 @@ the SGP proposed in (\ref{eq:sgp}) is affirmed by theorem \ref{thm:sgp_cons}.
 \end{theorem}
 
 
-% \begin{theorem}{\emph{SGP consistency}}
 
-
-% Let $\{y_i; i = 1, ..., n\}$ be i.i.d. data from a distribution with law $\mathcal{L}$. Let $P$ be a finite mixture distribution of the form of (\ref{eq:}) where each component distribution $P_c$ is continuous and under $P$, $E|X| < \infty$ and $\omega^* \in \{w1, ..., w_C : 0 \leq w_c \leq 1\}$ is the vector of mixture distribution weights which uniquely minimizes $CRPS(\sum_c w_c P_c, Y)$. If $\pi(\omega)$ is a prior distribution assigned to $\omega$ such that 
-% \[
-%     \pi(\{\omega: S(\omega) - S(\omega^*) < \delta \} ) > 0 \quad \forall \delta > 0,
-% \]
-% $\pi_n^{(\eta)} (\omega)$ is a Gibbs posterior of the form in (\ref{}) and $d(\cdot, \cdot)$ is the euclidean distance, then for any $\epsilon$
-
-% \[
-%     \pi_n^{(\eta)} (\{\omega : d(\omega, \omega^*) > \epsilon \}) \rightarrow 0, \quad \text{ in $\mathcal{L}$-probability as $n \rightarrow \infty$}
-% \]
-
-% \end{theorem}
-
+Theorem \ref{thm:sgp_cons} shows that as more data is observed, 
+the SGP becomes more
+concentrated around the unique minimizer $\boldsymbol{\omega}^*$. Thus, at 
+least in the case of i.i.d. data, the SGP will converge to produce the best
+possible linear pool combination for predictive accuracy under the CRPS. 
+In theory, this result may also be used to show that the SGP produces better 
+predictive results than the standard likelihood Bayesian results.
 This manuscript does not include consistency results beyond the case of data 
 being i.i.d. and having competing models which are fixed, or unaltered by 
 additional data. Such is the setting of the first simulation study in the 
@@ -774,9 +813,12 @@ both AVS and SGP, the learning rate $\eta$ needed to be selected, and we opted
 to select $\eta$ with the aim of minimizing the CRPS for prediction. A figure
 in the supplementary materials shows an example of how the 
 CRPS varies for different 
-values of $\eta$ for the AVS and SGP \cite{wadsworth2025bayesstack}. In the case of AVS, LOO cross 
+values of $\eta$ for the AVS and SGP \cite{wadsworth2025bayesstack}. In the 
+case of AVS, LOO cross 
 validation over a grid of values for $\eta$ was performed and the $\eta$ 
-which minimized the predictive CRPS was selected. For the SGP, the value of 
+which minimized the predictive CRPS was selected. Additional details on the 
+cross validation performed here are available in the supplementary materials.
+For the SGP, the value of 
 the CRPS continues to decrease as $\eta$ increases. The improvement became 
 less stark for higher values, so $\eta$ was fixed at 15 so as to retain 
 influence from the prior distribution.

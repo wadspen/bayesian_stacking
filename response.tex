@@ -57,7 +57,15 @@ is introduced.
 
   \spencerr{See final response to comments from reviewer R1}
   
-  \spencerr{Added:??}
+  \spencerr{Also added:
+  
+  ``The SGP is a specific case of FBP where the risk function is the CRPS evaluated
+over a linear pool of an arbitrary number of continous model components. 
+As far as we are aware, methods for evaluating the risk function have been 
+available only in the case of a two component linear pool model. In this 
+section, we provide a new definition of the CRPS which allows for evaluation
+of the CRPS for a linear pool of any finite number of continuous 
+model components.``}
 
 
   \item On page 6, it is odd on the one hand to write in (5) that
@@ -83,6 +91,14 @@ indeed suggested in Loaiza-Maya et
 al. (2021) but was recently rigorously proven to be a valid conjecture by 
 McLatchie et al. (2025).
 
+\spencerr{The following was added:
+
+``While the tuning of $\eta$ may have a noticeable effect on predictive
+performance for small sample sizes,
+it was recently argued in \cite[]{mclatchie2025predictive} that for moderate
+to large sample sizes, the selection of $\eta$ will have little effect on
+predictive accuracy.``}
+
 \item I found the use of the two different loss functions based on the 
 dependence in the data to
 be a useful addition to the literature. The construction itself appears very 
@@ -92,6 +108,34 @@ Of course,
 you are discounting within the loss used to construct the posterior and they 
 are discounting the
 predictive itself. Still, this should be mentioned.
+
+\spencerr{The following was added:
+
+``In this dynamic setting, $0 < \alpha \leq 1$ is a discount factor 
+used to lessen the influence of 
+previous forecasts making the performance of the most recent forecasts 
+the most influential. For example, if $\alpha = 0.98$, 
+observations from 10 time steps in the passed
+receive approximately 83\% of the weight as the most recent value.
+If $\alpha = 1$, the risk function in 
+(9) is recovered.
+
+Discount factors (also known as forgetting factors)
+have been used in the model averaging setting but not
+to our knowledge in the FBP setting 
+\cite[]{bernaciak2024loss,lavine2021adaptive, zhao2016dynamic, 
+koop2013large,raftery2010online}. 
+The discount
+factor has been largely used to improve upon BMA which is best for static 
+data as opposed to dynamic data. Previous literature suggests $\alpha$ 
+between 0.95 and 0.99 leads to more accurate predictions, and that varying 
+$\alpha$ has little effect except where there are dramatic changes in the 
+time series \cite[]{lavine2021adaptive, koop2013large}. 
+In the dynamic analyses below
+below we also tried other values of $\alpha$ between 0.9 and 0.99 but 
+found the specific value made little difference in predictive performance.
+In \cite{lavine2021adaptive}, the discount factor is 
+fixed at $\alpha = 0.98$, and we use the same value herein.``}
 
 \item  In Section 3.3, why do we care about consistency here? There is little 
 to no motivation here
@@ -103,6 +147,26 @@ Bayes posterior. When you talk about posterior consistency, you should bolster
 your argument by mentioning that Loaiza-Maya et al. (2021) and Frazier et al. 
 (2024) have already obtained
 such results under certain conditions.
+
+\spencerq{
+
+``When using the SGP to produce forecasts, one would like assurance
+that the optimized weights converge to create a linear pool which produce the
+best forecasts subject to the CRPS. The consistency result in this section
+provides some of that assurance. We note that similar results under
+differing conditions were shown 
+in \cite[]{frazier2025loss} and 
+in \cite[]{loaiza2021focused}.``
+
+
+``Theorem \ref{thm:sgp_cons} shows that as more data is observed, 
+the SGP becomes more
+concentrated around the unique minimizer $\boldsymbol{\omega}^*$. Thus, at 
+least in the case of i.i.d. data, the SGP will converge to produce the best
+possible linear pool combination for predictive accuracy under the CRPS. 
+In theory, this result may also be used to show that the SGP produces better 
+predictive results than the standard likelihood Bayesian results.``
+}
 
 \item On page 10, I have some questions about Theorem 1 and its proof.
 
@@ -129,6 +193,26 @@ size was used for
 the selection of $\eta$ when using the CRPS? Please clarify in the supplement 
 precisely how this
 optimisation was performed.
+
+\spencerr{The paragraph below was added to the supplmentary materials. It is 
+alluded to in the main text.
+
+``When optimizing linear pool model weights for adaptive variable AVS
+in the i.i.d. data simulation study in section 4.1, the learning rate $\eta$
+was selected via LOO cross validation. In the study, data
+was simulated from the specified mixture model for sample sizes
+$n \in \{10, 20,50, 100, 200\}$. 
+For each sample size, there were 500s replicates. 
+In each replicate, the AVS linear pool was fit using each of 30 equally spaced
+values of the potential learning rate $\eta$ from 0.001 to 1.5.
+Each of the $n$ observations was left out in turn, and the 
+AVS linear pool was fit using the remaining $n-1$ data points. The CRPS
+was then computed for the held out point. The value $\eta_i^*$ was set 
+as learning rate value which minimized the CRPS.
+Finally, the learning rate $\eta$ was set as the mean of the $n$ $\eta_i^*$s,
+and the AVS was fit using all $n$ data points with $\eta$ as the learning rate.
+The left plot in figure (1) shows an example of the CRPS
+values over each of 30 grid points when the sample size is $n = 10$.``}
 
 \item In Section 4.3, how was the posterior sampling conducted? In particular, 
 was the CRPS for
@@ -258,7 +342,7 @@ previously introduced ideas.
 
 \spencerr{In response to these comments, one paragraph in the 
 introduction was replaced with 
-the following:
+that below. See also responses to (1) and (4) of AE1.
 
 ``In this manuscript, we introduce a new method which we call the stacked 
 Gibbs posterior (SGP), for combining probabilistic forecasts by optimizing a 

@@ -317,10 +317,14 @@ plot_wis %>%
   geom_point(aes(y = location_name, x = mwis, fill = method, shape = method),
              size = 3) +
   scale_shape_manual(name = "Method", values=c(22:24)) +
+  # scale_fill_manual(name = "Method",
+  #                   labels = c("MED", "EQW", "SGP")
+  #                   ,values = c("grey60", "grey40", 
+  #                               "grey20")) +
   scale_fill_manual(name = "Method",
                     labels = c("MED", "EQW", "SGP")
-                    ,values = c("grey60", "grey40", 
-                                "grey20")) +
+                    ,values = c("#009a70", "#56B4E9", 
+                                "#D55E00")) +
   xlab("RWIS") +
   ylab("Region") +
   labs(fill = "Method", shape = "Method") +

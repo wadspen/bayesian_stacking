@@ -1,5 +1,22 @@
 \section{Additional plots from first simulation study}
 
+When optimizing linear pool model weights for adaptive variable AVS
+in the i.i.d. data simulation study in section 4.1, the learning rate $\eta$
+was selected via LOO cross validation. In the study, data
+was simulated from the specified mixture model for sample sizes
+$n \in \{10, 20,50, 100, 200\}$. 
+For each sample size, there were 500s replicates. 
+In each replicate, the AVS linear pool was fit using each of 30 equally spaced
+values of the potential learning rate $\eta$ from 0.001 to 1.5.
+Each of the $n$ observations was left out in turn, and the 
+AVS linear pool was fit using the remaining $n-1$ data points. The CRPS
+was then computed for the held out point. The value $\eta_i^*$ was set 
+as learning rate value which minimized the CRPS.
+Finally, the learning rate $\eta$ was set as the mean of the $n$ $\eta_i^*$s,
+and the AVS was fit using all $n$ data points with $\eta$ as the learning rate.
+The left plot in figure \ref{fig:min_etas} shows an example of the CRPS
+values over each of 30 grid points when the sample size is $n = 10$.
+
 \begin{figure}[hbt!]
 \centering
 %\begin{subfigure}{}
