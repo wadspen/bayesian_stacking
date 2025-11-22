@@ -15,6 +15,7 @@
 \usepackage{newtxmath} %for making indicator function
 \usepackage{changepage} %for adjusting the margins
 \usepackage{dsfont} %for getting the indicator function
+\usepackage{mathtools}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newcommand{\1}[1]{\mathds{1}\left[#1\right]}
 \newtheorem{theorem}{Theorem}
@@ -186,6 +187,24 @@ predictive results than the standard likelihood Bayesian results.``
     score; 
     however,
     Jensen should provide such a condition since $-\text{log}$ is concave.
+    
+    
+  \spencerq{We didn't include a result for the log score for teh reason you gave
+    about not finding a general upper bounding function but also because we 
+    focus more on the CRPS in this paper. What we need to bound to get similar
+    results for the log score is the linear pool density function $\bar{p}(y)$. 
+    For example, take the bounds 
+    $0 < \epsilon < \bar{p}(y) < M < \infty$ for all $y$.
+    Then one could set 
+    \[
+     m(y) = 
+      \begin{cases*}
+        \text{log}(M)  & if \(p(y) \ge 1\) \\
+        -\text{log}(\epsilon)   & if \(p(y) < 1\)
+      \end{cases*}
+    \]
+    and the proof would be complete.
+    }
   \end{enumerate}
   
 \item Page 11, for the learning rate in the example of Section 4.1, what sample 
