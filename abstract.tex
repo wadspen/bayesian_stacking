@@ -9,20 +9,25 @@ linear pooling.
 Besides optimal linear pooling, Bayesian predictive synthesis has 
 emerged as a model probability updating scheme which is more flexible than
 standard Bayesian model averaging and which provides a Bayesian 
-solution to selecting model weights for a linear pool.
+solution for selecting model weights.
 In many problems, equally weighted linear pool forecasts often 
 outperform forecasts constructed using sophisticated weight selection methods.
 % Existing methods may or may not improve ensembles for given datasets, and 
 % there is room for additional methodology.
 Thus regularization to an equal weighting of forecasts may be a valuable 
 addition to any weight selection method.
-In this manuscript, we introduce an optimal linear pool
-based on a Gibbs posterior over stacked model weights optimized
-over a proper scoring rule. The Gibbs posterior extends stacking 
+In this manuscript, we introduce a Gibbs posterior based optimal linear pool
+which is targetted to minimize a proper scoring rule, the continuous rank
+probability score (CRPS). 
+The Gibbs posterior extends stacking 
 into a Bayesian framework by allowing for optimal weight solutions to be 
 influenced by a prior distribution, and it also provides uncertainty 
 quantification of weights in the form of a probability distribution. 
-We compare ensemble forecast performance with model averaging methods and equal 
+A new definition of the CRPS is given which allows its approximate evaluation
+for any finite number of continuous ensemble components, and a discounting 
+factor is utilized to improve forecasts in dynamic settings.
+Ensemble forecast performance is compared 
+with model averaging methods and equal 
 weighted models in simulation studies and in a real data example from the 
 2023-24 US Centers for Disease Control FluSight competition. In both the 
 simulation studies and the FluSight analysis, the stacked Gibbs posterior 

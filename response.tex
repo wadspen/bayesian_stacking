@@ -32,10 +32,27 @@
 \newcommand{\spencerq}[1]{{\color{green} Question: #1}}
 
 \begin{document}
-  
-  
 \Huge
-AE1
+\noindent Responses to reviewer comments
+\normalsize
+\\~\\
+We appreciate the associate editor and reviwer for your thoughtful comments and 
+recommendations. We're also thankful for including citations of relevant work
+which strengthened helped clarify how certain points fit in the current 
+literature. Below are the specific comments made by both reviewers along
+with our responses to each comment. We begin with responses to 
+reviewer AE1 and finish with responses to R1. 
+
+Comments from the reviewers are in normal script, and 
+our responses are \emph{italicized}, and 
+most specific additions to the mauscript
+text are indented. Besides the responses to the reviewers comments, we also 
+cleaned up language in the manuscript where we felt it was needed, made small
+clarifying comments, and fixed additional grammatical/spelling errors.
+\\~\\
+\\~\\
+\Huge
+\noindent AE1
 \normalsize
 \section{Main Comments}
 \begin{enumerate}[(1)]
@@ -55,18 +72,82 @@ version). The direct link between the current proposal and this earlier work
 is not clear enough
 in the current draft and must be clarified right after the stacking posterior 
 is introduced.
+\\~\\
+\emph{To clarify the link between earlier work and the current proposal, 
+the following two paragraphs replaced one paragraph in the introduction}.
 
-  \spencerr{See final response to comments from reviewer R1}
-  
-  \spencerr{Also added:
-  
-  ``The SGP is a specific case of FBP where the risk function is the CRPS evaluated
-over a linear pool of an arbitrary number of continous model components. 
+\begin{quote}
+  \emph{In this manuscript, we introduce a new method which we call the stacked 
+  Gibbs posterior (SGP), for combining probabilistic forecasts by optimizing a 
+  linear pool. The SGP provides uncertainty quantification of the weights in 
+  the ensemble and allows the use of a prior distribution to inform or 
+  influence the optimized weights. 
+  The SGP belongs within the \textit{focused Bayesian prediction} (FBP) framework
+  introduced by Loaiza-Maya et al. \cite[]{loaiza2021focused}. 
+  In FBP, model parameters and forecasts are attained by constructing a Gibbs 
+  posterior which is a type of posterior probability distribution constructed 
+  not within the standard Bayesian framework but by specifying a risk function 
+  which one desires to optimize in place of a standard likelihood function 
+  \cite[]{martin2022direct,bissiri2016general}. In a Gibbs posterior, a prior
+  distribution is assigned to model parameters, and parameter uncertainty is
+  updated via Bayes theorem. In \cite[]{loaiza2021focused}, the Gibbs posterior
+  uses a risk function based on proper scoring rules so as to produce optimal
+  probabilistic 
+  forecasts. In \cite[]{frazier2025loss} FBP is extended by fitting
+  the Gibbs posterior via variational Bayes (VB)
+  and showing both theoretically and 
+  empirically that VB predictions are similar to predictions made via Markov
+  chain Monte Carlo (MCMC) posterior sampling.}
+  \\~\\
+  \emph{
+  The work herein elaborates upon FBP, but it is extended in two important ways.
+  The risk function optimized in the SGP is based on the continuous ranked 
+  probability score (CRPS), and it is used to optimize a linear pool of 
+  an arbitrary finite number of continous forecasts. 
+  A similar scenario is considered in \cite[]{loaiza2021focused}, 
+  but the number of components in the 
+  linear pool is limited to two. Another similar scenario is considered in
+  \cite[]{frazier2025loss} where a linear pool of 20 normal component models is
+  optimized via FBP, but optimization of the CRPS was explicitly excluded 
+  since a formula for evaluating it was unavailable. 
+  Herein we use a closed form
+  solution of the CRPS over a linear pool of a finite number of normal component
+  models. We also present a novel definition of the CRPS which allows for
+  Monte Carlo approximation when the distribution evaluated is a finite mixture
+  distribution with continuous components. This makes fitting the SGP possible
+  when one can draw samples from the distributions of individual forecasts
+  in a linear pool.
+  The second important extension is the use of a discount factor in the the risk
+  function. When data to be forecast is dynamic in nature, the discount factor
+  is used to downweight the influence of data from the distant past and 
+  upweight more recent data in the forecast optimization. The discount factor
+  used in the SGP is similar to that used in 
+  \cite[]{bernaciak2024loss,koop2013large, raftery2010online}.
+  More details of these two extensions are given in section 3.}
+\end{quote}
+% \\~\\
+\emph{The following statement was also added on page 6.
+\begin{quote}
 As far as we are aware, methods for evaluating the risk function have been 
-available only in the case of a two component linear pool model. In this 
-section, we provide a new definition of the CRPS which allows for evaluation
-of the CRPS for a linear pool of any finite number of continuous 
-model components.``}
+available only in the case of a two component linear pool model, as 
+considered in section 4.1 of \cite[]{loaiza2021focused}. In section 5.2 of 
+\cite[]{frazier2025loss} a linear pool
+ of 20 normal component models is optimized via FBP, but 
+ optimization of the CRPS
+ was explicitly excluded because no formula for evaluating the risk function was
+ available.
+\end{quote}
+}
+
+\emph{Finally, the following statement was added in the conclusion.
+\begin{quote}
+  As part of the SGP, a we provide a new definition of the CRPS which allows
+for its approximate evaluation for linear pool models of any finite number
+of components. We also include the use of a discount factor to control influence
+of data in dynamic settings.
+\end{quote}
+}
+
 
 
   \item On page 6, it is odd on the one hand to write in (5) that
@@ -80,10 +161,11 @@ model components.``}
 We reserve the notation $\in$ to clarify that the minimiser is not unique. 
 But if the population
 minimiser is not unique, then why would the sample minimiser be unique?
-
-\spencerr{It was a mistake to have $=$ in the (7) as the sample minimiser need
+\\~\\
+\emph{Thank you for catching this and pointing it out to us.
+It was a mistake to have $=$ in the (7) as the sample minimiser need
 not be unique. It was replaced with $\in$.}
-
+\\~\\
 \item  On page 7, when you talk about the selection of the learning rate, it 
 may be useful to
 point out that there is a meaningful sense in which predictions become ``more`` 
@@ -91,14 +173,19 @@ or ``less`` accurate for different choices of the learning rate. This fact was
 indeed suggested in Loaiza-Maya et
 al. (2021) but was recently rigorously proven to be a valid conjecture by 
 McLatchie et al. (2025).
-
-\spencerr{The following was added:
-
-``While the tuning of $\eta$ may have a noticeable effect on predictive
+\\~\\
+\emph{The following was added to page 7.
+\begin{quote}
+While the tuning of $\eta$ may have a noticeable effect on predictive
 performance for small sample sizes,
 it was recently argued in \cite[]{mclatchie2025predictive} that for moderate
-to large sample sizes, the selection of $\eta$ will have little effect on
-predictive accuracy.``}
+to large sample sizes, the selection of $\eta$ will have little effect on 
+predictive accuracy.
+Importantly the asymptotic 
+consistency of the Gibbs posterior is not dependent on $\eta$, so selecting 
+$\eta$ by most well reasoned methods is appropriate 
+\cite[]{martin2022direct,loaiza2021focused}.
+\end{quote}}
 
 \item I found the use of the two different loss functions based on the 
 dependence in the data to
@@ -109,34 +196,35 @@ Of course,
 you are discounting within the loss used to construct the posterior and they 
 are discounting the
 predictive itself. Still, this should be mentioned.
-
-\spencerr{The following was added:
-
-``In this dynamic setting, $0 < \alpha \leq 1$ is a discount factor 
+\\~\\
+\emph{The following paragraph was added to page 8.
+\begin{quote}
+In this dynamic setting, $0 < \alpha \leq 1$ is a discount factor 
 used to lessen the influence of 
 previous forecasts making the performance of the most recent forecasts 
 the most influential. For example, if $\alpha = 0.98$, 
-observations from 10 time steps in the passed
-receive approximately 83\% of the weight as the most recent value.
+observations from 10 time steps in the past
+are given approximately 83\% of the influence compared to the most recent value.
 If $\alpha = 1$, the risk function in 
 (9) is recovered.
-
 Discount factors (also known as forgetting factors)
 have been used in the model averaging setting but not
 to our knowledge in the FBP setting 
 \cite[]{bernaciak2024loss,lavine2021adaptive, zhao2016dynamic, 
 koop2013large,raftery2010online}. 
 The discount
-factor has been largely used to improve upon BMA which is best for static 
-data as opposed to dynamic data. Previous literature suggests $\alpha$ 
+factor has been used largely to improve upon BMA, which has good model
+selection properties for static data but suffers when data is dynamic. 
+Previous literature suggests $\alpha$ 
 between 0.95 and 0.99 leads to more accurate predictions, and that varying 
 $\alpha$ has little effect except where there are dramatic changes in the 
 time series \cite[]{lavine2021adaptive, koop2013large}. 
 In the dynamic analyses below
-below we also tried other values of $\alpha$ between 0.9 and 0.99 but 
+we also tried other values of $\alpha$ between 0.9 and 0.99 but 
 found the specific value made little difference in predictive performance.
-In \cite{lavine2021adaptive}, the discount factor is 
-fixed at $\alpha = 0.98$, and we use the same value herein.``}
+\end{quote}
+}  
+
 
 \item  In Section 3.3, why do we care about consistency here? There is little 
 to no motivation here
@@ -148,25 +236,28 @@ Bayes posterior. When you talk about posterior consistency, you should bolster
 your argument by mentioning that Loaiza-Maya et al. (2021) and Frazier et al. 
 (2024) have already obtained
 such results under certain conditions.
-
-\spencerq{
-
-``When using the SGP to produce forecasts, one would like assurance
-that the optimized weights converge to create a linear pool which produce the
+\\~\\
+\emph{The following was added to page 10.
+\begin{quote}
+When using the SGP to produce forecasts, one would like assurance
+that the optimized weights converge to create a linear pool which produces the
 best forecasts subject to the CRPS. The consistency result in this section
-provides some of that assurance. We note that similar results under
-differing conditions were shown 
+partially provides that assurance. We note that similar results were shown 
 in \cite[]{frazier2025loss} and 
-in \cite[]{loaiza2021focused}.``
+in \cite[]{loaiza2021focused}.
+\end{quote}
+}
 
-
-``Theorem \ref{thm:sgp_cons} shows that as more data is observed, 
+\emph{The following was also added to page 11.
+\begin{quote}
+Theorem 1 shows that as more data is observed, 
 the SGP becomes more
 concentrated around the unique minimizer $\boldsymbol{\omega}^*$. Thus, at 
 least in the case of i.i.d. data, the SGP will converge to produce the best
 possible linear pool combination for predictive accuracy under the CRPS. 
 In theory, this result may also be used to show that the SGP produces better 
-predictive results than the standard likelihood Bayesian results.``
+predictive results than the standard likelihood Bayesian results.
+\end{quote}
 }
 
 \item On page 10, I have some questions about Theorem 1 and its proof.
@@ -178,32 +269,38 @@ predictive results than the standard likelihood Bayesian results.``
   is satisfied in
   your example by the DP prior and giving it as a separate result in the 
   appendix.
-  
-  \spencerq{This seems weird to me. Why would a more specific case be desired
-            if it's covered under the given condition?}
+  \\~\\
+ \emph{In response to this comment, we give the proof of the theorem as a 
+ general result assuming the sufficient prior condition. In the main text on 
+ page 10, we state that the selected Dirichlet prior satisfies the condition.}
+    \\~\\
     \item Why have you only considered the CRPS in this result? My guess is that 
     this is because
     you can not generally find a simple upper bounding function for the log 
     score; 
     however,
     Jensen should provide such a condition since $-\text{log}$ is concave.
+    \\~\\
     
-    
-  \spencerq{We didn't include a result for the log score for teh reason you gave
-    about not finding a general upper bounding function but also because we 
-    focus more on the CRPS in this paper. What we need to bound to get similar
-    results for the log score is the linear pool density function $\bar{p}(y)$. 
+  \emph{The primary reason for not including a result for the log score is
+    that the focus of the paper is on the CRPS with the LogS serving as a 
+    measure for comparing different methods. As well, when initially writing we
+    did find the lack of simple bounds to be a barrier.
+    To prove a similar result for the log score, one needs to provide conditions
+    such that condition iv) in the appendix proof is met. For the condition to
+    be met, bounds need to be selected on
+    the linear pool density function $\bar{p}(y)$. 
     For example, take the bounds 
     $0 < \epsilon < \bar{p}(y) < M < \infty$ for all $y$.
     Then one could set 
     \[
      m(y) = 
       \begin{cases*}
-        \text{log}(M)  & if \(p(y) \ge 1\) \\
-        -\text{log}(\epsilon)   & if \(p(y) < 1\)
+        \text{log}(M)  & if \(\bar{p}(y) \ge 1\) \\
+        -\text{log}(\epsilon)   & if \(\bar{p}(y) < 1\)
       \end{cases*}
     \]
-    and the proof would be complete.
+    and the condition would be met.
     }
   \end{enumerate}
   
@@ -212,26 +309,28 @@ size was used for
 the selection of $\eta$ when using the CRPS? Please clarify in the supplement 
 precisely how this
 optimisation was performed.
-
-\spencerr{The paragraph below was added to the supplmentary materials. It is 
-alluded to in the main text.
-
-``When optimizing linear pool model weights for adaptive variable AVS
-in the i.i.d. data simulation study in section 4.1, the learning rate $\eta$
-was selected via LOO cross validation. In the study, data
-was simulated from the specified mixture model for sample sizes
-$n \in \{10, 20,50, 100, 200\}$. 
-For each sample size, there were 500s replicates. 
-In each replicate, the AVS linear pool was fit using each of 30 equally spaced
-values of the potential learning rate $\eta$ from 0.001 to 1.5.
-Each of the $n$ observations was left out in turn, and the 
-AVS linear pool was fit using the remaining $n-1$ data points. The CRPS
-was then computed for the held out point. The value $\eta_i^*$ was set 
-as learning rate value which minimized the CRPS.
-Finally, the learning rate $\eta$ was set as the mean of the $n$ $\eta_i^*$s,
-and the AVS was fit using all $n$ data points with $\eta$ as the learning rate.
-The left plot in figure (1) shows an example of the CRPS
-values over each of 30 grid points when the sample size is $n = 10$.``}
+\\~\\
+\emph{The following paragraph was added to the supplmentary materials. It is 
+alluded to in the main text on page 12.
+\begin{quote}
+  When optimizing linear pool model weights for adaptive variable AVS
+  in the i.i.d. data simulation study in section 4.1, the learning rate $\eta$
+  was selected via LOO cross validation. In the study, data
+  was simulated from the specified mixture model for sample sizes
+  $n \in \{10, 20,50, 100, 200\}$. 
+  For each sample size, there were 500 simulation replicates. 
+  In each replicate, the AVS linear pool was fit using each of 30 equally spaced
+  values of the potential learning rate $\eta$ from 0.001 to 1.5.
+  Each of the $n$ observations was left out in turn, and the 
+  AVS linear pool was fit using the remaining $n-1$ data points. The CRPS
+  was then computed for the held out point. The value $\eta_i^*$ was set 
+  as learning rate value which minimized the CRPS.
+  Finally, the learning rate $\eta$ was set as the mean of the $n$ $\eta_i^*$s,
+  and the AVS was fit using all $n$ data points with $\eta$ as the learning rate.
+  The left plot in figure (1) shows an example of the CRPS
+  values over each of 30 grid points when the sample size is $n = 10$.
+\end{quote}
+}
 
 \item In Section 4.3, how was the posterior sampling conducted? In particular, 
 was the CRPS for
@@ -241,31 +340,35 @@ posterior? Given that one of the models was an SIR model, I would be surprised
 if the predictive
 was Gaussian, which would mean getting the CRPS in closed-form would not be 
 feasible.
-
-
-\spencerr{Clarified by adding:
-``Neither of the two Bayesian forecast component models produced 
-closed form
-CDFs, but rather the distributions
-were estimated from 10,000 draws from the posterior
+\\~\\
+\emph{This was clarified by adding the following to page 16.
+\begin{quote}
+ Neither of the two Bayesian forecast component models produced closed form
+CDFs, but rather the distributions were estimated from 10,000 draws from 
+the posterior
 predictive distributions. Draws were also sampled from the the ARIMA and random
 walk predictive distributions, and to fit the SGP 
 the CRPS was approximated using equation
-(15).``}
+(15).
+\end{quote}
+}
 
 \item The SGP50 and the EQW have quite similar histograms. What does the 
 posterior for the
 SGP50 look like? Is it just basically equal weight across the models?
-
-\spencerr{A figure showing the posterior weights for SGP and SGP50 was added
-to the supplementary materials. The following was added to the main text:
 \\~\\
-``In the supplementary 
+\emph{A figure showing the posterior weights for SGP and SGP50 was added
+to the supplementary materials. The following was added to the main text on 
+page 17.
+\begin{quote}
+In the supplementary 
 materials an additional figure is included to compare the SGP and SGP50 
 posterior weights for the component models in this study. The figure shows 
 how the added regularization in the SGP50 brings posterior weights closer to
 equality --in this case 1/4 since there are 4 component models-- but still 
-allows for favoring some components over others.``}
+allows for favoring some components over others.
+\end{quote}
+}
 
 
 \end{enumerate}
@@ -274,26 +377,36 @@ allows for favoring some components over others.``}
 \begin{enumerate}[1.]
   \item Page 4, ``$h$ time steps into the with``. Missing ``future`` I guess.
   
-  \spencerr{added ``future`` to make sentence complete}
-  
+  \emph{Added ``future`` to make sentence complete}
+  % \\~\\
   \item Page 6, when you introduce $R(\theta)$ as $El_{\theta}(y)$ 
   clarify that $E$ is 
   expectation wrt the true data
 generating distribution of the data $y$.
 
-\spencerr{added, ``where $E$ denotes the expected value with 
-respect to the true data generating distribution of $y_i$.``}
-
+\emph{Added, ``where $E$ denotes the expected value with 
+respect to the true data generating distribution of $y$.``}
+% \\~\\
   \item Page 19, ``a thus a stronger``
-  
-  \spencerr{fixed and edited to now read ``thus provides stronger``}
-  
+
+  \emph{Fixed and edited to now read ``thus provides stronger``}
+  % \\~\\
   \item The grey scale in Figure 4 cannot be easily interpreted. Please 
   use a different colour scheme or way of denoting the methods.
-  
-  \spencerr{image updated with new colour scheme to make method results
+
+  \emph{The updated figure 4
+  below was given new colour scheme to make method results
             more discernible}
 \end{enumerate}
+\begin{figure}[hbt!]
+\centering
+  \includegraphics[width=1.1\linewidth]{Images/iid_sim_res_col.png}
+\caption{Boxplots of the mean of 1,000 Monte Carlo LogSs (left) and CRPSs 
+(right) for 500 replicates and for increasing sample size $n$. 
+Plots are colored by weighting method. For both
+LogS and CRPS, lower is better. }
+\label{fig:iid_scores}
+\end{figure}
 \newpage
 
 
@@ -302,20 +415,8 @@ respect to the true data generating distribution of $y_i$.``}
 
 
 \Huge
-R1
+\noindent R1
 \normalsize
-\\~\\
-In this paper, the authors develop a generalized Bayesian estimation framework 
-for determining the 
-weights of a mixture of given predictive distributions. Unlike standard 
-Bayesian updating based on the 
-likelihood function, their approach employs proper scoring rules, leading to 
-posterior distributions 
-over the simplex that concentrate on weights delivering high predictive 
-accuracy under the chosen 
-score. The paper illustrates the framework through a series of numerical 
-experiments and an 
-application to the influenza forecasting competition.
 \\~\\
 The paper is clearly written and thorough, but I view it more as an in-depth 
 elaboration of ideas 
@@ -341,13 +442,6 @@ FLMK advocate variational inference for computational tractability, the target
 remains the exact Gibbs 
 posterior defined by the scoring rule.
 \\~\\
-
-\spencerq{The work by Frazier is relevant in that it produces a Gibbs posterior
-on model parameters, but the difference in what I am doing is that the models
-are already given to me. I am not estimating model parameters. I am only 
-estimating the weights of a convex combination of distribution functions from
-the various given models. They also say that the CRPS cannot be calculated in 
-the case of the mixture.}
 The main novel aspect I see in this paper is the use of a discounting factor 
 in the loss function to deal 
 with the potential time varying nature of the data generating process. 
@@ -359,53 +453,116 @@ carefully executed and well
 written, its contribution lies primarily in consolidating and extending 
 previously introduced ideas.
 
-\spencerr{In response to these comments, one paragraph in the 
-introduction was replaced with 
-that below. See also responses to (1) and (4) of AE1.
+\emph{We're grateful for the reviewers thoughtful comments. 
+In response to these comments, one paragraph in the 
+introduction was replaced what's written below. 
+The responses here are also included after comments (1) and (4) from AE1.}
 
-``In this manuscript, we introduce a new method which we call the stacked 
-Gibbs posterior (SGP), for combining probabilistic forecasts by optimizing a 
-linear pool. The SGP provides uncertainty quantification of the weights in 
-the ensemble and allows the use of a prior distribution to inform or 
-influence the optimized weights. 
-The SGP belongs within the \textit{focused Bayesian prediction} (FBP) framework
-introduced by Loaiza-Maya et al. \cite[]{loaiza2021focused}. 
-In FBP, model parameters and forecasts are attained by constructing a Gibbs 
-posterior which is a type of posterior probability distribution constructed 
-not within the standard Bayesian framework but by specifying a risk function 
-which one desires to optimize in place of a standard likelihood function 
-\cite[]{martin2022direct,bissiri2016general}. In a Gibbs posterior, a prior
-distribution is assigned to model parameters, and parameter uncertainty is
-updated via Bayes theorem. In \cite[]{loaiza2021focused}, the Gibbs posterior
-uses a risk function based on proper scoring rules so as to produce optimal
-probabilistic 
-forecasts. In \cite[]{frazier2025loss} this is extended by fitting
-the Gibbs posterior via variational Bayes and showing both theoretically and 
-empirically that VB predictions are similar to predictions made via Markov
-chain Monte Carlo posterior sampling.``
+\emph{To clarify the link between earlier work and the current proposal, 
+the following two paragraphs replaced one paragraph in the introduction}.
 
-Herein the SGP elaborates upon FBP, but FBP is extended in two important ways.
-The risk function optimized in the SGP is based on the continuous ranked 
-probability score (CRPS), and it is used to optimize a linear pool of 
-an arbitrary finite number of continous forecasts. 
-This scenario is considered in section 4.1 of \cite[]{loaiza2021focused}, 
-but the number of components in the 
-linear pool components is limited to two. In section 5.2 of 
-\cite[]{frazier2025loss}, a linear pool of 20 normal component models is
-optimized via FBP, but optimization of the CRPS was explicitly excluded 
-as a formula for evaluating it was unavailable. Herein we use a closed form
-solution of the CRPS over a linear pool of a finite number of normal component
-models. We also present a novel definition of the CRPS which allows for
-Monte Carlo approximation when the distribution evaluated is a finite mixture
-distribution with continuous components. This makes fitting the SGP possible
-when distributions of individual forecasts in a linear pool can be sampled from.
-The second important extension is the use of a discount factor in the the risk
-function. When data to be forecast is dynamic in nature, the discount factor
-is used to downweight the influence of data from the distance past and 
-upweight more recent data in the forecast optimization. The discount factor
-used in the SGP is similar to that used in 
-\cite[]{bernaciak2024loss,koop2013large, raftery2010online}.
-More details of these two extensions are given in section 3.``}
+\begin{quote}
+  \emph{In this manuscript, we introduce a new method which we call the stacked 
+  Gibbs posterior (SGP), for combining probabilistic forecasts by optimizing a 
+  linear pool. The SGP provides uncertainty quantification of the weights in 
+  the ensemble and allows the use of a prior distribution to inform or 
+  influence the optimized weights. 
+  The SGP belongs within the \textit{focused Bayesian prediction} (FBP) framework
+  introduced by Loaiza-Maya et al. \cite[]{loaiza2021focused}. 
+  In FBP, model parameters and forecasts are attained by constructing a Gibbs 
+  posterior which is a type of posterior probability distribution constructed 
+  not within the standard Bayesian framework but by specifying a risk function 
+  which one desires to optimize in place of a standard likelihood function 
+  \cite[]{martin2022direct,bissiri2016general}. In a Gibbs posterior, a prior
+  distribution is assigned to model parameters, and parameter uncertainty is
+  updated via Bayes theorem. In \cite[]{loaiza2021focused}, the Gibbs posterior
+  uses a risk function based on proper scoring rules so as to produce optimal
+  probabilistic 
+  forecasts. In \cite[]{frazier2025loss} FBP is extended by fitting
+  the Gibbs posterior via variational Bayes (VB)
+  and showing both theoretically and 
+  empirically that VB predictions are similar to predictions made via Markov
+  chain Monte Carlo (MCMC) posterior sampling.}
+  \\~\\
+  \emph{
+  The work herein elaborates upon FBP, but it is extended in two important ways.
+  The risk function optimized in the SGP is based on the continuous ranked 
+  probability score (CRPS), and it is used to optimize a linear pool of 
+  an arbitrary finite number of continous forecasts. 
+  A similar scenario is considered in \cite[]{loaiza2021focused}, 
+  but the number of components in the 
+  linear pool is limited to two. Another similar scenario is considered in
+  \cite[]{frazier2025loss} where a linear pool of 20 normal component models is
+  optimized via FBP, but optimization of the CRPS was explicitly excluded 
+  since a formula for evaluating it was unavailable. 
+  Herein we use a closed form
+  solution of the CRPS over a linear pool of a finite number of normal component
+  models. We also present a novel definition of the CRPS which allows for
+  Monte Carlo approximation when the distribution evaluated is a finite mixture
+  distribution with continuous components. This makes fitting the SGP possible
+  when one can draw samples from the distributions of individual forecasts
+  in a linear pool.
+  The second important extension is the use of a discount factor in the the risk
+  function. When data to be forecast is dynamic in nature, the discount factor
+  is used to downweight the influence of data from the distant past and 
+  upweight more recent data in the forecast optimization. The discount factor
+  used in the SGP is similar to that used in 
+  \cite[]{bernaciak2024loss,koop2013large, raftery2010online}.
+  More details of these two extensions are given in section 3.}
+\end{quote}
+% \\~\\
+\emph{The following statement was also added on page 6.
+\begin{quote}
+As far as we are aware, methods for evaluating the risk function have been 
+available only in the case of a two component linear pool model, as 
+considered in section 4.1 of \cite[]{loaiza2021focused}. In section 5.2 of 
+\cite[]{frazier2025loss} a linear pool
+ of 20 normal component models is optimized via FBP, but 
+ optimization of the CRPS
+ was explicitly excluded because no formula for evaluating the risk function was
+ available.
+\end{quote}
+}
+
+
+\emph{The following paragraph was added to page 8.
+\begin{quote}
+In this dynamic setting, $0 < \alpha \leq 1$ is a discount factor 
+used to lessen the influence of 
+previous forecasts making the performance of the most recent forecasts 
+the most influential. For example, if $\alpha = 0.98$, 
+observations from 10 time steps in the past
+are given approximately 83\% of the influence compared to the most recent value.
+If $\alpha = 1$, the risk function in 
+(9) is recovered.
+Discount factors (also known as forgetting factors)
+have been used in the model averaging setting but not
+to our knowledge in the FBP setting 
+\cite[]{bernaciak2024loss,lavine2021adaptive, zhao2016dynamic, 
+koop2013large,raftery2010online}. 
+The discount
+factor has been used largely to improve upon BMA, which has good model
+selection properties for static data but suffers when data is dynamic. 
+Previous literature suggests $\alpha$ 
+between 0.95 and 0.99 leads to more accurate predictions, and that varying 
+$\alpha$ has little effect except where there are dramatic changes in the 
+time series \cite[]{lavine2021adaptive, koop2013large}. 
+In the dynamic analyses below
+we also tried other values of $\alpha$ between 0.9 and 0.99 but 
+found the specific value made little difference in predictive performance.
+\end{quote}
+}  
+
+
+\emph{The following statement was added in the conclusion.
+\begin{quote}
+  As part of the SGP, a we provide a new definition of the CRPS which allows
+for its approximate evaluation for linear pool models of any finite number
+of components. We also include the use of a discount factor to control influence
+of data in dynamic settings.
+\end{quote}
+}
+
 
 \bibliographystyle{ba}
 \bibliography{master_bib}
