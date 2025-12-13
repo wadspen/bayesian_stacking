@@ -31,7 +31,7 @@ functions {
 
   
 data {
-  int<lower=0> T;
+  int<lower=0> T; //test
   vector[T] y;
   int<lower=0> num_comp;
   real<lower=0> eta;

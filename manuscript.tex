@@ -30,8 +30,8 @@
 
 
 \section{Introduction}
-Forecasting future events is the object of much scientific and social activity 
-and informs many public and private decisions. Decision making tends to be 
+Forecasting future events is the object of much scientific and social activity, 
+and it informs many public and private decisions. Decision making tends to be 
 better if uncertainties are attached to the forecasts 
 \cite[]{ramos2013probabilistic,joslyn2012uncertainty}, and in many fields the 
 focus on making forecasts probabilistic is growing 
@@ -56,17 +56,39 @@ practice in forecast hubs, and these ensembles are often superior
 to individual forecasts in terms of predictive performance
 \cite[]{wang2023forecast,
 li2023bayesian,gyamerah2020probabilistic,li2019combining,
-reich2019collaborativeens}. For example, in the 2023-24 United States Centers 
-for Disease Control and Prevention (CDC) collaborative flu forecasting 
-competition --also known as FluSight-- ensemble forecasts largely outperformed 
+reich2019collaborativeens}. One such forecast hub dedicated to the rapid
+dissemination of influenza or flu 
+case hospitalization forecasts is the United States
+Centers for Disease Control and Prevention (CDC) flu forecasting competition.
+The CDC flu forecasting competition, hereafter referred to as FluSight, was the
+primary motivator for the work herein
+
+FluSight, is an
+annual competition which generally involves several dozen independent forecast
+teams. Each participating team provides weekly short term forecasts of flu 
+hospitalizations for each US state, the District of Columbia, Puerto Rico,
+and the nation as a whole 
+\cite[]{cdcfluforecasting2024,mathis2023evaluation,biggerstaff2016results}. 
+The annual international flu outbreak leads generally leads to an influx
+of hospitalizations, tens of billions of dollars in medical costs or income
+loss, and hundreds of thousands of deaths 
+\cite[]{whoflufact2025,molinari2007annual}
+Regularly publishing accurate short term flu hospitalization forecasts provides
+the public with valuable information for planning and decision making. Having
+multiple independent forecasts allows for increased learning opportunities and
+forecast improvements, and the ability to create ensemble forecasts.
+In the 2023-24 FluSight compeition, ensemble forecasts largely outperformed 
 individual forecasts in predicting flu hospitalizations. In fact the 
 forecast published weekly by the CDC as the official forecast is an ensemble 
-of all competing forecasts \cite[]{mathis2024evaluation}. Figure 
+of all competing forecasts \cite[]{mathis2024evaluation}. 
+Figure 
 \ref{fig:cdc_forecasts} shows an example of FluSight hospitalization 
 forecasts from many competing teams. The left of the figure shows individual
 forecasts whereas on the right is shown 
-the ensemble forecast constructed by combining all competing forecasts. It was
-this forecast competition which motivated the work herein.
+the ensemble forecast constructed by combining all competing forecasts.
+Additional information
+on FluSight forecasts and data is given in the real data analysis 
+section \ref{sec:flu_analysis} herein.
 
 \begin{figure}[hbt!]
     \centering
@@ -807,7 +829,7 @@ uninformative Dirichlet distribution with the parameter being a vector of 1s.
 In all studies, the weights used in the SGP ensembles are selected as the 
 mean vectors of 
 individual draws from the Gibbs posterior obtained via Hamiltonian 
-Monte Carlo sampling using the \texttt{cmdstanr} \texttt{R} package 
+Monte Carlo sampling using the cmdstanr R package 
 \cite[]{stan2024manual,gabry2022stan}.
 
 
@@ -1029,7 +1051,7 @@ as analogous to the values in the infected compartment
 % about the SIR model, maybe in the supplementary material?}
 
 The data used in this simulation study were generated from a stochastic SIR 
-model using the \texttt{SimInf} package in \texttt{R} 
+model using the SimInf package in R 
 \cite[]{widgren2019siminf}. For each of 3,000 simulation replicates, 35 
 consecutive ``weeks`` of infection counts were sampled. Starting at week 5, 
 we fit four individual forecast models and used each to make one week ahead 
@@ -1044,9 +1066,9 @@ with an ensemble of four or more components. The four models included
 a Bayesian SIR model similar to that used to forecast the flu in 
 \cite{osthus2019dynamic}, a nonlinear Bayesian model similar to that used by 
 \cite{ulloa2019} and \cite{wadsworth2025forecasting}, an ARIMA model fit 
-using the \texttt{forecast} package in \texttt{R} 
+using the forecast package in R 
 \cite[]{hyndman2008automatic}, and a naive random walk model also fit using
-the \texttt{forecast} package. The two Bayesian models were fit using the 
+the forecast package. The two Bayesian models were fit using the 
 proportion of infections of the total population.
 
 Neither of the two Bayesian forecast component models produced closed form
@@ -1246,7 +1268,7 @@ forecast teams updated their forecasts and the flu season progressed.
 To complete the SGP, an uninformative Dirichlet prior with parameter 
 $\mathbf{1}_C$ was assigned to $\boldsymbol{\omega}$. 
 The SGP was fit via Hamiltonian 
-Monte Carlo sampling using the \texttt{cmdstanr} \texttt{R} package 
+Monte Carlo sampling using the cmdstanr R package 
 \cite[]{stan2024manual,gabry2022stan}. To assess convergence of the fit, 
 the SGP for US forecasts at the national level for the week of 
 January 20, 2024 (week 15 of 29 of the flu season) was fit with 4 chains. 
@@ -1506,11 +1528,6 @@ Grant No. 2152117. Any opinions, findings, and conclusions or recommendations
 expressed in this material are those of the author(s) and do not necessarily 
 reflect the views of the National Science Foundation.
 
-
-\noindent We also acknowledge the contribution of anonymous 
-reviewers whose comments
-led to clearer insights and a much improved overall composition.
-
 % Include this in the Bayesian Analysis submission
 % \begin{supplement}
 % Supplement to ``Bayesian
@@ -1523,8 +1540,8 @@ led to clearer insights and a much improved overall composition.
 %  forecast analysis
 % \end{supplement}
 
-\bibliographystyle{ba}
-\bibliography{master_bib}
+% \bibliographystyle{ba}
+% \bibliography{master_bib}
 
 %%%%
 % Reference section comes before the appendix
