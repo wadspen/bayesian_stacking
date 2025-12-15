@@ -1,3 +1,4 @@
+.libPaths("~/rlibs")
 library(SimInf)
 library(forecast)
 library(tidyr)
@@ -12,8 +13,8 @@ source("./stack_functions.R")
 library(parallel)
 library(doParallel)
 library(doMC)
-n.cores <- detectCores()
-#n.cores <- 1 
+# n.cores <- detectCores()
+n.cores <- 110
 my.cluster <- makeCluster(n.cores, type = "PSOCK")
 doParallel::registerDoParallel(cl = my.cluster)
 foreach::getDoParRegistered()
@@ -28,8 +29,8 @@ asg_mod <- cmdstan_model(stan_file = '../stan_models/asg.stan')
 sir_mod <- cmdstan_model(stan_file = '../stan_models/sir.stan')
 mod <- cmdstan_model(stan_file = '../stan_models/emp_mix_crps_time_weight.stan')
 drawn <- 2000
-warm <- 1000
-reps <- 60
+warm <- 2000
+reps <- 100
 
 sir_res <- foreach(replicate = 1:reps,
                      .packages = c("cmdstanr", "stringr", "scoringRules",
