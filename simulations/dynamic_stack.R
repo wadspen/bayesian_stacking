@@ -1,4 +1,5 @@
 # library(TruncatedNormal)
+.libPaths("~/rlibs")
 library(tmvtnorm)
 library(cmdstanr)
 library(distr)
@@ -8,15 +9,15 @@ source("./stack_functions.R")
 library(parallel)
 library(doParallel)
 library(doMC)
-n.cores <- detectCores()
-#n.cores <- 1
+n.cores <- 110
 my.cluster <- makeCluster(n.cores, type = "PSOCK")
 doParallel::registerDoParallel(cl = my.cluster)
 foreach::getDoParRegistered()
 foreach::getDoParWorkers()
 registerDoMC(cores = n.cores)
 
-
+args <- commandArgs()
+tweight <- as.numeric(args[6])
 gibbmod <- cmdstan_model(stan_file = '../stan_models/simple_mix_norm_crps_T.stan')
 
 start <- 1
@@ -32,7 +33,7 @@ tsigmas <- rep(1, length(tmus))
 mus <- c(0,2,4,6,8,10)
 C <- length(mus)
 sigmas <- rep(1, C)
-tweight <- .98
+#tweight <- .98
 ms_et <- 15
 
 T <- 55
@@ -193,8 +194,8 @@ stacks <- foreach(replicate = 1:reps,
     
     # fit <- gibbmod$variational(data = stan_dat)
     fit <- gibbmod$sample(data = stan_dat, chains = 1, 
-                          iter_warmup = 1000,
-                          iter_sampling = 1000, 
+                          iter_warmup = 10000,
+                          iter_sampling = 50000, 
                           init = list(list(omega = rep(1/C, C))))
     
     draws <- fit$draws(variables = "omega", format = "df") %>%
@@ -285,7 +286,7 @@ stacks <- foreach(replicate = 1:reps,
 }
 
 
-saveRDS(stacks, "dynamic_stacks_all_weeks_fin.rds")
+saveRDS(stacks, paste0("dynamic_stacks_discf_", tweight, ".rds"))
 
 
 

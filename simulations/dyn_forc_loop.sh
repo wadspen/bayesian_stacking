@@ -1,6 +1,6 @@
 
-for i in $(seq 1 50);
+for tweight in ".78" ".8" ".82" ".84" ".86" ".88"
 do
-	sbatch dyn_forc2.sh "$i"
+	sbatch dynamic_sim.sh "$tweight"
 done
 
