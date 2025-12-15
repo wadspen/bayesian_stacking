@@ -22,6 +22,7 @@ registerDoMC(cores = n.cores)
 
 args <- commandArgs()
 step <- as.numeric(args[6])
+twt <- as.numeric(args[7])
 
 asg_mod <- cmdstan_model(stan_file = '../stan_models/asg.stan')
 sir_mod <- cmdstan_model(stan_file = '../stan_models/sir.stan')
@@ -208,7 +209,7 @@ sir_res <- foreach(replicate = 1:reps,
     bma_wt[,1] <- rep(1/C, C)
     avs_wt[,1] <- rep(1/C, C)	
     
-    alpha <- .98
+    alpha <- twt
     d <- ncol(crpsh1)
     select_ets <- c()
     for (d in 1:(ncol(crpsh1) - 1)) {
@@ -288,7 +289,7 @@ sir_res <- foreach(replicate = 1:reps,
         #   ev_grid[i] <- 
         #     try(learning_rate(etas[i], d-1, mse_mat = all_mse, 
         #                       absdiff_arr = absdiff_arr, 
-        #                       mod = mod, power = 1, tweight = .98,
+        #                       mod = mod, power = 1, tweight = twt,
         #                       alpha = 50))
         #   
         # }
@@ -297,7 +298,7 @@ sir_res <- foreach(replicate = 1:reps,
         wts <- try(learning_rate(etas, d-1, mse_mat = all_mse, 
                                  absdiff_arr = absdiff_arr, 
                                  mod = mod, power = 1, return_wts = "draws",
-                                 tweight = .98,
+                                 tweight = twt,
                                  alpha = 1))
         
         
@@ -354,7 +355,7 @@ sir_res <- foreach(replicate = 1:reps,
         wts <- try(learning_rate(etas, d-1, mse_mat = all_mse, 
                                  absdiff_arr = absdiff_arr, 
                                  mod = mod, power = 1, return_wts = "draws",
-                                 tweight = .98,
+                                 tweight = twt,
                                  alpha = 50))
         
         
@@ -435,10 +436,10 @@ sir_res <- foreach(replicate = 1:reps,
     
      
     scores <- data.frame(seq = step, rep = replicate, time, method = methods, 
-                       crps, logs, pit)
+                       crps, logs, pit, discf = twt)
     write.csv(scores, "test2.csv")
     scores
 
 }
 
-write.csv(sir_res, paste0("sir_res/seq_", step, ".csv"))
+saveRDS(sir_res, paste0("sir_res/seq_", step, "_discf_", twt, ".rds"))

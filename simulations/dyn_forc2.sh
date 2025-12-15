@@ -1,26 +1,17 @@
 #!/bin/bash
 
-#SBATCH --time=3-01:30:00
+#SBATCH --partition=general
+#SBATCH --time=11:59:00
 #SBATCH --nodes=1
-#SBATCH --ntasks-per-node=64
-#SBATCH --mem=0
-#SBATCH --exclusive
-#SBATCH --constraint=intel
+#SBATCH --ntasks=120
+#SBATCH --exclude=cn[473-479]
+#SBATCH --mem=501G
 
 
-# Old Module Load
-#module load gcc
-#module load r
-#module load udunits
-#module load r-rgdal
-#module load proj
-#module load r gsl
 
-# modules for Rscript run
 module purge
-module load r/4.4.1
-module load r-rgdal gsl udunits/2.2.28-et3j662
+module load gsl/2.8 udunits/2.2.28-gcc14.2 cuda/11.6 freetype/2.12.1 gdal/3.9.2 r/4.4.2 proj geos cmake
 
-Rscript ./SIR_simulation.R "$1" 
+Rscript ./SIR_simulation.R "$1" "$2"
 
 
